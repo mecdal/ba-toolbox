@@ -12,7 +12,7 @@
 <nav id="sidebar">
   <div id="sidebar-header">
     <h1>🧰 BA Toolbox</h1>
-    <p>İş Analisti Araç Seti</p>
+    <p>İş Analisti Araç Seti by Mecdal</p>
   </div>
   <input type="text" id="search-box" placeholder="Araç ara...">
   <div id="tool-list"></div>
@@ -219,17 +219,46 @@
     <!-- ===== BASE64 ===== -->
     <div id="panel-base64" class="tool-panel">
       <div class="tool-card">
-        <h3>Base64 Encode / Decode</h3>
-        <div class="error-box" id="base64-error"></div>
-        <label>Ham Metin</label>
-        <textarea id="b64-raw" placeholder="Metni buraya yazın..."></textarea>
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick="base64Encode()">↓ Encode</button>
-          <button class="btn btn-secondary" onclick="base64Decode()">↑ Decode</button>
+        <h3>Base64 / Dosya</h3>
+        <div class="tab-bar" id="base64-tabs">
+          <button class="tab-btn active" data-tab="tab-b64-text">Metin</button>
+          <button class="tab-btn" data-tab="tab-b64-file-to">Dosya → Base64</button>
+          <button class="tab-btn" data-tab="tab-b64-to-file">Base64 → Dosya</button>
         </div>
-        <label>Base64</label>
-        <textarea id="b64-encoded" placeholder="Base64 çıktısı..."></textarea>
-        <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('b64-encoded').value, this)">Kopyala</button>
+        <div class="error-box" id="base64-error"></div>
+
+        <!-- Metin -->
+        <div id="tab-b64-text" class="tab-content active">
+          <label>Ham Metin</label>
+          <textarea id="b64-raw" placeholder="Metni buraya yazın..."></textarea>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="base64Encode()">↓ Encode</button>
+            <button class="btn btn-secondary" onclick="base64Decode()">↑ Decode</button>
+          </div>
+          <label>Base64</label>
+          <textarea id="b64-encoded" placeholder="Base64 çıktısı..."></textarea>
+          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('b64-encoded').value, this)">Kopyala</button>
+        </div>
+
+        <!-- Dosya → Base64 -->
+        <div id="tab-b64-file-to" class="tab-content">
+          <label>Dosya Seç</label>
+          <input type="file" id="file-to-b64-input" style="padding:8px; background:var(--input-bg); border:1px solid var(--border); border-radius:6px; cursor:pointer; width:100%; margin-bottom:12px;">
+          <button class="btn btn-primary" onclick="fileToBase64()">Base64'e Çevir</button>
+          <div id="file-b64-info" style="font-size:12px; color:var(--text-muted); margin:10px 0;"></div>
+          <label>Base64 Çıktı</label>
+          <textarea id="file-b64-output" readonly placeholder="Base64 çıktısı burada görünecek..."></textarea>
+          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('file-b64-output').value, this)">Kopyala</button>
+        </div>
+
+        <!-- Base64 → Dosya -->
+        <div id="tab-b64-to-file" class="tab-content">
+          <label>Kaydedilecek Dosya Adı</label>
+          <input type="text" id="b64-target-filename" placeholder="dosya.pdf">
+          <label>Base64 Veri</label>
+          <textarea id="b64-to-file-input" placeholder="Base64 kodunu buraya yapıştırın..."></textarea>
+          <button class="btn btn-primary" onclick="base64ToFile()">↓ Dosyayı İndir</button>
+        </div>
       </div>
     </div>
 
@@ -465,6 +494,43 @@
           <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('lorem-output').value, this)">Kopyala</button>
         </div>
         <textarea id="lorem-output" readonly style="min-height:200px;"></textarea>
+      </div>
+    </div>
+
+    <!-- ===== JSON GRID ===== -->
+    <div id="panel-json-grid" class="tool-panel">
+      <div class="tool-card">
+        <h3>JSON Grid Görünümü <span style="font-size:11px; font-weight:400; color:var(--text-muted);">— Altova XMLSpy tarzı tablo görünümü</span></h3>
+        <div class="error-box" id="json-grid-error"></div>
+        <label>JSON Giriş</label>
+        <textarea id="json-grid-input" placeholder='[{"id": 1, "ad": "Ahmet", "sehir": "İstanbul"}, {"id": 2, "ad": "Ayşe", "sehir": "Ankara"}]'></textarea>
+        <button class="btn btn-primary" onclick="renderJsonGrid()">Grid Göster</button>
+        <div id="json-grid-output" class="json-grid-container" style="margin-top:16px;"></div>
+      </div>
+    </div>
+
+    <!-- ===== JSON ESCAPE ===== -->
+    <div id="panel-json-escape" class="tool-panel">
+      <div class="tool-card">
+        <h3>JSON Escape / Unescape</h3>
+        <div class="error-box" id="json-escape-error"></div>
+        <label>Ham Metin</label>
+        <textarea id="json-escape-input" placeholder='Merhaba "Dünya"&#10;Yeni satır\tTab'></textarea>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="jsonEscapeStr()">↓ Escape</button>
+          <button class="btn btn-secondary" onclick="jsonUnescapeStr()">↑ Unescape</button>
+        </div>
+        <label>Escape Edilmiş (JSON String)</label>
+        <textarea id="json-escape-output" placeholder='"Merhaba \"D\u00fcnya\"\nYeni sat\u0131r\tTab"'></textarea>
+        <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('json-escape-output').value, this)">Kopyala</button>
+      </div>
+    </div>
+
+    <!-- ===== SQL CHEATSHEET ===== -->
+    <div id="panel-sql-cheatsheet" class="tool-panel">
+      <div class="tool-card">
+        <h3>SQL Şablonları <span style="font-size:11px; font-weight:400; color:var(--text-muted);">— Hazır sorgular, tek tıkla SQL Formatlayıcı'ya aktar</span></h3>
+        <div id="sql-template-grid"></div>
       </div>
     </div>
 

@@ -408,6 +408,112 @@ mark { background: #fef08a; color: #713f12; border-radius: 2px; }
 #welcome h2 { font-size: 22px; color: var(--text); margin-bottom: 8px; }
 #welcome p { font-size: 14px; max-width: 400px; line-height: 1.6; }
 
+/* ===== JSON Grid ===== */
+.json-grid-container {
+  overflow: auto;
+  max-height: 500px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.json-grid-table {
+  border-collapse: collapse;
+  font-size: 12px;
+  background: var(--card-bg);
+  min-width: 100%;
+}
+
+.json-grid-table th,
+.json-grid-table td {
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.json-grid-table th {
+  background: var(--bg);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.json-grid-table td.json-grid-key {
+  background: var(--bg);
+  font-weight: 600;
+  color: var(--accent);
+  font-family: 'Consolas', monospace;
+  font-size: 11px;
+}
+
+.json-grid-idx {
+  color: var(--text-muted) !important;
+  font-size: 10px !important;
+  min-width: 28px;
+  text-align: right !important;
+  background: var(--bg) !important;
+}
+
+.json-grid-number { color: #e67e22; }
+.json-grid-bool   { color: #9b59b6; font-weight: 600; }
+.json-grid-null   { color: var(--text-muted); font-style: italic; }
+.json-grid-nested { color: var(--text-muted); cursor: default; }
+
+[data-theme="dark"] .json-grid-number { color: #f39c12; }
+[data-theme="dark"] .json-grid-bool   { color: #a29bfe; }
+
+/* ===== SQL Templates ===== */
+.sql-template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.sql-template-card {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  transition: border-color 0.15s;
+}
+
+.sql-template-card:hover { border-color: var(--accent); }
+
+.sql-template-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.sql-template-preview {
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-height: 90px;
+  overflow: hidden;
+  white-space: pre;
+  margin-bottom: 8px;
+}
+
+/* ===== File Upload ===== */
+.file-drop-area {
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-bottom: 12px;
+  transition: border-color 0.15s;
+  cursor: pointer;
+}
+
+.file-drop-area:hover { border-color: var(--accent); }
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   #sidebar { width: 200px; min-width: 200px; }

@@ -51,21 +51,29 @@ function updateThemeBtn(theme) {
 // ===== Navigation =====
 
 const tools = [
-  { id: 'json-formatter',    label: 'JSON Formatlayıcı',    icon: '{}',  group: 'Temel Araçlar' },
-  { id: 'uuid-generator',    label: 'UUID Üretici',          icon: '🔑',  group: 'Temel Araçlar' },
-  { id: 'interest-calc',     label: 'Faiz Hesaplama',        icon: '💰',  group: 'Temel Araçlar' },
-  { id: 'timestamp',         label: 'Timestamp Dönüştürücü', icon: '🕐',  group: 'Veri Araçları' },
-  { id: 'base64',            label: 'Base64 Encode/Decode',  icon: '🔐',  group: 'Veri Araçları' },
-  { id: 'csv-to-json',       label: 'CSV → JSON',            icon: '📊',  group: 'Veri Araçları' },
-  { id: 'diff-checker',      label: 'Metin Karşılaştırma',   icon: '🔍',  group: 'Metin Araçları' },
-  { id: 'regex-tester',      label: 'Regex Test',            icon: '.*',  group: 'Metin Araçları' },
-  { id: 'word-counter',      label: 'Kelime Sayacı',         icon: '📝',  group: 'Metin Araçları' },
-  { id: 'sql-formatter',     label: 'SQL Formatlayıcı',      icon: '🗄️',  group: 'Metin Araçları' },
+  // Veri & Format
+  { id: 'json-formatter',    label: 'JSON Formatlayıcı',     icon: '{}',  group: 'Veri & Format' },
+  { id: 'json-grid',         label: 'JSON Grid Görünüm',     icon: '⊞',   group: 'Veri & Format' },
+  { id: 'json-escape',       label: 'JSON Escape/Unescape',  icon: '\\{}', group: 'Veri & Format' },
+  { id: 'csv-to-json',       label: 'CSV → JSON',            icon: '📊',  group: 'Veri & Format' },
+  { id: 'base64',            label: 'Base64 / Dosya',        icon: '🔐',  group: 'Veri & Format' },
+  // Geliştirici
   { id: 'jwt-decoder',       label: 'JWT Decoder',           icon: '🎟️',  group: 'Geliştirici' },
   { id: 'url-encoder',       label: 'URL Encode/Decode',     icon: '🔗',  group: 'Geliştirici' },
   { id: 'hash-generator',    label: 'Hash Üretici',          icon: '#',   group: 'Geliştirici' },
-  { id: 'color-picker',      label: 'Renk Dönüştürücü',      icon: '🎨',  group: 'Ekstra' },
-  { id: 'lorem-ipsum',       label: 'Lorem Ipsum',           icon: '📄',  group: 'Ekstra' },
+  { id: 'uuid-generator',    label: 'UUID Üretici',          icon: '🔑',  group: 'Geliştirici' },
+  { id: 'regex-tester',      label: 'Regex Test',            icon: '.*',  group: 'Geliştirici' },
+  { id: 'timestamp',         label: 'Timestamp Dönüştürücü', icon: '🕐',  group: 'Geliştirici' },
+  // Veritabanı
+  { id: 'sql-formatter',     label: 'SQL Formatlayıcı',      icon: '🗄️',  group: 'Veritabanı' },
+  { id: 'sql-cheatsheet',    label: 'SQL Şablonları',        icon: '📋',  group: 'Veritabanı' },
+  // Metin
+  { id: 'diff-checker',      label: 'Metin Karşılaştırma',   icon: '🔍',  group: 'Metin' },
+  { id: 'word-counter',      label: 'Kelime Sayacı',         icon: '📝',  group: 'Metin' },
+  { id: 'lorem-ipsum',       label: 'Lorem Ipsum',           icon: '📄',  group: 'Metin' },
+  // Hesaplama
+  { id: 'interest-calc',     label: 'Faiz Hesaplama',        icon: '💰',  group: 'Hesaplama' },
+  { id: 'color-picker',      label: 'Renk Dönüştürücü',      icon: '🎨',  group: 'Hesaplama' },
 ];
 
 function buildNav() {
@@ -647,6 +655,298 @@ function generateLorem() {
   document.getElementById('lorem-output').value = result.trim();
 }
 
+// ===== Tool: JSON Grid =====
+
+function renderJsonGrid() {
+  hideError('json-grid-error');
+  const input = document.getElementById('json-grid-input').value.trim();
+  const container = document.getElementById('json-grid-output');
+  container.innerHTML = '';
+  if (!input) return;
+  try {
+    const data = JSON.parse(input);
+    container.appendChild(buildGridNode(data, 0));
+  } catch (e) {
+    showError('json-grid-error', 'JSON Hatası: ' + e.message);
+  }
+}
+
+function buildGridNode(data, depth) {
+  if (Array.isArray(data)) {
+    if (data.length === 0) return createGridSpan('[]', 'json-grid-null');
+
+    if (typeof data[0] === 'object' && data[0] !== null && !Array.isArray(data[0])) {
+      const keys = [...new Set(data.flatMap(obj => Object.keys(obj)))];
+      const table = document.createElement('table');
+      table.className = 'json-grid-table';
+      const thead = table.createTHead();
+      const headerRow = thead.insertRow();
+      const thIdx = document.createElement('th');
+      thIdx.textContent = '#';
+      thIdx.className = 'json-grid-idx';
+      headerRow.appendChild(thIdx);
+      keys.forEach(k => {
+        const th = document.createElement('th');
+        th.textContent = k;
+        headerRow.appendChild(th);
+      });
+      const tbody = table.createTBody();
+      data.forEach((row, i) => {
+        const tr = tbody.insertRow();
+        const tdIdx = tr.insertCell();
+        tdIdx.className = 'json-grid-idx';
+        tdIdx.textContent = i;
+        keys.forEach(k => {
+          const td = tr.insertCell();
+          setGridCell(td, row[k], depth);
+        });
+      });
+      return table;
+    }
+
+    // Array of primitives / mixed
+    const table = document.createElement('table');
+    table.className = 'json-grid-table';
+    const thead = table.createTHead();
+    const headerRow = thead.insertRow();
+    const thIdx = document.createElement('th');
+    thIdx.textContent = '#';
+    thIdx.className = 'json-grid-idx';
+    headerRow.appendChild(thIdx);
+    const thVal = document.createElement('th');
+    thVal.textContent = 'Değer';
+    headerRow.appendChild(thVal);
+    const tbody = table.createTBody();
+    data.forEach((item, i) => {
+      const tr = tbody.insertRow();
+      const tdIdx = tr.insertCell();
+      tdIdx.className = 'json-grid-idx';
+      tdIdx.textContent = i;
+      setGridCell(tr.insertCell(), item, depth);
+    });
+    return table;
+  }
+
+  if (typeof data === 'object' && data !== null) {
+    const table = document.createElement('table');
+    table.className = 'json-grid-table';
+    const tbody = table.createTBody();
+    Object.entries(data).forEach(([k, v]) => {
+      const tr = tbody.insertRow();
+      const tdKey = tr.insertCell();
+      tdKey.className = 'json-grid-key';
+      tdKey.textContent = k;
+      setGridCell(tr.insertCell(), v, depth);
+    });
+    return table;
+  }
+
+  return createGridSpan(String(data), typeof data === 'number' ? 'json-grid-number' : typeof data === 'boolean' ? 'json-grid-bool' : '');
+}
+
+function setGridCell(td, val, depth) {
+  if (val === undefined || val === null) {
+    td.appendChild(createGridSpan('null', 'json-grid-null'));
+  } else if (typeof val === 'object') {
+    td.appendChild(depth < 3 ? buildGridNode(val, depth + 1) : createGridSpan(Array.isArray(val) ? '[…]' : '{…}', 'json-grid-nested'));
+  } else if (typeof val === 'boolean') {
+    td.appendChild(createGridSpan(String(val), 'json-grid-bool'));
+  } else if (typeof val === 'number') {
+    td.appendChild(createGridSpan(String(val), 'json-grid-number'));
+  } else {
+    td.textContent = val;
+  }
+}
+
+function createGridSpan(text, className) {
+  const span = document.createElement('span');
+  if (className) span.className = className;
+  span.textContent = text;
+  return span;
+}
+
+// ===== Tool: JSON Escape =====
+
+function jsonEscapeStr() {
+  hideError('json-escape-error');
+  const input = document.getElementById('json-escape-input').value;
+  document.getElementById('json-escape-output').value = JSON.stringify(input);
+}
+
+function jsonUnescapeStr() {
+  hideError('json-escape-error');
+  const input = document.getElementById('json-escape-output').value.trim();
+  try {
+    const parsed = JSON.parse(input);
+    document.getElementById('json-escape-input').value =
+      typeof parsed === 'string' ? parsed : JSON.stringify(parsed, null, 2);
+  } catch (e) {
+    showError('json-escape-error', 'Parse hatası: ' + e.message);
+  }
+}
+
+// ===== Tool: File to Base64 =====
+
+function fileToBase64() {
+  const fileInput = document.getElementById('file-to-b64-input');
+  const file = fileInput.files[0];
+  if (!file) { alert('Lütfen bir dosya seçin.'); return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const b64 = reader.result.split(',')[1];
+    document.getElementById('file-b64-output').value = b64;
+    document.getElementById('file-b64-info').textContent =
+      `${file.name} · ${formatBytes(file.size)} → ${b64.length} karakter`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function base64ToFile() {
+  const b64 = document.getElementById('b64-to-file-input').value.trim();
+  const filename = document.getElementById('b64-target-filename').value.trim() || 'dosya';
+  if (!b64) return;
+  try {
+    const binary = atob(b64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    const url = URL.createObjectURL(new Blob([bytes]));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch {
+    showError('base64-error', 'Geçersiz Base64 verisi.');
+  }
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / 1048576).toFixed(1) + ' MB';
+}
+
+// ===== Tool: SQL Cheatsheet =====
+
+const sqlTemplates = [
+  {
+    category: 'Temel Sorgular',
+    templates: [
+      { name: 'SELECT *', sql: `SELECT *\nFROM tablo_adi\nWHERE koşul = 'değer'\nORDER BY sütun ASC\nLIMIT 100;` },
+      { name: 'SELECT belirli sütunlar', sql: `SELECT\n    id,\n    ad,\n    email,\n    olusturma_tarihi\nFROM kullanicilar\nWHERE aktif = 1\nORDER BY ad ASC;` },
+      { name: 'INSERT INTO', sql: `INSERT INTO tablo_adi (sütun1, sütun2, sütun3)\nVALUES ('değer1', 'değer2', 'değer3');` },
+      { name: 'INSERT çoklu satır', sql: `INSERT INTO tablo_adi (sütun1, sütun2)\nVALUES\n    ('değer1a', 'değer1b'),\n    ('değer2a', 'değer2b'),\n    ('değer3a', 'değer3b');` },
+      { name: 'UPDATE', sql: `UPDATE tablo_adi\nSET\n    sütun1 = 'yeni_değer1',\n    sütun2 = 'yeni_değer2'\nWHERE id = 1;` },
+      { name: 'DELETE', sql: `DELETE FROM tablo_adi\nWHERE id = 1;` },
+    ]
+  },
+  {
+    category: 'JOIN Sorguları',
+    templates: [
+      { name: 'INNER JOIN', sql: `SELECT\n    a.id,\n    a.ad,\n    b.sütun\nFROM tablo_a a\nINNER JOIN tablo_b b ON a.b_id = b.id\nWHERE a.aktif = 1;` },
+      { name: 'LEFT JOIN', sql: `SELECT\n    a.id,\n    a.ad,\n    b.sütun\nFROM tablo_a a\nLEFT JOIN tablo_b b ON a.b_id = b.id;` },
+      { name: 'Çoklu JOIN', sql: `SELECT\n    s.id AS siparis_id,\n    k.ad AS musteri,\n    u.ad AS urun,\n    sd.adet,\n    sd.birim_fiyat\nFROM siparisler s\nINNER JOIN musteriler k ON s.musteri_id = k.id\nINNER JOIN siparis_detay sd ON s.id = sd.siparis_id\nINNER JOIN urunler u ON sd.urun_id = u.id\nWHERE s.tarih >= '2024-01-01'\nORDER BY s.tarih DESC;` },
+      { name: 'SELF JOIN', sql: `SELECT\n    e.id,\n    e.ad AS calisan,\n    m.ad AS yonetici\nFROM calisanlar e\nLEFT JOIN calisanlar m ON e.yonetici_id = m.id;` },
+    ]
+  },
+  {
+    category: 'Agregasyon & Gruplama',
+    templates: [
+      { name: 'GROUP BY + COUNT/SUM', sql: `SELECT\n    kategori,\n    COUNT(*) AS adet,\n    SUM(tutar) AS toplam,\n    AVG(tutar) AS ortalama\nFROM siparisler\nWHERE tarih >= '2024-01-01'\nGROUP BY kategori\nHAVING COUNT(*) > 5\nORDER BY toplam DESC;` },
+      { name: 'DISTINCT COUNT', sql: `SELECT\n    COUNT(*) AS toplam_siparis,\n    COUNT(DISTINCT musteri_id) AS tekil_musteri\nFROM siparisler\nWHERE YEAR(tarih) = 2024;` },
+      { name: 'ROLLUP', sql: `SELECT\n    departman,\n    pozisyon,\n    COUNT(*) AS calisan_sayisi,\n    AVG(maas) AS ort_maas\nFROM calisanlar\nGROUP BY departman, pozisyon WITH ROLLUP;` },
+    ]
+  },
+  {
+    category: 'Alt Sorgular & CTE',
+    templates: [
+      { name: 'WHERE IN (alt sorgu)', sql: `SELECT *\nFROM urunler\nWHERE id IN (\n    SELECT urun_id\n    FROM siparis_detay\n    WHERE siparis_id IN (\n        SELECT id\n        FROM siparisler\n        WHERE durum = 'tamamlandi'\n    )\n);` },
+      { name: 'EXISTS', sql: `SELECT *\nFROM musteriler k\nWHERE EXISTS (\n    SELECT 1\n    FROM siparisler s\n    WHERE s.musteri_id = k.id\n      AND s.tarih >= '2024-01-01'\n);` },
+      { name: 'CTE (WITH)', sql: `WITH aylik_ozet AS (\n    SELECT\n        DATE_TRUNC('month', tarih) AS ay,\n        SUM(tutar) AS toplam\n    FROM siparisler\n    GROUP BY DATE_TRUNC('month', tarih)\n)\nSELECT\n    ay,\n    toplam,\n    LAG(toplam) OVER (ORDER BY ay) AS onceki_ay,\n    toplam - LAG(toplam) OVER (ORDER BY ay) AS degisim\nFROM aylik_ozet\nORDER BY ay;` },
+    ]
+  },
+  {
+    category: 'Analitik & Pencere Fonksiyonları',
+    templates: [
+      { name: 'ROW_NUMBER / RANK', sql: `SELECT\n    id, ad, satis, departman,\n    ROW_NUMBER() OVER (PARTITION BY departman ORDER BY satis DESC) AS sira,\n    RANK()       OVER (PARTITION BY departman ORDER BY satis DESC) AS rank,\n    DENSE_RANK() OVER (PARTITION BY departman ORDER BY satis DESC) AS dense_rank\nFROM calisanlar;` },
+      { name: 'Kümülatif toplam', sql: `SELECT\n    tarih,\n    tutar,\n    SUM(tutar) OVER (ORDER BY tarih) AS kumulatif_toplam,\n    AVG(tutar) OVER (ORDER BY tarih ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS haftalik_ort\nFROM gunluk_satis\nORDER BY tarih;` },
+      { name: 'LAG / LEAD', sql: `SELECT\n    tarih,\n    tutar,\n    LAG(tutar, 1)  OVER (ORDER BY tarih) AS onceki_gun,\n    LEAD(tutar, 1) OVER (ORDER BY tarih) AS sonraki_gun,\n    tutar - LAG(tutar, 1) OVER (ORDER BY tarih) AS degisim\nFROM gunluk_satis\nORDER BY tarih;` },
+    ]
+  },
+  {
+    category: 'DDL (Tablo Yapısı)',
+    templates: [
+      { name: 'CREATE TABLE', sql: `CREATE TABLE kullanicilar (\n    id         INT AUTO_INCREMENT PRIMARY KEY,\n    uuid       CHAR(36) NOT NULL UNIQUE,\n    ad         VARCHAR(100) NOT NULL,\n    email      VARCHAR(255) NOT NULL UNIQUE,\n    aktif      TINYINT(1) DEFAULT 1,\n    olusturma  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    guncelleme TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n);` },
+      { name: 'ALTER TABLE (sütun ekle)', sql: `ALTER TABLE tablo_adi\nADD COLUMN yeni_sutun VARCHAR(255) NULL AFTER mevcut_sutun;` },
+      { name: 'INDEX oluştur', sql: `CREATE INDEX idx_tablo_sutun\n    ON tablo_adi (sutun_adi);\n\nCREATE UNIQUE INDEX idx_kullanici_email\n    ON kullanicilar (email);` },
+      { name: 'FOREIGN KEY', sql: `ALTER TABLE siparis_detay\nADD CONSTRAINT fk_siparis\n    FOREIGN KEY (siparis_id)\n    REFERENCES siparisler (id)\n    ON DELETE CASCADE\n    ON UPDATE CASCADE;` },
+    ]
+  },
+];
+
+function buildSqlCheatsheet() {
+  const container = document.getElementById('sql-template-grid');
+  if (!container) return;
+  container.innerHTML = '';
+
+  sqlTemplates.forEach(cat => {
+    const section = document.createElement('div');
+    section.style.marginBottom = '28px';
+
+    const h4 = document.createElement('h4');
+    h4.textContent = cat.category;
+    h4.style.cssText = 'font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border);';
+    section.appendChild(h4);
+
+    const grid = document.createElement('div');
+    grid.className = 'sql-template-grid';
+
+    cat.templates.forEach(tmpl => {
+      const card = document.createElement('div');
+      card.className = 'sql-template-card';
+
+      const name = document.createElement('div');
+      name.className = 'sql-template-name';
+      name.textContent = tmpl.name;
+
+      const pre = document.createElement('pre');
+      pre.className = 'sql-template-preview';
+      pre.textContent = tmpl.sql;
+
+      const btnGroup = document.createElement('div');
+      btnGroup.className = 'btn-group';
+      btnGroup.style.marginBottom = '0';
+
+      const btnExport = document.createElement('button');
+      btnExport.className = 'btn btn-primary';
+      btnExport.style.cssText = 'font-size:11px; padding:5px 10px;';
+      btnExport.textContent = "SQL'e Aktar";
+      btnExport.addEventListener('click', () => insertSqlTemplate(tmpl.sql));
+
+      const btnCopy = document.createElement('button');
+      btnCopy.className = 'btn btn-secondary';
+      btnCopy.style.cssText = 'font-size:11px; padding:5px 10px;';
+      btnCopy.textContent = 'Kopyala';
+      btnCopy.addEventListener('click', () => copyToClipboard(tmpl.sql, btnCopy));
+
+      btnGroup.appendChild(btnExport);
+      btnGroup.appendChild(btnCopy);
+      card.appendChild(name);
+      card.appendChild(pre);
+      card.appendChild(btnGroup);
+      grid.appendChild(card);
+    });
+
+    section.appendChild(grid);
+    container.appendChild(section);
+  });
+}
+
+function insertSqlTemplate(sql) {
+  navigate('sql-formatter');
+  document.getElementById('sql-input').value = sql;
+}
+
 // ===== Init =====
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -655,6 +955,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initSearch();
   initColorPicker();
   initTabs('interest-tabs');
+  initTabs('base64-tabs');
+  buildSqlCheatsheet();
 
   document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
 
