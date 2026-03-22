@@ -4,14 +4,14 @@ async function copyToClipboard(text, btn) {
   try {
     await navigator.clipboard.writeText(text);
     const original = btn.textContent;
-    btn.textContent = 'Kopyalandı!';
+    btn.textContent = t('copied');
     btn.classList.add('btn-success');
     setTimeout(() => {
       btn.textContent = original;
       btn.classList.remove('btn-success');
     }, 2000);
   } catch {
-    alert('Kopyalama başarısız. Manuel olarak seçip kopyalayın.');
+    alert(t('copy.failed'));
   }
 }
 
@@ -54,6 +54,7 @@ let currentLang = localStorage.getItem('ba-lang') || 'tr';
 
 const translations = {
   tr: {
+    // Nav / global
     'welcome.title': 'BA Toolbox\'a Hoş Geldiniz',
     'welcome.subtitle': 'Sol menüden bir araç seçerek başlayın. Tüm araçlar tarayıcınızda çalışır, internet bağlantısı gerekmez.',
     'search.placeholder': 'Araç ara...',
@@ -64,8 +65,180 @@ const translations = {
     'group.gelistirici': 'Geliştirici',
     'group.hesaplama': 'Hesaplama',
     'group.metin': 'Metin',
+    // Shared actions
+    'copy': 'Kopyala',
+    'copied': 'Kopyalandı!',
+    'copy.failed': 'Kopyalama başarısız. Manuel olarak seçip kopyalayın.',
+    'clear': 'Temizle',
+    'calculate': 'Hesapla',
+    'format': 'Formatla',
+    'convert': 'Dönüştür',
+    'compare': 'Karşılaştır',
+    'download': '↓ İndir',
+    'generate': 'Üret',
+    'shorten': 'Kısalt',
+    'output': 'Çıktı',
+    'keyword.guide': 'Anahtar Kelime Rehberi',
+    'error.fill-fields': 'Lütfen tüm alanları doğru doldurun.',
+    // JSON status / errors
+    'json.valid': '✓ Geçerli JSON',
+    'json.invalid': '✗ Geçersiz JSON',
+    'json.error': 'JSON Hatası: ',
+    'csv.error': 'CSV Hatası: ',
+    // JSON Formatter
+    'json-fmt.title': 'JSON Formatlayıcı',
+    'json-fmt.input': 'JSON Giriş',
+    'json-fmt.beautify': 'Güzelleştir',
+    'json-fmt.minify': 'Sıkıştır',
+    'json-fmt.validate': 'Doğrula',
+    // UUID
+    'uuid.title': 'UUID Üretici (v4)',
+    'uuid.count': 'Adet (1-100)',
+    'uuid.placeholder': 'Üretilen UUID\'ler burada görünecek...',
+    // Interest
+    'interest.title': 'Basit Faiz Hesaplama',
+    'interest.principal': 'Ana Para (₺)',
+    'interest.rate': 'Yıllık Faiz (%)',
+    'interest.term': 'Vade',
+    'interest.day': 'Gün',
+    'interest.month': 'Ay',
+    'interest.year': 'Yıl',
+    'interest.tax': 'Vergi',
+    'interest.tax.none': 'Vergisiz',
+    'interest.tax.tr': '🇹🇷 Türkiye — Stopaj',
+    'interest.tax.de': '🇩🇪 Almanya — Abgeltungssteuer (KPMG)',
+    'interest.stopaj': 'Stopaj Oranı (%)',
+    'interest.result.title': 'FAİZ HESAPLAMA SONUCU',
+    'interest.gross': 'Brüt Faiz Geliri',
+    'interest.net': 'Net Faiz Geliri',
+    'interest.total': 'VADE SONU TOPLAM',
+    'interest.principal.label': 'Ana Para',
+    // Loan
+    'loan.title': 'Kredi Hesaplama',
+    'loan.subtitle': '— Aylık taksit ve amortisman tablosu',
+    'loan.amount': 'Kredi Tutarı (₺)',
+    'loan.rate': 'Yıllık Faiz (%)',
+    'loan.months': 'Vade (Ay)',
+    'loan.result.title': 'KREDİ HESAPLAMA SONUCU',
+    'loan.amount.label': 'Kredi Tutarı',
+    'loan.monthly': 'Aylık Taksit',
+    'loan.total.payment': 'Toplam Geri Ödeme',
+    'loan.total.interest': 'Toplam Faiz Maliyeti',
+    'loan.interest.ratio': 'FAİZ YÜK ORANI',
+    'loan.th.month': 'Ay',
+    'loan.th.installment': 'Taksit',
+    'loan.th.principal': 'Anapara Payı',
+    'loan.th.interest': 'Faiz Payı',
+    'loan.th.remaining': 'Kalan Borç',
+    // Timestamp
+    'ts.title': 'Unix Timestamp ↔ Tarih',
+    'ts.to-date': 'Timestamp → Tarih',
+    'ts.now': 'Şimdi',
+    'ts.to-ts': 'Tarih → Timestamp',
+    'ts.invalid': 'Geçersiz timestamp',
+    // Base64
+    'b64.title': 'Base64 / Dosya',
+    'b64.tab.text': 'Metin',
+    'b64.tab.file-to': 'Dosya → Base64',
+    'b64.tab.to-file': 'Base64 → Dosya',
+    'b64.raw': 'Ham Metin',
+    'b64.raw.placeholder': 'Metni buraya yazın...',
+    'b64.output.placeholder': 'Base64 çıktısı...',
+    'b64.file-select': 'Dosya Seç',
+    'b64.convert': 'Base64\'e Çevir',
+    'b64.file-output.label': 'Base64 Çıktı',
+    'b64.file-output.placeholder': 'Base64 çıktısı burada görünecek...',
+    'b64.filename': 'Kaydedilecek Dosya Adı',
+    'b64.data': 'Base64 Veri',
+    'b64.paste.placeholder': 'Base64 kodunu buraya yapıştırın...',
+    'b64.download': '↓ Dosyayı İndir',
+    'b64.error.encode': 'Encode hatası: ',
+    'b64.error.decode': 'Geçersiz Base64 verisi.',
+    // CSV
+    'csv.title': 'CSV → JSON Dönüştürücü',
+    'csv.delimiter': 'Ayraç',
+    'csv.comma': 'Virgül (,)',
+    'csv.semicolon': 'Noktalı Virgül (;)',
+    'csv.header': 'İlk satır başlık',
+    'csv.input': 'CSV Giriş',
+    'csv.output': 'JSON Çıktı',
+    // Diff Checker
+    'diff.title': 'Metin Karşılaştırma',
+    'diff.original': 'Orijinal',
+    'diff.original.placeholder': 'Orijinal metin...',
+    'diff.new': 'Yeni',
+    'diff.new.placeholder': 'Yeni metin...',
+    'diff.added': 'eklendi',
+    'diff.removed': 'silindi',
+    // Word Counter
+    'wc.title': 'Kelime Sayacı',
+    'wc.placeholder': 'Metni buraya yazın...',
+    'wc.chars': 'KARAKTER',
+    'wc.no-space': 'BOŞLUKSUZ',
+    'wc.words': 'KELİME',
+    'wc.sentences': 'CÜMLE',
+    'wc.paragraphs': 'PARAGRAF',
+    'wc.readtime': 'OKUMA SÜRESİ',
+    'wc.readtime.unit': 'dk',
+    'wc.stats': '{chars} karakter · {words} kelime · {lines} satır',
+    // SQL Formatter
+    'sql-fmt.title': 'SQL Formatlayıcı',
+    'sql-fmt.input': 'SQL Giriş',
+    // JWT
+    'jwt.subtitle': '(Sadece okuma — imza doğrulaması yapılmaz)',
+    'jwt.decode': 'Decode Et',
+    // URL Encoder
+    'url-enc.raw': 'Ham URL / Metin',
+    'url-enc.encoded': 'Encoded',
+    'url-enc.copy': 'Encoded\'ı Kopyala',
+    // KQL Formatter
+    'kql-fmt.title': 'KQL Formatlayıcı',
+    'kql-fmt.input': 'KQL Giriş',
+    // KQL Cheatsheet
+    'kql-cs.subtitle': '— Hazır sorgular, tek tıkla KQL Formatlayıcı\'ya aktar',
+    'kql.export': 'KQL\'e Aktar',
+    // Text Editor
+    'editor.title': 'Metin Editörü',
+    'editor.filename': 'Dosya Adı',
+    'editor.format': 'Format',
+    'editor.placeholder': 'Metni buraya yazın...',
+    // URL Shortener
+    'url-short.title': 'URL Kısaltıcı',
+    'url-short.label': 'Uzun URL',
+    'url-short.result.label': 'Kısaltılmış URL',
+    'url-short.footer': 'İnternet bağlantısı gerektirir · Powered by TinyURL',
+    // JSON Grid
+    'json-grid.title': 'JSON Grid Görünümü',
+    'json-grid.subtitle': '— Altova XMLSpy tarzı tablo görünümü',
+    'json-grid.input': 'JSON Giriş',
+    'json-grid.show': 'Grid Göster',
+    // JSON Escape
+    'json-esc.raw': 'Ham Metin',
+    'json-esc.escaped.label': 'Escape Edilmiş (JSON String)',
+    // JWT
+    'jwt.error.format': 'Geçersiz JWT formatı. 3 parça (header.payload.signature) olmalı.',
+    'jwt.error.decode': 'Decode hatası: ',
+    // JSON Escape
+    'json-esc.error': 'Parse hatası: ',
+    // URL Shortener
+    'url-short.error.invalid': 'Geçerli bir URL girin (https:// ile başlamalı).',
+    'url-short.error.failed': 'Kısaltılamadı: ',
+    // JSON Diff
+    'json-diff.title': 'JSON Karşılaştırma',
+    'json-diff.subtitle': '— Yapısal JSON diff (path bazlı)',
+    'json-diff.left': 'Sol JSON (Eski / A)',
+    'json-diff.right': 'Sağ JSON (Yeni / B)',
+    'json-diff.identical': '✓ İki JSON aynı — fark yok.',
+    'json-diff.found': '{n} fark bulundu',
+    'json-diff.error.empty': 'Her iki alana da JSON girin.',
+    'json-diff.error.left': 'Sol JSON hatalı: ',
+    'json-diff.error.right': 'Sağ JSON hatalı: ',
+    // SQL Cheatsheet
+    'sql-cs.subtitle': '— Hazır sorgular, tek tıkla SQL Formatlayıcı\'ya aktar',
+    'sql.export': 'SQL\'e Aktar',
   },
   en: {
+    // Nav / global
     'welcome.title': 'Welcome to BA Toolbox',
     'welcome.subtitle': 'Select a tool from the left menu to get started. All tools run in your browser — no internet required.',
     'search.placeholder': 'Search tools...',
@@ -76,6 +249,177 @@ const translations = {
     'group.gelistirici': 'Developer',
     'group.hesaplama': 'Calculation',
     'group.metin': 'Text',
+    // Shared actions
+    'copy': 'Copy',
+    'copied': 'Copied!',
+    'copy.failed': 'Copy failed. Please select and copy manually.',
+    'clear': 'Clear',
+    'calculate': 'Calculate',
+    'format': 'Format',
+    'convert': 'Convert',
+    'compare': 'Compare',
+    'download': '↓ Download',
+    'generate': 'Generate',
+    'shorten': 'Shorten',
+    'output': 'Output',
+    'keyword.guide': 'Keyword Reference',
+    'error.fill-fields': 'Please fill in all fields correctly.',
+    // JSON status / errors
+    'json.valid': '✓ Valid JSON',
+    'json.invalid': '✗ Invalid JSON',
+    'json.error': 'JSON Error: ',
+    'csv.error': 'CSV Error: ',
+    // JSON Formatter
+    'json-fmt.title': 'JSON Formatter',
+    'json-fmt.input': 'JSON Input',
+    'json-fmt.beautify': 'Beautify',
+    'json-fmt.minify': 'Minify',
+    'json-fmt.validate': 'Validate',
+    // UUID
+    'uuid.title': 'UUID Generator (v4)',
+    'uuid.count': 'Count (1-100)',
+    'uuid.placeholder': 'Generated UUIDs will appear here...',
+    // Interest
+    'interest.title': 'Simple Interest Calculator',
+    'interest.principal': 'Principal (₺)',
+    'interest.rate': 'Annual Rate (%)',
+    'interest.term': 'Term',
+    'interest.day': 'Day',
+    'interest.month': 'Month',
+    'interest.year': 'Year',
+    'interest.tax': 'Tax',
+    'interest.tax.none': 'No Tax',
+    'interest.tax.tr': '🇹🇷 Turkey — Withholding Tax',
+    'interest.tax.de': '🇩🇪 Germany — Abgeltungssteuer (KPMG)',
+    'interest.stopaj': 'Withholding Rate (%)',
+    'interest.result.title': 'INTEREST CALCULATION RESULT',
+    'interest.gross': 'Gross Interest Income',
+    'interest.net': 'Net Interest Income',
+    'interest.total': 'MATURITY TOTAL',
+    'interest.principal.label': 'Principal',
+    // Loan
+    'loan.title': 'Loan Calculator',
+    'loan.subtitle': '— Monthly installment & amortization table',
+    'loan.amount': 'Loan Amount (₺)',
+    'loan.rate': 'Annual Rate (%)',
+    'loan.months': 'Term (Months)',
+    'loan.result.title': 'LOAN CALCULATION RESULT',
+    'loan.amount.label': 'Loan Amount',
+    'loan.monthly': 'Monthly Installment',
+    'loan.total.payment': 'Total Payment',
+    'loan.total.interest': 'Total Interest Cost',
+    'loan.interest.ratio': 'INTEREST BURDEN RATIO',
+    'loan.th.month': 'Month',
+    'loan.th.installment': 'Installment',
+    'loan.th.principal': 'Principal',
+    'loan.th.interest': 'Interest',
+    'loan.th.remaining': 'Remaining',
+    // Timestamp
+    'ts.title': 'Unix Timestamp ↔ Date',
+    'ts.to-date': 'Timestamp → Date',
+    'ts.now': 'Now',
+    'ts.to-ts': 'Date → Timestamp',
+    'ts.invalid': 'Invalid timestamp',
+    // Base64
+    'b64.title': 'Base64 / File',
+    'b64.tab.text': 'Text',
+    'b64.tab.file-to': 'File → Base64',
+    'b64.tab.to-file': 'Base64 → File',
+    'b64.raw': 'Raw Text',
+    'b64.raw.placeholder': 'Type text here...',
+    'b64.output.placeholder': 'Base64 output...',
+    'b64.file-select': 'Select File',
+    'b64.convert': 'Convert to Base64',
+    'b64.file-output.label': 'Base64 Output',
+    'b64.file-output.placeholder': 'Base64 output will appear here...',
+    'b64.filename': 'File Name to Save',
+    'b64.data': 'Base64 Data',
+    'b64.paste.placeholder': 'Paste Base64 code here...',
+    'b64.download': '↓ Download File',
+    'b64.error.encode': 'Encode error: ',
+    'b64.error.decode': 'Invalid Base64 data.',
+    // CSV
+    'csv.title': 'CSV → JSON Converter',
+    'csv.delimiter': 'Delimiter',
+    'csv.comma': 'Comma (,)',
+    'csv.semicolon': 'Semicolon (;)',
+    'csv.header': 'First row is header',
+    'csv.input': 'CSV Input',
+    'csv.output': 'JSON Output',
+    // Diff Checker
+    'diff.title': 'Text Comparison',
+    'diff.original': 'Original',
+    'diff.original.placeholder': 'Original text...',
+    'diff.new': 'New',
+    'diff.new.placeholder': 'New text...',
+    'diff.added': 'added',
+    'diff.removed': 'removed',
+    // Word Counter
+    'wc.title': 'Word Counter',
+    'wc.placeholder': 'Type text here...',
+    'wc.chars': 'CHARACTERS',
+    'wc.no-space': 'NO SPACES',
+    'wc.words': 'WORDS',
+    'wc.sentences': 'SENTENCES',
+    'wc.paragraphs': 'PARAGRAPHS',
+    'wc.readtime': 'READ TIME',
+    'wc.readtime.unit': 'min',
+    'wc.stats': '{chars} chars · {words} words · {lines} lines',
+    // SQL Formatter
+    'sql-fmt.title': 'SQL Formatter',
+    'sql-fmt.input': 'SQL Input',
+    // JWT
+    'jwt.error.format': 'Invalid JWT format. Must have 3 parts (header.payload.signature).',
+    'jwt.error.decode': 'Decode error: ',
+    // JSON Escape
+    'json-esc.error': 'Parse error: ',
+    // URL Shortener
+    'url-short.error.invalid': 'Enter a valid URL (must start with https://).',
+    'url-short.error.failed': 'Shortening failed: ',
+    // JWT
+    'jwt.subtitle': '(Read-only — signature not verified)',
+    'jwt.decode': 'Decode',
+    // URL Encoder
+    'url-enc.raw': 'Raw URL / Text',
+    'url-enc.encoded': 'Encoded',
+    'url-enc.copy': 'Copy Encoded',
+    // KQL Formatter
+    'kql-fmt.title': 'KQL Formatter',
+    'kql-fmt.input': 'KQL Input',
+    // KQL Cheatsheet
+    'kql-cs.subtitle': '— Ready queries, export to KQL Formatter in one click',
+    'kql.export': 'Export to KQL',
+    // Text Editor
+    'editor.title': 'Text Editor',
+    'editor.filename': 'File Name',
+    'editor.format': 'Format',
+    'editor.placeholder': 'Type text here...',
+    // URL Shortener
+    'url-short.title': 'URL Shortener',
+    'url-short.label': 'Long URL',
+    'url-short.result.label': 'Shortened URL',
+    'url-short.footer': 'Requires internet connection · Powered by TinyURL',
+    // JSON Grid
+    'json-grid.title': 'JSON Grid View',
+    'json-grid.subtitle': '— Altova XMLSpy-style table view',
+    'json-grid.input': 'JSON Input',
+    'json-grid.show': 'Show Grid',
+    // JSON Escape
+    'json-esc.raw': 'Raw Text',
+    'json-esc.escaped.label': 'Escaped (JSON String)',
+    // JSON Diff
+    'json-diff.title': 'JSON Diff',
+    'json-diff.subtitle': '— Structural JSON diff (path-based)',
+    'json-diff.left': 'Left JSON (Old / A)',
+    'json-diff.right': 'Right JSON (New / B)',
+    'json-diff.identical': '✓ Both JSONs are identical — no differences.',
+    'json-diff.found': '{n} difference(s) found',
+    'json-diff.error.empty': 'Enter JSON in both fields.',
+    'json-diff.error.left': 'Left JSON error: ',
+    'json-diff.error.right': 'Right JSON error: ',
+    // SQL Cheatsheet
+    'sql-cs.subtitle': '— Ready queries, export to SQL Formatter in one click',
+    'sql.export': 'Export to SQL',
   },
 };
 
@@ -130,6 +474,15 @@ function applyLang() {
 
   // Update theme button text
   updateThemeBtn(document.documentElement.getAttribute('data-theme'));
+
+  // Rebuild dynamic content with new language
+  buildSqlCheatsheet();
+  buildKqlCheatsheet();
+
+  // Update loan table headers if visible
+  const loanTh = document.querySelectorAll('#panel-loan-calc thead th');
+  const loanHeaders = ['loan.th.month', 'loan.th.installment', 'loan.th.principal', 'loan.th.interest', 'loan.th.remaining'];
+  loanTh.forEach((th, i) => { if (loanHeaders[i]) th.textContent = t(loanHeaders[i]); });
 }
 
 function toggleLang() {
@@ -273,11 +626,11 @@ function jsonBeautify() {
     if (!input) return;
     const parsed = JSON.parse(input);
     document.getElementById('json-output').value = JSON.stringify(parsed, null, 2);
-    document.getElementById('json-status').textContent = '✓ Geçerli JSON';
+    document.getElementById('json-status').textContent = t('json.valid');
     document.getElementById('json-status').style.color = 'var(--success)';
   } catch (e) {
-    showError('json-error', 'JSON Hatası: ' + e.message);
-    document.getElementById('json-status').textContent = '✗ Geçersiz JSON';
+    showError('json-error', t('json.error') + e.message);
+    document.getElementById('json-status').textContent = t('json.invalid');
     document.getElementById('json-status').style.color = 'var(--error)';
   }
 }
@@ -290,7 +643,7 @@ function jsonMinify() {
     const parsed = JSON.parse(input);
     document.getElementById('json-output').value = JSON.stringify(parsed);
   } catch (e) {
-    showError('json-error', 'JSON Hatası: ' + e.message);
+    showError('json-error', t('json.error') + e.message);
   }
 }
 
@@ -299,12 +652,12 @@ function jsonValidate() {
   const input = document.getElementById('json-input').value.trim();
   try {
     JSON.parse(input);
-    document.getElementById('json-status').textContent = '✓ Geçerli JSON';
+    document.getElementById('json-status').textContent = t('json.valid');
     document.getElementById('json-status').style.color = 'var(--success)';
     hideError('json-error');
   } catch (e) {
-    showError('json-error', 'JSON Hatası: ' + e.message);
-    document.getElementById('json-status').textContent = '✗ Geçersiz JSON';
+    showError('json-error', t('json.error') + e.message);
+    document.getElementById('json-status').textContent = t('json.invalid');
     document.getElementById('json-status').style.color = 'var(--error)';
   }
 }
@@ -381,16 +734,16 @@ function renderInterestResult(containerId, data) {
   const el = document.getElementById(containerId);
   if (!el) return;
   const fmt = n => Math.abs(n).toLocaleString('tr-TR', { minimumFractionDigits: 2 });
-  let html = '<div class="irc-row irc-header"><span>FAİZ HESAPLAMA SONUCU</span></div>';
-  html += `<div class="irc-row"><span>${data.principalLabel || 'Ana Para'}</span><span class="irc-val">₺ ${fmt(data.principal)}</span></div>`;
-  html += `<div class="irc-row"><span>Brüt Faiz Geliri</span><span class="irc-val positive">+ ₺ ${fmt(data.grossInterest)}</span></div>`;
+  let html = `<div class="irc-row irc-header"><span>${t('interest.result.title')}</span></div>`;
+  html += `<div class="irc-row"><span>${data.principalLabel || t('interest.principal.label')}</span><span class="irc-val">₺ ${fmt(data.principal)}</span></div>`;
+  html += `<div class="irc-row"><span>${t('interest.gross')}</span><span class="irc-val positive">+ ₺ ${fmt(data.grossInterest)}</span></div>`;
   if (data.breakdown && data.breakdown.length > 0) {
     data.breakdown.forEach(b => {
       html += `<div class="irc-row irc-tax"><span>${b.label}</span><span class="irc-val negative">− ₺ ${fmt(b.amount)}</span></div>`;
     });
-    html += `<div class="irc-row"><span>Net Faiz Geliri</span><span class="irc-val positive">+ ₺ ${fmt(data.netInterest)}</span></div>`;
+    html += `<div class="irc-row"><span>${t('interest.net')}</span><span class="irc-val positive">+ ₺ ${fmt(data.netInterest)}</span></div>`;
   }
-  html += `<div class="irc-row irc-total"><span>VADE SONU TOPLAM</span><span class="irc-val total">₺ ${fmt(data.total)}</span></div>`;
+  html += `<div class="irc-row irc-total"><span>${t('interest.total')}</span><span class="irc-val total">₺ ${fmt(data.total)}</span></div>`;
   el.innerHTML = html;
   el.style.display = 'block';
 }
@@ -403,7 +756,7 @@ function calcSimpleInterest() {
   const unit = document.getElementById('si-unit').value;
 
   if (isNaN(P) || isNaN(R) || isNaN(T) || P <= 0 || T <= 0) {
-    showError('interest-error', 'Lütfen tüm alanları doğru doldurun.');
+    showError('interest-error', t('error.fill-fields'));
     return;
   }
 
@@ -420,7 +773,7 @@ function calcSimpleInterest() {
 function tsToDate() {
   const val = document.getElementById('ts-input').value.trim();
   const num = parseInt(val);
-  if (isNaN(num)) { document.getElementById('ts-result').textContent = 'Geçersiz timestamp'; return; }
+  if (isNaN(num)) { document.getElementById('ts-result').textContent = t('ts.invalid'); return; }
   const ms = val.length >= 13 ? num : num * 1000;
   const d = new Date(ms);
   document.getElementById('ts-result').textContent =
@@ -448,7 +801,7 @@ function base64Encode() {
     const input = document.getElementById('b64-raw').value;
     document.getElementById('b64-encoded').value = btoa(unescape(encodeURIComponent(input)));
   } catch (e) {
-    showError('base64-error', 'Encode hatası: ' + e.message);
+    showError('base64-error', t('b64.error.encode') + e.message);
   }
 }
 
@@ -458,7 +811,7 @@ function base64Decode() {
     const input = document.getElementById('b64-encoded').value.trim();
     document.getElementById('b64-raw').value = decodeURIComponent(escape(atob(input)));
   } catch (e) {
-    showError('base64-error', 'Geçersiz Base64 verisi.');
+    showError('base64-error', t('b64.error.decode'));
   }
 }
 
@@ -490,7 +843,7 @@ function csvToJson() {
 
     document.getElementById('csv-output').value = JSON.stringify(result, null, 2);
   } catch (e) {
-    showError('csv-error', 'CSV Hatası: ' + e.message);
+    showError('csv-error', t('csv.error') + e.message);
   }
 }
 
@@ -522,7 +875,7 @@ function runDiff() {
     }
   }
 
-  document.getElementById('diff-stats').textContent = `+${added} eklendi, -${removed} silindi`;
+  document.getElementById('diff-stats').textContent = `+${added} ${t('diff.added')}, -${removed} ${t('diff.removed')}`;
 }
 
 function escapeHtml(str) {
@@ -545,7 +898,7 @@ function countWords() {
   document.getElementById('wc-words').textContent = words;
   document.getElementById('wc-sentences').textContent = sentences;
   document.getElementById('wc-paragraphs').textContent = paragraphs;
-  document.getElementById('wc-readtime').textContent = readTime + ' dk';
+  document.getElementById('wc-readtime').textContent = readTime + ' ' + t('wc.readtime.unit');
 }
 
 // ===== Tool: SQL Formatter =====
@@ -580,7 +933,7 @@ function decodeJWT() {
   const token = document.getElementById('jwt-input').value.trim();
   const parts = token.split('.');
   if (parts.length !== 3) {
-    showError('jwt-error', 'Geçersiz JWT formatı. 3 parça (header.payload.signature) olmalı.');
+    showError('jwt-error', t('jwt.error.format'));
     return;
   }
 
@@ -601,7 +954,7 @@ function decodeJWT() {
       document.getElementById('jwt-exp').textContent = 'Son kullanma tarihi yok';
     }
   } catch (e) {
-    showError('jwt-error', 'Decode hatası: ' + e.message);
+    showError('jwt-error', t('jwt.error.decode') + e.message);
   }
 }
 
@@ -629,7 +982,7 @@ function renderJsonGrid() {
     container.appendChild(toolbar);
     container.appendChild(buildGridNode(data, 0));
   } catch (e) {
-    showError('json-grid-error', 'JSON Hatası: ' + e.message);
+    showError('json-grid-error', t('json.error') + e.message);
   }
 }
 
@@ -768,7 +1121,7 @@ function jsonUnescapeStr() {
     document.getElementById('json-escape-input').value =
       typeof parsed === 'string' ? parsed : JSON.stringify(parsed, null, 2);
   } catch (e) {
-    showError('json-escape-error', 'Parse hatası: ' + e.message);
+    showError('json-escape-error', t('json-esc.error') + e.message);
   }
 }
 
@@ -781,23 +1134,23 @@ function diffJson() {
   const output = document.getElementById('json-diff-output');
 
   if (!leftText || !rightText) {
-    showError('json-diff-error', 'Her iki alana da JSON girin.');
+    showError('json-diff-error', t('json-diff.error.empty'));
     return;
   }
 
   let leftObj, rightObj;
   try { leftObj = JSON.parse(leftText); } catch (e) {
-    showError('json-diff-error', 'Sol JSON hatalı: ' + e.message); return;
+    showError('json-diff-error', t('json-diff.error.left') + e.message); return;
   }
   try { rightObj = JSON.parse(rightText); } catch (e) {
-    showError('json-diff-error', 'Sağ JSON hatalı: ' + e.message); return;
+    showError('json-diff-error', t('json-diff.error.right') + e.message); return;
   }
 
   const diffs = [];
   jsonDiffRecurse(leftObj, rightObj, '', diffs);
 
   if (diffs.length === 0) {
-    output.innerHTML = '<div style="color:var(--success); padding:12px; font-weight:600;">✓ İki JSON aynı — fark yok.</div>';
+    output.innerHTML = `<div style="color:var(--success); padding:12px; font-weight:600;">${t('json-diff.identical')}</div>`;
     return;
   }
 
@@ -818,7 +1171,7 @@ function diffJson() {
     </div>`;
   }).join('');
 
-  output.innerHTML = `<div style="margin-bottom:8px; font-size:12px; color:var(--text-muted);">${diffs.length} fark bulundu</div>` + html;
+  output.innerHTML = `<div style="margin-bottom:8px; font-size:12px; color:var(--text-muted);">${t('json-diff.found').replace('{n}', diffs.length)}</div>` + html;
 }
 
 function jsonDiffRecurse(left, right, path, diffs) {
@@ -880,7 +1233,7 @@ function base64ToFile() {
     a.click();
     URL.revokeObjectURL(url);
   } catch {
-    showError('base64-error', 'Geçersiz Base64 verisi.');
+    showError('base64-error', t('b64.error.decode'));
   }
 }
 
@@ -917,76 +1270,48 @@ function formatKQL() {
 
 const kqlKeywords = [
   { kw: 'where', desc: 'Satırları filtreler. SQL WHERE gibi. Örn: | where Level == "Error"' },
-  { kw: 'project', desc: 'Sütun seçer veya yeniden adlandırır. SQL SELECT gibi. Örn: | project TimeGenerated, Message' },
-  { kw: 'summarize', desc: 'Gruplama ve agregasyon yapar. SQL GROUP BY + COUNT/SUM/AVG gibi. Örn: | summarize count() by Category' },
-  { kw: 'extend', desc: 'Yeni hesaplanmış sütun ekler, mevcut sütunları korur. Örn: | extend FullName = strcat(Ad, " ", Soyad)' },
-  { kw: 'order by', desc: 'Sonuçları sıralar. asc veya desc belirtilebilir. Örn: | order by TimeGenerated desc' },
-  { kw: 'take / limit', desc: 'İlk N kayıtı döner. Büyük tablolarda keşif için kullanılır. Örn: | take 100' },
-  { kw: 'distinct', desc: 'Tekil değerleri döner. Örn: | distinct Category, Level' },
-  { kw: 'join', desc: 'İki tabloyu birleştirir. kind=inner, kind=leftouter, kind=anti gibi türleri vardır.' },
-  { kw: 'bin()', desc: 'Zaman veya sayısal değerleri gruplara böler. Zaman serisi sorgularında kullanılır. Örn: bin(TimeGenerated, 5m)' },
-  { kw: 'ago()', desc: 'Belirli süre öncesini ifade eder. Örn: ago(1h), ago(7d), ago(30m)' },
-  { kw: 'render', desc: 'Sorgu sonucunu görsel olarak sunar. timechart, barchart, piechart gibi seçenekler var.' },
-  { kw: 'let', desc: 'Değişken veya alt sorgu tanımlar. Okunabilirlik için kullanılır. Örn: let threshold = 1000;' },
-  { kw: 'parse', desc: 'Serbest metin alanlarından değer çıkartır. Örn: | parse Message with * "user=" User " " *' },
-  { kw: 'mv-expand', desc: 'Dizi veya dinamik değerleri birden fazla satıra açar. Etiket/liste alanlarını analiz etmek için kullanılır.' },
+  { kw: 'project', desc: 'Sütun seçer. SQL SELECT gibi. Örn: | project TimeGenerated, Message' },
+  { kw: 'summarize', desc: 'Gruplama ve agregasyon. SQL GROUP BY gibi. Örn: | summarize count() by Category' },
+  { kw: 'order by', desc: 'Sonuçları sıralar. asc (artan) veya desc (azalan). Örn: | order by TimeGenerated desc' },
+  { kw: 'take / limit', desc: 'İlk N kaydı döner. Keşif için kullanılır. Örn: | take 100' },
+  { kw: 'distinct', desc: 'Tekil değerleri döner. SQL DISTINCT gibi. Örn: | distinct Category' },
+  { kw: 'extend', desc: 'Hesaplanmış yeni sütun ekler. Örn: | extend Toplam = Adet * Fiyat' },
+  { kw: 'ago()', desc: 'Belirli süre öncesi. Örn: ago(1h) = 1 saat önce, ago(7d) = 7 gün önce' },
+  { kw: 'contains', desc: 'Metin içerme kontrolü (büyük/küçük harf duyarsız). Örn: | where Message contains "hata"' },
+  { kw: 'count()', desc: 'Kayıt sayısını hesaplar. Örn: | summarize count() by Durum' },
 ];
 
 const kqlTemplates = [
   {
     category: 'Temel Sorgular',
     templates: [
-      { name: 'Basit sorgu', sql: `TableName\n| where TimeGenerated > ago(1h)\n| limit 100` },
-      { name: 'Zaman aralığı + filtre', sql: `TableName\n| where TimeGenerated between (datetime(2024-01-01) .. datetime(2024-12-31))\n| where Level == "Error"\n| project TimeGenerated, Message, Level, Computer` },
-      { name: 'DISTINCT değerler', sql: `TableName\n| distinct Category, Level\n| order by Category asc` },
-      { name: 'TOP N kayıt', sql: `TableName\n| top 10 by TimeGenerated desc` },
+      { name: 'Son 1 saatin kayıtları', sql: `TableName\n| where TimeGenerated > ago(1h)\n| order by TimeGenerated desc\n| take 100` },
+      { name: 'Belirli değere göre filtre', sql: `TableName\n| where TimeGenerated > ago(24h)\n| where Durum == "Hata"\n| project TimeGenerated, Mesaj, Durum, Kaynak\n| order by TimeGenerated desc` },
+      { name: 'Metin arama', sql: `TableName\n| where TimeGenerated > ago(7d)\n| where Mesaj contains "anahtar_kelime"\n| order by TimeGenerated desc` },
     ]
   },
   {
-    category: 'Zaman & Bin',
+    category: 'Sayma & Gruplama',
     templates: [
-      { name: 'Son N saat/gün', sql: `TableName\n| where TimeGenerated > ago(24h)` },
-      { name: 'Zaman serisi (5dk aralık)', sql: `TableName\n| where TimeGenerated > ago(1h)\n| summarize count() by bin(TimeGenerated, 5m)\n| render timechart` },
-      { name: 'Günlük özet', sql: `TableName\n| summarize Count=count() by bin(TimeGenerated, 1d)\n| order by TimeGenerated asc\n| render barchart` },
+      { name: 'Alana göre kayıt sayısı', sql: `TableName\n| where TimeGenerated > ago(7d)\n| summarize Adet=count() by Kategori\n| order by Adet desc` },
+      { name: 'Tekil değer sayısı', sql: `TableName\n| where TimeGenerated > ago(30d)\n| summarize TekliKullanici=dcount(KullaniciId) by Departman\n| order by TekliKullanici desc` },
+      { name: 'Top N', sql: `TableName\n| where TimeGenerated > ago(7d)\n| summarize Adet=count() by Kategori\n| top 10 by Adet desc` },
     ]
   },
   {
-    category: 'Agregasyon',
+    category: 'Zaman Bazlı Analiz',
     templates: [
-      { name: 'Count by field', sql: `TableName\n| summarize Count=count() by Category\n| order by Count desc` },
-      { name: 'Çoklu metrik', sql: `TableName\n| summarize\n    Count=count(),\n    Avg=avg(Duration),\n    P95=percentile(Duration, 95),\n    Max=max(Duration)\n  by Computer` },
-      { name: 'dcount (tekil sayı)', sql: `TableName\n| summarize UniqueUsers=dcount(UserId) by bin(TimeGenerated, 1h)` },
+      { name: 'Günlük kayıt özeti', sql: `TableName\n| where TimeGenerated > ago(30d)\n| summarize Adet=count() by bin(TimeGenerated, 1d)\n| order by TimeGenerated asc` },
+      { name: 'Saatlik trend (grafik)', sql: `TableName\n| where TimeGenerated > ago(7d)\n| summarize Adet=count() by bin(TimeGenerated, 1h)\n| render timechart` },
+      { name: 'Belirli tarih aralığı', sql: `TableName\n| where TimeGenerated between (datetime(2024-01-01) .. datetime(2024-03-31))\n| summarize Adet=count() by Kategori\n| order by Adet desc` },
     ]
   },
   {
-    category: 'Log Analytics & Azure Monitor',
+    category: 'Veri Keşfi',
     templates: [
-      { name: 'Hata logları (AzureDiagnostics)', sql: `AzureDiagnostics\n| where Category == "ApplicationGatewayAccessLog"\n| where httpStatus_d >= 400\n| project TimeGenerated, requestUri_s, httpStatus_d, clientIP_s\n| order by TimeGenerated desc` },
-      { name: 'VM CPU kullanımı', sql: `Perf\n| where ObjectName == "Processor"\n    and CounterName == "% Processor Time"\n    and InstanceName == "_Total"\n| where TimeGenerated > ago(1h)\n| summarize AvgCPU=avg(CounterValue) by Computer, bin(TimeGenerated, 5m)\n| render timechart` },
-      { name: 'Heartbeat / VM uptime', sql: `Heartbeat\n| where TimeGenerated > ago(24h)\n| summarize LastSeen=max(TimeGenerated) by Computer\n| where LastSeen < ago(5m)` },
-    ]
-  },
-  {
-    category: 'Application Insights',
-    templates: [
-      { name: 'Exception tracking', sql: `exceptions\n| where timestamp > ago(24h)\n| summarize Count=count() by type, outerMessage\n| order by Count desc\n| take 20` },
-      { name: 'Yavaş istekler (P95)', sql: `requests\n| where timestamp > ago(1h)\n| summarize P95=percentile(duration, 95), Count=count() by name\n| where P95 > 1000\n| order by P95 desc` },
-      { name: 'Bağımlılık hataları', sql: `dependencies\n| where timestamp > ago(1h)\n    and success == false\n| summarize Count=count() by target, name, type\n| order by Count desc` },
-    ]
-  },
-  {
-    category: 'Güvenlik & Sentinel',
-    templates: [
-      { name: 'Başarısız giriş denemeleri', sql: `SecurityEvent\n| where EventID == 4625\n    and TimeGenerated > ago(1h)\n| summarize Attempts=count() by Account, IpAddress\n| where Attempts > 10\n| order by Attempts desc` },
-      { name: 'Yeni servis hesapları', sql: `SecurityEvent\n| where EventID == 4720\n    and TimeGenerated > ago(7d)\n| project TimeGenerated, TargetAccount, SubjectAccount, Computer` },
-    ]
-  },
-  {
-    category: 'İleri Düzey',
-    templates: [
-      { name: 'Let değişkeni', sql: `let threshold = 1000;\nlet startTime = ago(24h);\nTableName\n| where TimeGenerated > startTime\n    and Duration > threshold\n| order by Duration desc` },
-      { name: 'Join', sql: `TableA\n| join kind=inner (\n    TableB\n    | where Condition == true\n  ) on $left.Id == $right.TableAId\n| project TimeGenerated, FieldA, FieldB` },
-      { name: 'Parse (metin ayrıştırma)', sql: `TableName\n| parse Message with * "user=" User " " *\n| summarize count() by User` },
+      { name: 'Tekil değerleri listele', sql: `TableName\n| where TimeGenerated > ago(7d)\n| distinct Kategori, AltKategori\n| order by Kategori asc` },
+      { name: 'Boş / NULL kayıtlar', sql: `TableName\n| where TimeGenerated > ago(30d)\n| where isempty(Deger) or isnull(Deger)\n| project TimeGenerated, Id, Deger` },
+      { name: 'Örnek veri önizleme', sql: `TableName\n| take 20` },
     ]
   },
 ];
@@ -1023,7 +1348,7 @@ function buildKqlCheatsheet() {
       const btnExport = document.createElement('button');
       btnExport.className = 'btn btn-primary';
       btnExport.style.cssText = 'font-size:11px; padding:5px 10px;';
-      btnExport.textContent = "KQL'e Aktar";
+      btnExport.textContent = t('kql.export');
       btnExport.addEventListener('click', () => {
         navigate('kql-formatter');
         document.getElementById('kql-input').value = tmpl.sql;
@@ -1031,7 +1356,7 @@ function buildKqlCheatsheet() {
       const btnCopy = document.createElement('button');
       btnCopy.className = 'btn btn-secondary';
       btnCopy.style.cssText = 'font-size:11px; padding:5px 10px;';
-      btnCopy.textContent = 'Kopyala';
+      btnCopy.textContent = t('copy');
       btnCopy.addEventListener('click', () => copyToClipboard(tmpl.sql, btnCopy));
       btnGroup.appendChild(btnExport);
       btnGroup.appendChild(btnCopy);
@@ -1065,7 +1390,10 @@ function updateEditorStats() {
   const content = document.getElementById('editor-content').value;
   const words = content.trim() ? content.trim().split(/\s+/).length : 0;
   const lines = content.split('\n').length;
-  document.getElementById('editor-stats').textContent = `${content.length} karakter · ${words} kelime · ${lines} satır`;
+  document.getElementById('editor-stats').textContent = t('wc.stats')
+    .replace('{chars}', content.length)
+    .replace('{words}', words)
+    .replace('{lines}', lines);
 }
 
 // ===== Tool: URL Shortener =====
@@ -1075,7 +1403,7 @@ async function shortenUrl() {
   const url = document.getElementById('url-short-input').value.trim();
   if (!url) return;
   try { new URL(url); } catch {
-    showError('url-short-error', 'Geçerli bir URL girin (https:// ile başlamalı).');
+    showError('url-short-error', t('url-short.error.invalid'));
     return;
   }
   const resultEl = document.getElementById('url-short-result');
@@ -1090,7 +1418,7 @@ async function shortenUrl() {
     outputEl.href = shortUrl;
     resultEl.style.display = 'block';
   } catch (e) {
-    showError('url-short-error', 'Kısaltılamadı: ' + e.message);
+    showError('url-short-error', t('url-short.error.failed') + e.message);
   }
 }
 
@@ -1107,7 +1435,7 @@ function calcLoanPayment() {
   const months = parseInt(document.getElementById('loan-months').value);
 
   if (isNaN(P) || isNaN(annualRate) || isNaN(months) || P <= 0 || months <= 0) {
-    showError('loan-error', 'Lütfen tüm alanları doğru doldurun.');
+    showError('loan-error', t('error.fill-fields'));
     return;
   }
 
@@ -1119,12 +1447,12 @@ function calcLoanPayment() {
   const fmt = n => n.toLocaleString('tr-TR', { minimumFractionDigits: 2 });
 
   const cardEl = document.getElementById('loan-result-card');
-  let html = '<div class="irc-row irc-header"><span>KREDİ HESAPLAMA SONUCU</span></div>';
-  html += `<div class="irc-row"><span>Kredi Tutarı</span><span class="irc-val">₺ ${fmt(P)}</span></div>`;
-  html += `<div class="irc-row"><span>Aylık Taksit</span><span class="irc-val total">₺ ${fmt(monthlyPayment)}</span></div>`;
-  html += `<div class="irc-row"><span>Toplam Geri Ödeme</span><span class="irc-val">₺ ${fmt(totalPayment)}</span></div>`;
-  html += `<div class="irc-row irc-tax"><span>Toplam Faiz Maliyeti</span><span class="irc-val negative">− ₺ ${fmt(totalInterest)}</span></div>`;
-  html += `<div class="irc-row irc-total"><span>FAİZ YÜK ORANI</span><span class="irc-val total">${((totalInterest / P) * 100).toFixed(1)}%</span></div>`;
+  let html = `<div class="irc-row irc-header"><span>${t('loan.result.title')}</span></div>`;
+  html += `<div class="irc-row"><span>${t('loan.amount.label')}</span><span class="irc-val">₺ ${fmt(P)}</span></div>`;
+  html += `<div class="irc-row"><span>${t('loan.monthly')}</span><span class="irc-val total">₺ ${fmt(monthlyPayment)}</span></div>`;
+  html += `<div class="irc-row"><span>${t('loan.total.payment')}</span><span class="irc-val">₺ ${fmt(totalPayment)}</span></div>`;
+  html += `<div class="irc-row irc-tax"><span>${t('loan.total.interest')}</span><span class="irc-val negative">− ₺ ${fmt(totalInterest)}</span></div>`;
+  html += `<div class="irc-row irc-total"><span>${t('loan.interest.ratio')}</span><span class="irc-val total">${((totalInterest / P) * 100).toFixed(1)}%</span></div>`;
   cardEl.innerHTML = html;
   cardEl.style.display = 'block';
 
@@ -1154,7 +1482,8 @@ function addClearButtons() {
     const btn = document.createElement('button');
     btn.className = 'btn btn-secondary';
     btn.style.cssText = 'font-size:11px; opacity:0.65;';
-    btn.textContent = 'Temizle';
+    btn.dataset.i18n = 'clear';
+    btn.textContent = t('clear');
     btn.addEventListener('click', () => clearPanel(panel.id));
     footer.appendChild(btn);
     card.appendChild(footer);
@@ -1194,7 +1523,6 @@ const sqlKeywords = [
   { kw: 'HAVING', desc: 'GROUP BY sonrası gruplara filtre uygular. WHERE satırlara filtre uygularken HAVING gruplara uygular.' },
   { kw: 'ORDER BY', desc: 'Sonuçları sıralar. ASC artan (varsayılan), DESC azalan. Birden fazla sütunla kullanılabilir.' },
   { kw: 'LIKE', desc: 'Metin arama deseni. % sıfır veya daha fazla karakter, _ tam olarak bir karakter. Örn: LIKE \'%ahmet%\'' },
-  { kw: 'COLLATE', desc: 'Metin karşılaştırma kuralını belirtir. Büyük/küçük harf ve aksan duyarlılığını kontrol eder. Örn: COLLATE utf8_turkish_ci' },
   { kw: 'COALESCE', desc: 'İlk NULL olmayan değeri döner. COALESCE(a, b, c): a NULL ise b\'ye, o da NULL ise c\'ye bakar. NULL alanları varsayılan değerle doldurmak için kullanılır.' },
   { kw: 'IN', desc: 'Değerin bir liste içinde olup olmadığını kontrol eder. WHERE şehir IN (\'İstanbul\', \'Ankara\') — OR zincirine alternatif.' },
   { kw: 'BETWEEN', desc: 'Değerin bir aralıkta olup olmadığını kontrol eder (sınırlar dahil). Örn: WHERE fiyat BETWEEN 100 AND 500' },
@@ -1250,7 +1578,7 @@ function buildKeywordCards(keywords, container) {
   const section = document.createElement('div');
   section.style.marginBottom = '28px';
   const h4 = document.createElement('h4');
-  h4.textContent = 'Anahtar Kelime Rehberi';
+  h4.textContent = t('keyword.guide');
   h4.style.cssText = 'font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border);';
   section.appendChild(h4);
   const grid = document.createElement('div');
@@ -1310,13 +1638,13 @@ function buildSqlCheatsheet() {
       const btnExport = document.createElement('button');
       btnExport.className = 'btn btn-primary';
       btnExport.style.cssText = 'font-size:11px; padding:5px 10px;';
-      btnExport.textContent = "SQL'e Aktar";
+      btnExport.textContent = t('sql.export');
       btnExport.addEventListener('click', () => insertSqlTemplate(tmpl.sql));
 
       const btnCopy = document.createElement('button');
       btnCopy.className = 'btn btn-secondary';
       btnCopy.style.cssText = 'font-size:11px; padding:5px 10px;';
-      btnCopy.textContent = 'Kopyala';
+      btnCopy.textContent = t('copy');
       btnCopy.addEventListener('click', () => copyToClipboard(tmpl.sql, btnCopy));
 
       btnGroup.appendChild(btnExport);

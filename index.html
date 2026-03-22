@@ -40,76 +40,76 @@
     <!-- ===== JSON FORMATTER ===== -->
     <div id="panel-json-formatter" class="tool-panel">
       <div class="tool-card">
-        <h3>JSON Formatlayıcı</h3>
-        <label>JSON Giriş</label>
+        <h3 data-i18n="json-fmt.title">JSON Formatlayıcı</h3>
+        <label data-i18n="json-fmt.input">JSON Giriş</label>
         <textarea id="json-input" placeholder='{"key": "value"}'></textarea>
         <div class="btn-group">
-          <button class="btn btn-primary" onclick="jsonBeautify()">Güzelleştir</button>
-          <button class="btn btn-secondary" onclick="jsonMinify()">Sıkıştır</button>
-          <button class="btn btn-secondary" onclick="jsonValidate()">Doğrula</button>
+          <button class="btn btn-primary" onclick="jsonBeautify()" data-i18n="json-fmt.beautify">Güzelleştir</button>
+          <button class="btn btn-secondary" onclick="jsonMinify()" data-i18n="json-fmt.minify">Sıkıştır</button>
+          <button class="btn btn-secondary" onclick="jsonValidate()" data-i18n="json-fmt.validate">Doğrula</button>
           <span id="json-status" style="align-self:center; font-size:13px;"></span>
         </div>
         <div class="error-box" id="json-error"></div>
-        <label>Çıktı</label>
+        <label data-i18n="output">Çıktı</label>
         <textarea id="json-output" readonly></textarea>
-        <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('json-output').value, this)">Kopyala</button>
+        <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('json-output').value, this)" data-i18n="copy">Kopyala</button>
       </div>
     </div>
 
     <!-- ===== UUID GENERATOR ===== -->
     <div id="panel-uuid-generator" class="tool-panel">
       <div class="tool-card">
-        <h3>UUID Üretici (v4)</h3>
+        <h3 data-i18n="uuid.title">UUID Üretici (v4)</h3>
         <div class="grid-2">
           <div>
-            <label>Adet (1-100)</label>
+            <label data-i18n="uuid.count">Adet (1-100)</label>
             <input type="number" id="uuid-count" value="1" min="1" max="100">
           </div>
         </div>
         <div class="btn-group">
-          <button class="btn btn-primary" onclick="generateUUIDs()">Üret</button>
-          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('uuid-output').value, this)">Kopyala</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('uuid-output').value=''">Temizle</button>
+          <button class="btn btn-primary" onclick="generateUUIDs()" data-i18n="generate">Üret</button>
+          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('uuid-output').value, this)" data-i18n="copy">Kopyala</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('uuid-output').value=''" data-i18n="clear">Temizle</button>
         </div>
-        <textarea id="uuid-output" readonly placeholder="Üretilen UUID'ler burada görünecek..."></textarea>
+        <textarea id="uuid-output" readonly data-i18n-placeholder="uuid.placeholder" placeholder="Üretilen UUID'ler burada görünecek..."></textarea>
       </div>
     </div>
 
     <!-- ===== INTEREST CALCULATOR ===== -->
     <div id="panel-interest-calc" class="tool-panel">
       <div class="tool-card">
-        <h3>Basit Faiz Hesaplama</h3>
+        <h3 data-i18n="interest.title">Basit Faiz Hesaplama</h3>
         <div class="error-box" id="interest-error"></div>
         <div class="grid-3">
           <div>
-            <label>Ana Para (₺)</label>
+            <label data-i18n="interest.principal">Ana Para (₺)</label>
             <input type="number" id="si-principal" placeholder="10000" min="0">
           </div>
           <div>
-            <label>Yıllık Faiz (%)</label>
+            <label data-i18n="interest.rate">Yıllık Faiz (%)</label>
             <input type="number" id="si-rate" placeholder="45" step="0.01" min="0">
           </div>
           <div>
-            <label>Vade</label>
+            <label data-i18n="interest.term">Vade</label>
             <div style="display:flex; gap:6px; margin-bottom:12px;">
               <input type="number" id="si-time" placeholder="30" style="flex:2; margin:0;">
               <select id="si-unit" style="flex:1;">
-                <option value="day">Gün</option>
-                <option value="month" selected>Ay</option>
-                <option value="year">Yıl</option>
+                <option value="day" data-i18n="interest.day">Gün</option>
+                <option value="month" selected data-i18n="interest.month">Ay</option>
+                <option value="year" data-i18n="interest.year">Yıl</option>
               </select>
             </div>
           </div>
         </div>
         <div class="interest-tax-section">
-          <label>Vergi</label>
+          <label data-i18n="interest.tax">Vergi</label>
           <select id="si-tax" onchange="onTaxChange('si')">
-            <option value="none">Vergisiz</option>
-            <option value="tr">🇹🇷 Türkiye — Stopaj</option>
-            <option value="de">🇩🇪 Almanya — Abgeltungssteuer (KPMG)</option>
+            <option value="none" data-i18n="interest.tax.none">Vergisiz</option>
+            <option value="tr" data-i18n="interest.tax.tr">🇹🇷 Türkiye — Stopaj</option>
+            <option value="de" data-i18n="interest.tax.de">🇩🇪 Almanya — Abgeltungssteuer (KPMG)</option>
           </select>
           <div id="si-tax-tr" class="tax-options" style="display:none;">
-            <label>Stopaj Oranı (%)</label>
+            <label data-i18n="interest.stopaj">Stopaj Oranı (%)</label>
             <input type="number" id="si-stopaj" value="15" min="0" max="100" step="0.1">
           </div>
           <div id="si-tax-de" class="tax-options" style="display:none;">
@@ -123,7 +123,7 @@
             </div>
           </div>
         </div>
-        <button class="btn btn-primary" onclick="calcSimpleInterest()">Hesapla</button>
+        <button class="btn btn-primary" onclick="calcSimpleInterest()" data-i18n="calculate">Hesapla</button>
         <div id="si-result-card" class="interest-result-card" style="display:none; margin-top:16px;"></div>
       </div><!-- /tool-card -->
     </div><!-- /panel-interest-calc -->
@@ -131,27 +131,33 @@
     <!-- ===== LOAN CALCULATOR ===== -->
     <div id="panel-loan-calc" class="tool-panel">
       <div class="tool-card">
-        <h3>Kredi Hesaplama <span style="font-size:11px;font-weight:400;color:var(--text-muted);">— Aylık taksit ve amortisman tablosu</span></h3>
+        <h3><span data-i18n="loan.title">Kredi Hesaplama</span> <span style="font-size:11px;font-weight:400;color:var(--text-muted);" data-i18n="loan.subtitle">— Aylık taksit ve amortisman tablosu</span></h3>
         <div class="error-box" id="loan-error"></div>
         <div class="grid-3">
           <div>
-            <label>Kredi Tutarı (₺)</label>
+            <label data-i18n="loan.amount">Kredi Tutarı (₺)</label>
             <input type="number" id="loan-principal" placeholder="100000" min="0">
           </div>
           <div>
-            <label>Yıllık Faiz (%)</label>
+            <label data-i18n="loan.rate">Yıllık Faiz (%)</label>
             <input type="number" id="loan-rate" placeholder="40" step="0.01" min="0">
           </div>
           <div>
-            <label>Vade (Ay)</label>
+            <label data-i18n="loan.months">Vade (Ay)</label>
             <input type="number" id="loan-months" placeholder="24" min="1" max="360">
           </div>
         </div>
-        <button class="btn btn-primary" onclick="calcLoanPayment()" style="margin-bottom:16px;">Hesapla</button>
+        <button class="btn btn-primary" onclick="calcLoanPayment()" style="margin-bottom:16px;" data-i18n="calculate">Hesapla</button>
         <div id="loan-result-card" class="interest-result-card" style="display:none;"></div>
         <div class="table-wrapper" id="loan-table-wrap" style="margin-top:12px; display:none;">
           <table>
-            <thead><tr><th>Ay</th><th>Taksit</th><th>Anapara Payı</th><th>Faiz Payı</th><th>Kalan Borç</th></tr></thead>
+            <thead><tr>
+              <th data-i18n="loan.th.month">Ay</th>
+              <th data-i18n="loan.th.installment">Taksit</th>
+              <th data-i18n="loan.th.principal">Anapara Payı</th>
+              <th data-i18n="loan.th.interest">Faiz Payı</th>
+              <th data-i18n="loan.th.remaining">Kalan Borç</th>
+            </tr></thead>
             <tbody id="loan-table"></tbody>
           </table>
         </div>
@@ -161,19 +167,19 @@
     <!-- ===== TIMESTAMP ===== -->
     <div id="panel-timestamp" class="tool-panel">
       <div class="tool-card">
-        <h3>Unix Timestamp ↔ Tarih</h3>
+        <h3 data-i18n="ts.title">Unix Timestamp ↔ Tarih</h3>
         <div class="grid-2">
           <div>
-            <label>Timestamp → Tarih</label>
+            <label data-i18n="ts.to-date">Timestamp → Tarih</label>
             <input type="text" id="ts-input" placeholder="1700000000">
             <div class="btn-group">
-              <button class="btn btn-primary" onclick="tsToDate()">Dönüştür</button>
-              <button class="btn btn-secondary" onclick="setNow()">Şimdi</button>
+              <button class="btn btn-primary" onclick="tsToDate()" data-i18n="convert">Dönüştür</button>
+              <button class="btn btn-secondary" onclick="setNow()" data-i18n="ts.now">Şimdi</button>
             </div>
             <div class="result-box" id="ts-result"></div>
           </div>
           <div>
-            <label>Tarih → Timestamp</label>
+            <label data-i18n="ts.to-ts">Tarih → Timestamp</label>
             <input type="datetime-local" id="date-input" oninput="dateToTs()">
             <div class="result-box" id="date-ts-result"></div>
           </div>
@@ -184,45 +190,45 @@
     <!-- ===== BASE64 ===== -->
     <div id="panel-base64" class="tool-panel">
       <div class="tool-card">
-        <h3>Base64 / Dosya</h3>
+        <h3 data-i18n="b64.title">Base64 / Dosya</h3>
         <div class="tab-bar" id="base64-tabs">
-          <button class="tab-btn active" data-tab="tab-b64-text">Metin</button>
-          <button class="tab-btn" data-tab="tab-b64-file-to">Dosya → Base64</button>
-          <button class="tab-btn" data-tab="tab-b64-to-file">Base64 → Dosya</button>
+          <button class="tab-btn active" data-tab="tab-b64-text" data-i18n="b64.tab.text">Metin</button>
+          <button class="tab-btn" data-tab="tab-b64-file-to" data-i18n="b64.tab.file-to">Dosya → Base64</button>
+          <button class="tab-btn" data-tab="tab-b64-to-file" data-i18n="b64.tab.to-file">Base64 → Dosya</button>
         </div>
         <div class="error-box" id="base64-error"></div>
 
         <!-- Metin -->
         <div id="tab-b64-text" class="tab-content active">
-          <label>Ham Metin</label>
-          <textarea id="b64-raw" placeholder="Metni buraya yazın..."></textarea>
+          <label data-i18n="b64.raw">Ham Metin</label>
+          <textarea id="b64-raw" data-i18n-placeholder="b64.raw.placeholder" placeholder="Metni buraya yazın..."></textarea>
           <div class="btn-group">
             <button class="btn btn-primary" onclick="base64Encode()">↓ Encode</button>
             <button class="btn btn-secondary" onclick="base64Decode()">↑ Decode</button>
           </div>
           <label>Base64</label>
-          <textarea id="b64-encoded" placeholder="Base64 çıktısı..."></textarea>
-          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('b64-encoded').value, this)">Kopyala</button>
+          <textarea id="b64-encoded" data-i18n-placeholder="b64.output.placeholder" placeholder="Base64 çıktısı..."></textarea>
+          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('b64-encoded').value, this)" data-i18n="copy">Kopyala</button>
         </div>
 
         <!-- Dosya → Base64 -->
         <div id="tab-b64-file-to" class="tab-content">
-          <label>Dosya Seç</label>
+          <label data-i18n="b64.file-select">Dosya Seç</label>
           <input type="file" id="file-to-b64-input" style="padding:8px; background:var(--input-bg); border:1px solid var(--border); border-radius:6px; cursor:pointer; width:100%; margin-bottom:12px;">
-          <button class="btn btn-primary" onclick="fileToBase64()">Base64'e Çevir</button>
+          <button class="btn btn-primary" onclick="fileToBase64()" data-i18n="b64.convert">Base64'e Çevir</button>
           <div id="file-b64-info" style="font-size:12px; color:var(--text-muted); margin:10px 0;"></div>
-          <label>Base64 Çıktı</label>
-          <textarea id="file-b64-output" readonly placeholder="Base64 çıktısı burada görünecek..."></textarea>
-          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('file-b64-output').value, this)">Kopyala</button>
+          <label data-i18n="b64.file-output.label">Base64 Çıktı</label>
+          <textarea id="file-b64-output" readonly data-i18n-placeholder="b64.file-output.placeholder" placeholder="Base64 çıktısı burada görünecek..."></textarea>
+          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('file-b64-output').value, this)" data-i18n="copy">Kopyala</button>
         </div>
 
         <!-- Base64 → Dosya -->
         <div id="tab-b64-to-file" class="tab-content">
-          <label>Kaydedilecek Dosya Adı</label>
+          <label data-i18n="b64.filename">Kaydedilecek Dosya Adı</label>
           <input type="text" id="b64-target-filename" placeholder="dosya.pdf">
-          <label>Base64 Veri</label>
-          <textarea id="b64-to-file-input" placeholder="Base64 kodunu buraya yapıştırın..."></textarea>
-          <button class="btn btn-primary" onclick="base64ToFile()">↓ Dosyayı İndir</button>
+          <label data-i18n="b64.data">Base64 Veri</label>
+          <textarea id="b64-to-file-input" data-i18n-placeholder="b64.paste.placeholder" placeholder="Base64 kodunu buraya yapıştırın..."></textarea>
+          <button class="btn btn-primary" onclick="base64ToFile()" data-i18n="b64.download">↓ Dosyayı İndir</button>
         </div>
       </div>
     </div>
@@ -230,47 +236,47 @@
     <!-- ===== CSV TO JSON ===== -->
     <div id="panel-csv-to-json" class="tool-panel">
       <div class="tool-card">
-        <h3>CSV → JSON Dönüştürücü</h3>
+        <h3 data-i18n="csv.title">CSV → JSON Dönüştürücü</h3>
         <div class="error-box" id="csv-error"></div>
         <div class="grid-2">
           <div>
-            <label>Ayraç</label>
+            <label data-i18n="csv.delimiter">Ayraç</label>
             <select id="csv-delimiter">
-              <option value=",">Virgül (,)</option>
-              <option value=";">Noktalı Virgül (;)</option>
+              <option value="," data-i18n="csv.comma">Virgül (,)</option>
+              <option value=";" data-i18n="csv.semicolon">Noktalı Virgül (;)</option>
               <option value="	">Tab</option>
             </select>
           </div>
           <div style="display:flex; align-items:center; gap:8px; padding-top:20px;">
             <input type="checkbox" id="csv-headers" checked style="width:auto; margin:0;">
-            <label style="margin:0; text-transform:none; font-size:13px;">İlk satır başlık</label>
+            <label style="margin:0; text-transform:none; font-size:13px;" data-i18n="csv.header">İlk satır başlık</label>
           </div>
         </div>
-        <label>CSV Giriş</label>
+        <label data-i18n="csv.input">CSV Giriş</label>
         <textarea id="csv-input" placeholder="isim,yaş,şehir&#10;Ahmet,30,İstanbul&#10;Ayşe,25,Ankara"></textarea>
-        <button class="btn btn-primary" onclick="csvToJson()">Dönüştür</button>
-        <label>JSON Çıktı</label>
+        <button class="btn btn-primary" onclick="csvToJson()" data-i18n="convert">Dönüştür</button>
+        <label data-i18n="csv.output">JSON Çıktı</label>
         <textarea id="csv-output" readonly></textarea>
-        <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('csv-output').value, this)">Kopyala</button>
+        <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('csv-output').value, this)" data-i18n="copy">Kopyala</button>
       </div>
     </div>
 
     <!-- ===== DIFF CHECKER ===== -->
     <div id="panel-diff-checker" class="tool-panel">
       <div class="tool-card">
-        <h3>Metin Karşılaştırma</h3>
+        <h3 data-i18n="diff.title">Metin Karşılaştırma</h3>
         <div class="grid-2">
           <div>
-            <label>Orijinal</label>
-            <textarea id="diff-original" placeholder="Orijinal metin..."></textarea>
+            <label data-i18n="diff.original">Orijinal</label>
+            <textarea id="diff-original" data-i18n-placeholder="diff.original.placeholder" placeholder="Orijinal metin..."></textarea>
           </div>
           <div>
-            <label>Yeni</label>
-            <textarea id="diff-new" placeholder="Yeni metin..."></textarea>
+            <label data-i18n="diff.new">Yeni</label>
+            <textarea id="diff-new" data-i18n-placeholder="diff.new.placeholder" placeholder="Yeni metin..."></textarea>
           </div>
         </div>
         <div class="btn-group">
-          <button class="btn btn-primary" onclick="runDiff()">Karşılaştır</button>
+          <button class="btn btn-primary" onclick="runDiff()" data-i18n="compare">Karşılaştır</button>
           <span id="diff-stats" style="align-self:center; font-size:12px; color:var(--text-muted);"></span>
         </div>
         <div id="diff-output" style="border:1px solid var(--border); border-radius:6px; overflow:hidden; min-height:60px;"></div>
@@ -280,32 +286,32 @@
     <!-- ===== WORD COUNTER ===== -->
     <div id="panel-word-counter" class="tool-panel">
       <div class="tool-card">
-        <h3>Kelime Sayacı</h3>
-        <textarea id="wc-input" placeholder="Metni buraya yazın..." oninput="countWords()" style="min-height:150px;"></textarea>
+        <h3 data-i18n="wc.title">Kelime Sayacı</h3>
+        <textarea id="wc-input" data-i18n-placeholder="wc.placeholder" placeholder="Metni buraya yazın..." oninput="countWords()" style="min-height:150px;"></textarea>
         <div class="grid-3" style="margin-top:8px;">
           <div class="tool-card" style="text-align:center; padding:16px;">
             <div style="font-size:24px; font-weight:700; color:var(--accent);" id="wc-chars">0</div>
-            <div style="font-size:11px; color:var(--text-muted);">KARAKTER</div>
+            <div style="font-size:11px; color:var(--text-muted);" data-i18n="wc.chars">KARAKTER</div>
           </div>
           <div class="tool-card" style="text-align:center; padding:16px;">
             <div style="font-size:24px; font-weight:700; color:var(--accent);" id="wc-chars-no-space">0</div>
-            <div style="font-size:11px; color:var(--text-muted);">BOŞLUKSUZ</div>
+            <div style="font-size:11px; color:var(--text-muted);" data-i18n="wc.no-space">BOŞLUKSUZ</div>
           </div>
           <div class="tool-card" style="text-align:center; padding:16px;">
             <div style="font-size:24px; font-weight:700; color:var(--accent);" id="wc-words">0</div>
-            <div style="font-size:11px; color:var(--text-muted);">KELİME</div>
+            <div style="font-size:11px; color:var(--text-muted);" data-i18n="wc.words">KELİME</div>
           </div>
           <div class="tool-card" style="text-align:center; padding:16px;">
             <div style="font-size:24px; font-weight:700; color:var(--accent);" id="wc-sentences">0</div>
-            <div style="font-size:11px; color:var(--text-muted);">CÜMLE</div>
+            <div style="font-size:11px; color:var(--text-muted);" data-i18n="wc.sentences">CÜMLE</div>
           </div>
           <div class="tool-card" style="text-align:center; padding:16px;">
             <div style="font-size:24px; font-weight:700; color:var(--accent);" id="wc-paragraphs">0</div>
-            <div style="font-size:11px; color:var(--text-muted);">PARAGRAF</div>
+            <div style="font-size:11px; color:var(--text-muted);" data-i18n="wc.paragraphs">PARAGRAF</div>
           </div>
           <div class="tool-card" style="text-align:center; padding:16px;">
             <div style="font-size:24px; font-weight:700; color:var(--accent);" id="wc-readtime">0 dk</div>
-            <div style="font-size:11px; color:var(--text-muted);">OKUMA SÜRESİ</div>
+            <div style="font-size:11px; color:var(--text-muted);" data-i18n="wc.readtime">OKUMA SÜRESİ</div>
           </div>
         </div>
       </div>
@@ -314,14 +320,14 @@
     <!-- ===== SQL FORMATTER ===== -->
     <div id="panel-sql-formatter" class="tool-panel">
       <div class="tool-card">
-        <h3>SQL Formatlayıcı</h3>
-        <label>SQL Giriş</label>
+        <h3 data-i18n="sql-fmt.title">SQL Formatlayıcı</h3>
+        <label data-i18n="sql-fmt.input">SQL Giriş</label>
         <textarea id="sql-input" placeholder="SELECT * FROM users WHERE id = 1 AND status = 'active'"></textarea>
         <div class="btn-group">
-          <button class="btn btn-primary" onclick="formatSQL()">Formatla</button>
-          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('sql-output').value, this)">Kopyala</button>
+          <button class="btn btn-primary" onclick="formatSQL()" data-i18n="format">Formatla</button>
+          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('sql-output').value, this)" data-i18n="copy">Kopyala</button>
         </div>
-        <label>Çıktı</label>
+        <label data-i18n="output">Çıktı</label>
         <textarea id="sql-output" readonly></textarea>
       </div>
     </div>
@@ -329,11 +335,11 @@
     <!-- ===== JWT DECODER ===== -->
     <div id="panel-jwt-decoder" class="tool-panel">
       <div class="tool-card">
-        <h3>JWT Decoder <span style="font-size:11px; color:var(--text-muted); font-weight:400;">(Sadece okuma — imza doğrulaması yapılmaz)</span></h3>
+        <h3>JWT Decoder <span style="font-size:11px; color:var(--text-muted); font-weight:400;" data-i18n="jwt.subtitle">(Sadece okuma — imza doğrulaması yapılmaz)</span></h3>
         <div class="error-box" id="jwt-error"></div>
         <label>JWT Token</label>
         <textarea id="jwt-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." style="min-height:80px;"></textarea>
-        <button class="btn btn-primary" onclick="decodeJWT()">Decode Et</button>
+        <button class="btn btn-primary" onclick="decodeJWT()" data-i18n="jwt.decode">Decode Et</button>
         <div style="margin-top:12px; font-size:12px; color:var(--text-muted);" id="jwt-exp"></div>
         <div class="grid-2" style="margin-top:12px;">
           <div>
@@ -352,25 +358,25 @@
     <div id="panel-url-encoder" class="tool-panel">
       <div class="tool-card">
         <h3>URL Encode / Decode</h3>
-        <label>Ham URL / Metin</label>
+        <label data-i18n="url-enc.raw">Ham URL / Metin</label>
         <textarea id="url-raw" placeholder="https://example.com/search?q=merhaba dünya"></textarea>
-        <label>Encoded</label>
+        <label data-i18n="url-enc.encoded">Encoded</label>
         <textarea id="url-encoded" placeholder="https%3A%2F%2F..."></textarea>
-        <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('url-encoded').value, this)">Encoded'ı Kopyala</button>
+        <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('url-encoded').value, this)" data-i18n="url-enc.copy">Encoded'ı Kopyala</button>
       </div>
     </div>
 
     <!-- ===== KQL FORMATTER ===== -->
     <div id="panel-kql-formatter" class="tool-panel">
       <div class="tool-card">
-        <h3>KQL Formatlayıcı <span style="font-size:11px; font-weight:400; color:var(--text-muted);">— Azure Monitor / Log Analytics / Sentinel</span></h3>
-        <label>KQL Giriş</label>
+        <h3><span data-i18n="kql-fmt.title">KQL Formatlayıcı</span> <span style="font-size:11px; font-weight:400; color:var(--text-muted);">— Azure Monitor / Log Analytics / Sentinel</span></h3>
+        <label data-i18n="kql-fmt.input">KQL Giriş</label>
         <textarea id="kql-input" placeholder="TableName | where TimeGenerated > ago(1h) | where Level == 'Error' | summarize count() by bin(TimeGenerated, 5m)"></textarea>
         <div class="btn-group">
-          <button class="btn btn-primary" onclick="formatKQL()">Formatla</button>
-          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('kql-output').value, this)">Kopyala</button>
+          <button class="btn btn-primary" onclick="formatKQL()" data-i18n="format">Formatla</button>
+          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('kql-output').value, this)" data-i18n="copy">Kopyala</button>
         </div>
-        <label>Çıktı</label>
+        <label data-i18n="output">Çıktı</label>
         <textarea id="kql-output" readonly></textarea>
       </div>
     </div>
@@ -378,7 +384,7 @@
     <!-- ===== KQL CHEATSHEET ===== -->
     <div id="panel-kql-cheatsheet" class="tool-panel">
       <div class="tool-card">
-        <h3>KQL Şablonları <span style="font-size:11px; font-weight:400; color:var(--text-muted);">— Hazır sorgular, tek tıkla KQL Formatlayıcı'ya aktar</span></h3>
+        <h3>KQL Şablonları <span style="font-size:11px; font-weight:400; color:var(--text-muted);" data-i18n="kql-cs.subtitle">— Hazır sorgular, tek tıkla KQL Formatlayıcı'ya aktar</span></h3>
         <div id="kql-template-grid"></div>
       </div>
     </div>
@@ -386,14 +392,14 @@
     <!-- ===== TEXT EDITOR ===== -->
     <div id="panel-text-editor" class="tool-panel">
       <div class="tool-card">
-        <h3>Metin Editörü</h3>
+        <h3 data-i18n="editor.title">Metin Editörü</h3>
         <div class="grid-2">
           <div>
-            <label>Dosya Adı</label>
+            <label data-i18n="editor.filename">Dosya Adı</label>
             <input type="text" id="editor-filename" placeholder="belge" value="belge">
           </div>
           <div>
-            <label>Format</label>
+            <label data-i18n="editor.format">Format</label>
             <select id="editor-format">
               <option value="txt">.txt</option>
               <option value="md">.md</option>
@@ -406,9 +412,9 @@
             </select>
           </div>
         </div>
-        <textarea id="editor-content" placeholder="Metni buraya yazın..." oninput="updateEditorStats()"></textarea>
+        <textarea id="editor-content" data-i18n-placeholder="editor.placeholder" placeholder="Metni buraya yazın..." oninput="updateEditorStats()"></textarea>
         <div class="btn-group">
-          <button class="btn btn-primary" onclick="downloadTextFile()">↓ İndir</button>
+          <button class="btn btn-primary" onclick="downloadTextFile()" data-i18n="download">↓ İndir</button>
           <span id="editor-stats" style="align-self:center; font-size:12px; color:var(--text-muted);"></span>
         </div>
       </div>
@@ -417,30 +423,30 @@
     <!-- ===== URL SHORTENER ===== -->
     <div id="panel-url-shortener" class="tool-panel">
       <div class="tool-card">
-        <h3>URL Kısaltıcı</h3>
+        <h3 data-i18n="url-short.title">URL Kısaltıcı</h3>
         <div class="error-box" id="url-short-error"></div>
-        <label>Uzun URL</label>
+        <label data-i18n="url-short.label">Uzun URL</label>
         <input type="text" id="url-short-input" placeholder="https://ornek.com/cok/uzun/bir/url?param=deger">
-        <button class="btn btn-primary" onclick="shortenUrl()">Kısalt</button>
+        <button class="btn btn-primary" onclick="shortenUrl()" data-i18n="shorten">Kısalt</button>
         <div id="url-short-result" class="url-short-result-box" style="display:none;">
-          <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em;">Kısaltılmış URL</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em;" data-i18n="url-short.result.label">Kısaltılmış URL</div>
           <div style="display:flex; gap:8px; align-items:center;">
             <a id="url-short-output" href="#" target="_blank" rel="noopener noreferrer" style="font-size:15px; font-weight:600; color:var(--accent); text-decoration:none; flex:1; word-break:break-all;"></a>
-            <button class="btn btn-secondary" id="url-short-copy-btn" onclick="copyShortUrl()">Kopyala</button>
+            <button class="btn btn-secondary" id="url-short-copy-btn" onclick="copyShortUrl()" data-i18n="copy">Kopyala</button>
           </div>
         </div>
-        <div style="font-size:11px; color:var(--text-muted); margin-top:10px;">İnternet bağlantısı gerektirir · Powered by is.gd</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:10px;" data-i18n="url-short.footer">İnternet bağlantısı gerektirir · Powered by TinyURL</div>
       </div>
     </div>
 
     <!-- ===== JSON GRID ===== -->
     <div id="panel-json-grid" class="tool-panel">
       <div class="tool-card">
-        <h3>JSON Grid Görünümü <span style="font-size:11px; font-weight:400; color:var(--text-muted);">— Altova XMLSpy tarzı tablo görünümü</span></h3>
+        <h3><span data-i18n="json-grid.title">JSON Grid Görünümü</span> <span style="font-size:11px; font-weight:400; color:var(--text-muted);" data-i18n="json-grid.subtitle">— Altova XMLSpy tarzı tablo görünümü</span></h3>
         <div class="error-box" id="json-grid-error"></div>
-        <label>JSON Giriş</label>
+        <label data-i18n="json-grid.input">JSON Giriş</label>
         <textarea id="json-grid-input" placeholder='[{"id": 1, "ad": "Ahmet", "sehir": "İstanbul"}, {"id": 2, "ad": "Ayşe", "sehir": "Ankara"}]'></textarea>
-        <button class="btn btn-primary" onclick="renderJsonGrid()">Grid Göster</button>
+        <button class="btn btn-primary" onclick="renderJsonGrid()" data-i18n="json-grid.show">Grid Göster</button>
         <div id="json-grid-output" class="json-grid-container" style="margin-top:16px;"></div>
       </div>
     </div>
@@ -450,34 +456,34 @@
       <div class="tool-card">
         <h3>JSON Escape / Unescape</h3>
         <div class="error-box" id="json-escape-error"></div>
-        <label>Ham Metin</label>
+        <label data-i18n="json-esc.raw">Ham Metin</label>
         <textarea id="json-escape-input" placeholder='Merhaba "Dünya"&#10;Yeni satır\tTab'></textarea>
         <div class="btn-group">
           <button class="btn btn-primary" onclick="jsonEscapeStr()">↓ Escape</button>
           <button class="btn btn-secondary" onclick="jsonUnescapeStr()">↑ Unescape</button>
         </div>
-        <label>Escape Edilmiş (JSON String)</label>
+        <label data-i18n="json-esc.escaped.label">Escape Edilmiş (JSON String)</label>
         <textarea id="json-escape-output" placeholder='"Merhaba \"D\u00fcnya\"\nYeni sat\u0131r\tTab"'></textarea>
-        <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('json-escape-output').value, this)">Kopyala</button>
+        <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('json-escape-output').value, this)" data-i18n="copy">Kopyala</button>
       </div>
     </div>
 
     <!-- ===== JSON DIFF ===== -->
     <div id="panel-json-diff" class="tool-panel">
       <div class="tool-card">
-        <h3>JSON Karşılaştırma <span style="font-size:11px; font-weight:400; color:var(--text-muted);">— Yapısal JSON diff (path bazlı)</span></h3>
+        <h3><span data-i18n="json-diff.title">JSON Karşılaştırma</span> <span style="font-size:11px; font-weight:400; color:var(--text-muted);" data-i18n="json-diff.subtitle">— Yapısal JSON diff (path bazlı)</span></h3>
         <div class="error-box" id="json-diff-error"></div>
         <div class="grid-2">
           <div>
-            <label>Sol JSON (Eski / A)</label>
+            <label data-i18n="json-diff.left">Sol JSON (Eski / A)</label>
             <textarea id="json-diff-left" placeholder='{"name": "Ali", "age": 30}'></textarea>
           </div>
           <div>
-            <label>Sağ JSON (Yeni / B)</label>
+            <label data-i18n="json-diff.right">Sağ JSON (Yeni / B)</label>
             <textarea id="json-diff-right" placeholder='{"name": "Ali", "age": 31, "city": "İstanbul"}'></textarea>
           </div>
         </div>
-        <button class="btn btn-primary" onclick="diffJson()">Karşılaştır</button>
+        <button class="btn btn-primary" onclick="diffJson()" data-i18n="compare">Karşılaştır</button>
         <div id="json-diff-output" style="margin-top:16px;"></div>
       </div>
     </div>
@@ -485,7 +491,7 @@
     <!-- ===== SQL CHEATSHEET ===== -->
     <div id="panel-sql-cheatsheet" class="tool-panel">
       <div class="tool-card">
-        <h3>SQL Şablonları <span style="font-size:11px; font-weight:400; color:var(--text-muted);">— Hazır sorgular, tek tıkla SQL Formatlayıcı'ya aktar</span></h3>
+        <h3>SQL Şablonları <span style="font-size:11px; font-weight:400; color:var(--text-muted);" data-i18n="sql-cs.subtitle">— Hazır sorgular, tek tıkla SQL Formatlayıcı'ya aktar</span></h3>
         <div id="sql-template-grid"></div>
       </div>
     </div>
