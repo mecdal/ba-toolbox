@@ -408,6 +408,119 @@ mark { background: #fef08a; color: #713f12; border-radius: 2px; }
 #welcome h2 { font-size: 22px; color: var(--text); margin-bottom: 8px; }
 #welcome p { font-size: 14px; max-width: 400px; line-height: 1.6; }
 
+/* ===== Interest Calculator Revamp ===== */
+.interest-tax-section {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.interest-tax-section > label:first-child {
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.tax-options {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.tax-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text);
+  cursor: pointer;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.checkbox-label input[type="checkbox"] { width: auto; margin: 0; }
+
+.kist-rate-input {
+  width: 65px !important;
+  margin: 0 !important;
+  padding: 4px 8px !important;
+  display: inline-block !important;
+  min-height: auto !important;
+}
+
+.interest-result-card {
+  border: 2px solid var(--accent);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.irc-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.irc-row:last-child { border-bottom: none; }
+
+.irc-header {
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 8px 16px;
+}
+
+.irc-total {
+  background: var(--bg);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.irc-tax { background: #fef2f2; }
+[data-theme="dark"] .irc-tax { background: #2d1414; }
+
+.irc-val { font-family: 'Consolas', monospace; font-weight: 600; }
+.irc-val.negative { color: var(--error); }
+.irc-val.positive { color: var(--success); }
+.irc-val.total { color: var(--accent); font-size: 16px; }
+
+/* ===== Clear Button ===== */
+.panel-clear-footer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  text-align: right;
+}
+
+/* ===== Text Editor ===== */
+#editor-content { min-height: 320px; }
+
+/* ===== URL Shortener ===== */
+.url-short-result-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
 /* ===== JSON Grid ===== */
 .json-grid-container {
   overflow: auto;
