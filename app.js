@@ -1169,7 +1169,7 @@ function clearPanel(panelId) {
   panel.querySelectorAll('.error-box').forEach(el => { el.textContent = ''; el.style.display = 'none'; });
   panel.querySelectorAll('.result-box').forEach(el => { el.innerHTML = ''; });
   panel.querySelectorAll('tbody').forEach(el => { el.innerHTML = ''; });
-  ['json-grid-output', 'diff-output', 'si-result-card', 'loan-result-card', 'editor-stats', 'diff-stats', 'file-b64-info', 'json-status', 'url-short-result'].forEach(id => {
+  ['json-grid-output', 'json-diff-output', 'diff-output', 'si-result-card', 'loan-result-card', 'editor-stats', 'diff-stats', 'file-b64-info', 'json-status', 'url-short-result'].forEach(id => {
     const el = panel.querySelector('#' + id);
     if (!el) return;
     if (id === 'url-short-result') { el.style.display = 'none'; }
