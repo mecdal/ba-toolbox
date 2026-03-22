@@ -479,6 +479,11 @@ function applyLang() {
   buildSqlCheatsheet();
   buildKqlCheatsheet();
 
+  // Refresh word counter stats if there is text
+  if (document.getElementById('wc-input') && document.getElementById('wc-input').value) {
+    countWords();
+  }
+
   // Update loan table headers if visible
   const loanTh = document.querySelectorAll('#panel-loan-calc thead th');
   const loanHeaders = ['loan.th.month', 'loan.th.installment', 'loan.th.principal', 'loan.th.interest', 'loan.th.remaining'];
@@ -1082,7 +1087,9 @@ function setGridCell(td, val, depth) {
       const summary = document.createElement('summary');
       summary.className = 'json-grid-nested';
       summary.style.cursor = 'pointer';
-      summary.textContent = isArr ? `[${count} öğe]` : `{${count} alan}`;
+      summary.textContent = isArr
+        ? `[${count} ${currentLang === 'en' ? 'item' : 'öğe'}]`
+        : `{${count} ${currentLang === 'en' ? 'field' : 'alan'}}`;
       details.appendChild(summary);
       details.appendChild(buildGridNode(val, depth + 1));
       td.appendChild(details);
@@ -1269,49 +1276,49 @@ function formatKQL() {
 // ===== Tool: KQL Cheatsheet =====
 
 const kqlKeywords = [
-  { kw: 'where', desc: 'Satırları filtreler. SQL WHERE gibi. Örn: | where Level == "Error"' },
-  { kw: 'project', desc: 'Sütun seçer. SQL SELECT gibi. Örn: | project TimeGenerated, Message' },
-  { kw: 'summarize', desc: 'Gruplama ve agregasyon. SQL GROUP BY gibi. Örn: | summarize count() by Category' },
-  { kw: 'order by', desc: 'Sonuçları sıralar. asc (artan) veya desc (azalan). Örn: | order by TimeGenerated desc' },
-  { kw: 'take / limit', desc: 'İlk N kaydı döner. Keşif için kullanılır. Örn: | take 100' },
-  { kw: 'distinct', desc: 'Tekil değerleri döner. SQL DISTINCT gibi. Örn: | distinct Category' },
-  { kw: 'extend', desc: 'Hesaplanmış yeni sütun ekler. Örn: | extend Toplam = Adet * Fiyat' },
-  { kw: 'ago()', desc: 'Belirli süre öncesi. Örn: ago(1h) = 1 saat önce, ago(7d) = 7 gün önce' },
-  { kw: 'contains', desc: 'Metin içerme kontrolü (büyük/küçük harf duyarsız). Örn: | where Message contains "hata"' },
-  { kw: 'count()', desc: 'Kayıt sayısını hesaplar. Örn: | summarize count() by Durum' },
+  { kw: 'where',       desc: 'Satırları filtreler. SQL WHERE gibi. Örn: | where Level == "Error"',                          descEn: 'Filters rows. Like SQL WHERE. e.g., | where Level == "Error"' },
+  { kw: 'project',     desc: 'Sütun seçer. SQL SELECT gibi. Örn: | project TimeGenerated, Message',                         descEn: 'Selects columns. Like SQL SELECT. e.g., | project TimeGenerated, Message' },
+  { kw: 'summarize',   desc: 'Gruplama ve agregasyon. SQL GROUP BY gibi. Örn: | summarize count() by Category',              descEn: 'Grouping and aggregation. Like SQL GROUP BY. e.g., | summarize count() by Category' },
+  { kw: 'order by',    desc: 'Sonuçları sıralar. asc (artan) veya desc (azalan). Örn: | order by TimeGenerated desc',       descEn: 'Sorts results. asc (ascending) or desc (descending). e.g., | order by TimeGenerated desc' },
+  { kw: 'take / limit',desc: 'İlk N kaydı döner. Keşif için kullanılır. Örn: | take 100',                                   descEn: 'Returns the first N records. Used for exploration. e.g., | take 100' },
+  { kw: 'distinct',    desc: 'Tekil değerleri döner. SQL DISTINCT gibi. Örn: | distinct Category',                          descEn: 'Returns unique values. Like SQL DISTINCT. e.g., | distinct Category' },
+  { kw: 'extend',      desc: 'Hesaplanmış yeni sütun ekler. Örn: | extend Toplam = Adet * Fiyat',                           descEn: 'Adds a new calculated column. e.g., | extend Total = Count * Price' },
+  { kw: 'ago()',       desc: 'Belirli süre öncesi. Örn: ago(1h) = 1 saat önce, ago(7d) = 7 gün önce',                      descEn: 'Refers to a time period ago. e.g., ago(1h) = 1 hour ago, ago(7d) = 7 days ago' },
+  { kw: 'contains',   desc: 'Metin içerme kontrolü (büyük/küçük harf duyarsız). Örn: | where Message contains "hata"',     descEn: 'Case-insensitive text search. e.g., | where Message contains "error"' },
+  { kw: 'count()',     desc: 'Kayıt sayısını hesaplar. Örn: | summarize count() by Durum',                                  descEn: 'Counts records. e.g., | summarize count() by Status' },
 ];
 
 const kqlTemplates = [
   {
-    category: 'Temel Sorgular',
+    category: 'Temel Sorgular', categoryEn: 'Basic Queries',
     templates: [
-      { name: 'Son 1 saatin kayıtları', sql: `TableName\n| where TimeGenerated > ago(1h)\n| order by TimeGenerated desc\n| take 100` },
-      { name: 'Belirli değere göre filtre', sql: `TableName\n| where TimeGenerated > ago(24h)\n| where Durum == "Hata"\n| project TimeGenerated, Mesaj, Durum, Kaynak\n| order by TimeGenerated desc` },
-      { name: 'Metin arama', sql: `TableName\n| where TimeGenerated > ago(7d)\n| where Mesaj contains "anahtar_kelime"\n| order by TimeGenerated desc` },
+      { name: 'Son 1 saatin kayıtları',    nameEn: 'Last 1 hour records',       sql: `TableName\n| where TimeGenerated > ago(1h)\n| order by TimeGenerated desc\n| take 100` },
+      { name: 'Belirli değere göre filtre',nameEn: 'Filter by specific value',   sql: `TableName\n| where TimeGenerated > ago(24h)\n| where Durum == "Hata"\n| project TimeGenerated, Mesaj, Durum, Kaynak\n| order by TimeGenerated desc` },
+      { name: 'Metin arama',               nameEn: 'Text search',                sql: `TableName\n| where TimeGenerated > ago(7d)\n| where Mesaj contains "anahtar_kelime"\n| order by TimeGenerated desc` },
     ]
   },
   {
-    category: 'Sayma & Gruplama',
+    category: 'Sayma & Gruplama', categoryEn: 'Count & Group',
     templates: [
-      { name: 'Alana göre kayıt sayısı', sql: `TableName\n| where TimeGenerated > ago(7d)\n| summarize Adet=count() by Kategori\n| order by Adet desc` },
-      { name: 'Tekil değer sayısı', sql: `TableName\n| where TimeGenerated > ago(30d)\n| summarize TekliKullanici=dcount(KullaniciId) by Departman\n| order by TekliKullanici desc` },
-      { name: 'Top N', sql: `TableName\n| where TimeGenerated > ago(7d)\n| summarize Adet=count() by Kategori\n| top 10 by Adet desc` },
+      { name: 'Alana göre kayıt sayısı', nameEn: 'Count records by field',    sql: `TableName\n| where TimeGenerated > ago(7d)\n| summarize Adet=count() by Kategori\n| order by Adet desc` },
+      { name: 'Tekil değer sayısı',      nameEn: 'Unique value count',         sql: `TableName\n| where TimeGenerated > ago(30d)\n| summarize TekliKullanici=dcount(KullaniciId) by Departman\n| order by TekliKullanici desc` },
+      { name: 'Top N',                   nameEn: 'Top N',                      sql: `TableName\n| where TimeGenerated > ago(7d)\n| summarize Adet=count() by Kategori\n| top 10 by Adet desc` },
     ]
   },
   {
-    category: 'Zaman Bazlı Analiz',
+    category: 'Zaman Bazlı Analiz', categoryEn: 'Time-Based Analysis',
     templates: [
-      { name: 'Günlük kayıt özeti', sql: `TableName\n| where TimeGenerated > ago(30d)\n| summarize Adet=count() by bin(TimeGenerated, 1d)\n| order by TimeGenerated asc` },
-      { name: 'Saatlik trend (grafik)', sql: `TableName\n| where TimeGenerated > ago(7d)\n| summarize Adet=count() by bin(TimeGenerated, 1h)\n| render timechart` },
-      { name: 'Belirli tarih aralığı', sql: `TableName\n| where TimeGenerated between (datetime(2024-01-01) .. datetime(2024-03-31))\n| summarize Adet=count() by Kategori\n| order by Adet desc` },
+      { name: 'Günlük kayıt özeti',  nameEn: 'Daily record summary',  sql: `TableName\n| where TimeGenerated > ago(30d)\n| summarize Adet=count() by bin(TimeGenerated, 1d)\n| order by TimeGenerated asc` },
+      { name: 'Saatlik trend (grafik)', nameEn: 'Hourly trend (chart)',sql: `TableName\n| where TimeGenerated > ago(7d)\n| summarize Adet=count() by bin(TimeGenerated, 1h)\n| render timechart` },
+      { name: 'Belirli tarih aralığı', nameEn: 'Specific date range', sql: `TableName\n| where TimeGenerated between (datetime(2024-01-01) .. datetime(2024-03-31))\n| summarize Adet=count() by Kategori\n| order by Adet desc` },
     ]
   },
   {
-    category: 'Veri Keşfi',
+    category: 'Veri Keşfi', categoryEn: 'Data Exploration',
     templates: [
-      { name: 'Tekil değerleri listele', sql: `TableName\n| where TimeGenerated > ago(7d)\n| distinct Kategori, AltKategori\n| order by Kategori asc` },
-      { name: 'Boş / NULL kayıtlar', sql: `TableName\n| where TimeGenerated > ago(30d)\n| where isempty(Deger) or isnull(Deger)\n| project TimeGenerated, Id, Deger` },
-      { name: 'Örnek veri önizleme', sql: `TableName\n| take 20` },
+      { name: 'Tekil değerleri listele', nameEn: 'List unique values',   sql: `TableName\n| where TimeGenerated > ago(7d)\n| distinct Kategori, AltKategori\n| order by Kategori asc` },
+      { name: 'Boş / NULL kayıtlar',    nameEn: 'Empty / NULL records',  sql: `TableName\n| where TimeGenerated > ago(30d)\n| where isempty(Deger) or isnull(Deger)\n| project TimeGenerated, Id, Deger` },
+      { name: 'Örnek veri önizleme',    nameEn: 'Sample data preview',   sql: `TableName\n| take 20` },
     ]
   },
 ];
@@ -1327,7 +1334,7 @@ function buildKqlCheatsheet() {
     const section = document.createElement('div');
     section.style.marginBottom = '28px';
     const h4 = document.createElement('h4');
-    h4.textContent = cat.category;
+    h4.textContent = (currentLang === 'en' && cat.categoryEn) ? cat.categoryEn : cat.category;
     h4.style.cssText = 'font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border);';
     section.appendChild(h4);
     const grid = document.createElement('div');
@@ -1338,7 +1345,7 @@ function buildKqlCheatsheet() {
       card.className = 'sql-template-card';
       const name = document.createElement('div');
       name.className = 'sql-template-name';
-      name.textContent = tmpl.name;
+      name.textContent = (currentLang === 'en' && tmpl.nameEn) ? tmpl.nameEn : tmpl.name;
       const pre = document.createElement('pre');
       pre.className = 'sql-template-preview';
       pre.textContent = tmpl.sql;
@@ -1514,62 +1521,62 @@ function clearPanel(panelId) {
 // ===== Tool: SQL Cheatsheet =====
 
 const sqlKeywords = [
-  { kw: 'SELECT', desc: 'Hangi sütunları getireceğini belirtir. SELECT * tüm sütunları, SELECT a,b sadece a ve b sütunlarını döner.' },
-  { kw: 'FROM', desc: 'Verinin hangi tablodan okunacağını belirtir. Birden fazla tablo için JOIN kullanılır.' },
-  { kw: 'WHERE', desc: 'Satırları filtreler. Koşul sağlamayan satırlar sonuca dahil edilmez. Agregasyon sonrası filtre için HAVING kullanılır.' },
-  { kw: 'DISTINCT', desc: 'Tekrar eden satırları kaldırır. SELECT DISTINCT şehir: her şehri yalnızca bir kez döner.' },
-  { kw: 'JOIN', desc: 'İki tabloyu birleştirir. INNER: her iki tarafta eşleşen satırlar. LEFT: sol tablo tam + sağ taraf NULL olabilir. RIGHT: sağ tablo tam.' },
-  { kw: 'GROUP BY', desc: 'Satırları belirtilen sütuna göre gruplar. COUNT/SUM/AVG gibi agregasyon fonksiyonlarıyla kullanılır.' },
-  { kw: 'HAVING', desc: 'GROUP BY sonrası gruplara filtre uygular. WHERE satırlara filtre uygularken HAVING gruplara uygular.' },
-  { kw: 'ORDER BY', desc: 'Sonuçları sıralar. ASC artan (varsayılan), DESC azalan. Birden fazla sütunla kullanılabilir.' },
-  { kw: 'LIKE', desc: 'Metin arama deseni. % sıfır veya daha fazla karakter, _ tam olarak bir karakter. Örn: LIKE \'%ahmet%\'' },
-  { kw: 'COALESCE', desc: 'İlk NULL olmayan değeri döner. COALESCE(a, b, c): a NULL ise b\'ye, o da NULL ise c\'ye bakar. NULL alanları varsayılan değerle doldurmak için kullanılır.' },
-  { kw: 'IN', desc: 'Değerin bir liste içinde olup olmadığını kontrol eder. WHERE şehir IN (\'İstanbul\', \'Ankara\') — OR zincirine alternatif.' },
-  { kw: 'BETWEEN', desc: 'Değerin bir aralıkta olup olmadığını kontrol eder (sınırlar dahil). Örn: WHERE fiyat BETWEEN 100 AND 500' },
-  { kw: 'IS NULL', desc: 'Değerin NULL (boş) olup olmadığını kontrol eder. = NULL kullanılmaz; IS NULL ya da IS NOT NULL kullanılır.' },
-  { kw: 'CASE WHEN', desc: 'Koşullu ifade (if-else). CASE WHEN koşul THEN değer ELSE varsayılan END. SELECT içinde hesaplanmış sütun yaratmak için kullanılır.' },
-  { kw: 'EXISTS', desc: 'Alt sorgunun en az bir satır döndürüp döndürmediğini kontrol eder. IN\'e göre büyük veri setlerinde daha performanslı olabilir.' },
+  { kw: 'SELECT',    desc: 'Hangi sütunları getireceğini belirtir. SELECT * tüm sütunları, SELECT a,b sadece a ve b sütunlarını döner.',                                  descEn: 'Specifies which columns to retrieve. SELECT * returns all columns, SELECT a,b returns only a and b.' },
+  { kw: 'FROM',      desc: 'Verinin hangi tablodan okunacağını belirtir. Birden fazla tablo için JOIN kullanılır.',                                                        descEn: 'Specifies which table to read from. Use JOIN for multiple tables.' },
+  { kw: 'WHERE',     desc: 'Satırları filtreler. Koşul sağlamayan satırlar sonuca dahil edilmez. Agregasyon sonrası filtre için HAVING kullanılır.',                       descEn: 'Filters rows. Rows not matching the condition are excluded. Use HAVING for post-aggregation filtering.' },
+  { kw: 'DISTINCT',  desc: 'Tekrar eden satırları kaldırır. SELECT DISTINCT şehir: her şehri yalnızca bir kez döner.',                                                    descEn: 'Removes duplicate rows. SELECT DISTINCT city returns each city only once.' },
+  { kw: 'JOIN',      desc: 'İki tabloyu birleştirir. INNER: her iki tarafta eşleşen satırlar. LEFT: sol tablo tam + sağ taraf NULL olabilir. RIGHT: sağ tablo tam.',      descEn: 'Combines two tables. INNER: matching rows on both sides. LEFT: full left table + right side can be NULL. RIGHT: full right table.' },
+  { kw: 'GROUP BY',  desc: 'Satırları belirtilen sütuna göre gruplar. COUNT/SUM/AVG gibi agregasyon fonksiyonlarıyla kullanılır.',                                        descEn: 'Groups rows by the specified column. Used with aggregation functions like COUNT/SUM/AVG.' },
+  { kw: 'HAVING',    desc: 'GROUP BY sonrası gruplara filtre uygular. WHERE satırlara filtre uygularken HAVING gruplara uygular.',                                        descEn: 'Applies filter to groups after GROUP BY. WHERE filters rows, HAVING filters groups.' },
+  { kw: 'ORDER BY',  desc: 'Sonuçları sıralar. ASC artan (varsayılan), DESC azalan. Birden fazla sütunla kullanılabilir.',                                               descEn: 'Sorts results. ASC ascending (default), DESC descending. Can use multiple columns.' },
+  { kw: 'LIKE',      desc: 'Metin arama deseni. % sıfır veya daha fazla karakter, _ tam olarak bir karakter. Örn: LIKE \'%ahmet%\'',                                     descEn: 'Text search pattern. % matches zero or more characters, _ exactly one. e.g., LIKE \'%john%\'' },
+  { kw: 'COALESCE',  desc: 'İlk NULL olmayan değeri döner. COALESCE(a, b, c): a NULL ise b\'ye, o da NULL ise c\'ye bakar. NULL alanları varsayılan değerle doldurmak için kullanılır.', descEn: 'Returns the first non-NULL value. COALESCE(a, b, c): if a is NULL tries b, then c. Used to fill NULL fields with defaults.' },
+  { kw: 'IN',        desc: 'Değerin bir liste içinde olup olmadığını kontrol eder. WHERE şehir IN (\'İstanbul\', \'Ankara\') — OR zincirine alternatif.',                 descEn: 'Checks if a value is in a list. WHERE city IN (\'London\', \'Paris\') — alternative to OR chain.' },
+  { kw: 'BETWEEN',   desc: 'Değerin bir aralıkta olup olmadığını kontrol eder (sınırlar dahil). Örn: WHERE fiyat BETWEEN 100 AND 500',                                    descEn: 'Checks if a value is within a range (inclusive). e.g., WHERE price BETWEEN 100 AND 500' },
+  { kw: 'IS NULL',   desc: 'Değerin NULL (boş) olup olmadığını kontrol eder. = NULL kullanılmaz; IS NULL ya da IS NOT NULL kullanılır.',                                  descEn: 'Checks if a value is NULL (empty). Don\'t use = NULL; use IS NULL or IS NOT NULL.' },
+  { kw: 'CASE WHEN', desc: 'Koşullu ifade (if-else). CASE WHEN koşul THEN değer ELSE varsayılan END. SELECT içinde hesaplanmış sütun yaratmak için kullanılır.',         descEn: 'Conditional expression (if-else). CASE WHEN condition THEN value ELSE default END. Creates calculated columns in SELECT.' },
+  { kw: 'EXISTS',    desc: 'Alt sorgunun en az bir satır döndürüp döndürmediğini kontrol eder. IN\'e göre büyük veri setlerinde daha performanslı olabilir.',             descEn: 'Checks if a subquery returns at least one row. Can be more efficient than IN for large datasets.' },
 ];
 
 const sqlTemplates = [
   {
-    category: 'Temel Sorgular',
+    category: 'Temel Sorgular', categoryEn: 'Basic Queries',
     templates: [
-      { name: 'SELECT *', sql: `SELECT *\nFROM tablo_adi\nWHERE koşul = 'değer'\nORDER BY sütun ASC\nLIMIT 100;` },
-      { name: 'SELECT belirli sütunlar', sql: `SELECT\n    id,\n    ad,\n    email,\n    olusturma_tarihi\nFROM kullanicilar\nWHERE aktif = 1\nORDER BY ad ASC;` },
-      { name: 'INSERT INTO', sql: `INSERT INTO tablo_adi (sütun1, sütun2, sütun3)\nVALUES ('değer1', 'değer2', 'değer3');` },
-      { name: 'UPDATE', sql: `UPDATE tablo_adi\nSET\n    sütun1 = 'yeni_değer1',\n    sütun2 = 'yeni_değer2'\nWHERE id = 1;` },
-      { name: 'DELETE', sql: `DELETE FROM tablo_adi\nWHERE id = 1;` },
+      { name: 'SELECT *',                 nameEn: 'SELECT *',                  sql: `SELECT *\nFROM tablo_adi\nWHERE koşul = 'değer'\nORDER BY sütun ASC\nLIMIT 100;` },
+      { name: 'SELECT belirli sütunlar',  nameEn: 'SELECT specific columns',   sql: `SELECT\n    id,\n    ad,\n    email,\n    olusturma_tarihi\nFROM kullanicilar\nWHERE aktif = 1\nORDER BY ad ASC;` },
+      { name: 'INSERT INTO',              nameEn: 'INSERT INTO',               sql: `INSERT INTO tablo_adi (sütun1, sütun2, sütun3)\nVALUES ('değer1', 'değer2', 'değer3');` },
+      { name: 'UPDATE',                   nameEn: 'UPDATE',                    sql: `UPDATE tablo_adi\nSET\n    sütun1 = 'yeni_değer1',\n    sütun2 = 'yeni_değer2'\nWHERE id = 1;` },
+      { name: 'DELETE',                   nameEn: 'DELETE',                    sql: `DELETE FROM tablo_adi\nWHERE id = 1;` },
     ]
   },
   {
-    category: 'JOIN Sorguları',
+    category: 'JOIN Sorguları', categoryEn: 'JOIN Queries',
     templates: [
-      { name: 'INNER JOIN', sql: `SELECT\n    a.id,\n    a.ad,\n    b.sütun\nFROM tablo_a a\nINNER JOIN tablo_b b ON a.b_id = b.id\nWHERE a.aktif = 1;` },
-      { name: 'LEFT JOIN', sql: `SELECT\n    a.id,\n    a.ad,\n    b.sütun\nFROM tablo_a a\nLEFT JOIN tablo_b b ON a.b_id = b.id;` },
-      { name: 'Çoklu JOIN', sql: `SELECT\n    s.id AS siparis_id,\n    k.ad AS musteri,\n    u.ad AS urun,\n    sd.adet,\n    sd.birim_fiyat\nFROM siparisler s\nINNER JOIN musteriler k ON s.musteri_id = k.id\nINNER JOIN siparis_detay sd ON s.id = sd.siparis_id\nINNER JOIN urunler u ON sd.urun_id = u.id\nWHERE s.tarih >= '2024-01-01'\nORDER BY s.tarih DESC;` },
+      { name: 'INNER JOIN',  nameEn: 'INNER JOIN',    sql: `SELECT\n    a.id,\n    a.ad,\n    b.sütun\nFROM tablo_a a\nINNER JOIN tablo_b b ON a.b_id = b.id\nWHERE a.aktif = 1;` },
+      { name: 'LEFT JOIN',   nameEn: 'LEFT JOIN',     sql: `SELECT\n    a.id,\n    a.ad,\n    b.sütun\nFROM tablo_a a\nLEFT JOIN tablo_b b ON a.b_id = b.id;` },
+      { name: 'Çoklu JOIN',  nameEn: 'Multiple JOINs',sql: `SELECT\n    s.id AS siparis_id,\n    k.ad AS musteri,\n    u.ad AS urun,\n    sd.adet,\n    sd.birim_fiyat\nFROM siparisler s\nINNER JOIN musteriler k ON s.musteri_id = k.id\nINNER JOIN siparis_detay sd ON s.id = sd.siparis_id\nINNER JOIN urunler u ON sd.urun_id = u.id\nWHERE s.tarih >= '2024-01-01'\nORDER BY s.tarih DESC;` },
     ]
   },
   {
-    category: 'Agregasyon & Gruplama',
+    category: 'Agregasyon & Gruplama', categoryEn: 'Aggregation & Grouping',
     templates: [
-      { name: 'GROUP BY + COUNT/SUM', sql: `SELECT\n    kategori,\n    COUNT(*) AS adet,\n    SUM(tutar) AS toplam,\n    AVG(tutar) AS ortalama\nFROM siparisler\nWHERE tarih >= '2024-01-01'\nGROUP BY kategori\nHAVING COUNT(*) > 5\nORDER BY toplam DESC;` },
-      { name: 'DISTINCT COUNT', sql: `SELECT\n    COUNT(*) AS toplam_siparis,\n    COUNT(DISTINCT musteri_id) AS tekil_musteri\nFROM siparisler\nWHERE YEAR(tarih) = 2024;` },
+      { name: 'GROUP BY + COUNT/SUM', nameEn: 'GROUP BY + COUNT/SUM', sql: `SELECT\n    kategori,\n    COUNT(*) AS adet,\n    SUM(tutar) AS toplam,\n    AVG(tutar) AS ortalama\nFROM siparisler\nWHERE tarih >= '2024-01-01'\nGROUP BY kategori\nHAVING COUNT(*) > 5\nORDER BY toplam DESC;` },
+      { name: 'DISTINCT COUNT',       nameEn: 'DISTINCT COUNT',       sql: `SELECT\n    COUNT(*) AS toplam_siparis,\n    COUNT(DISTINCT musteri_id) AS tekil_musteri\nFROM siparisler\nWHERE YEAR(tarih) = 2024;` },
     ]
   },
   {
-    category: 'Alt Sorgular & CTE',
+    category: 'Alt Sorgular & CTE', categoryEn: 'Subqueries & CTE',
     templates: [
-      { name: 'WHERE IN (alt sorgu)', sql: `SELECT *\nFROM urunler\nWHERE id IN (\n    SELECT urun_id\n    FROM siparis_detay\n    WHERE durum = 'tamamlandi'\n);` },
-      { name: 'EXISTS', sql: `SELECT *\nFROM musteriler k\nWHERE EXISTS (\n    SELECT 1\n    FROM siparisler s\n    WHERE s.musteri_id = k.id\n      AND s.tarih >= '2024-01-01'\n);` },
-      { name: 'CTE (WITH)', sql: `WITH aylik_ozet AS (\n    SELECT\n        DATE_TRUNC('month', tarih) AS ay,\n        SUM(tutar) AS toplam\n    FROM siparisler\n    GROUP BY DATE_TRUNC('month', tarih)\n)\nSELECT ay, toplam,\n    LAG(toplam) OVER (ORDER BY ay) AS onceki_ay\nFROM aylik_ozet\nORDER BY ay;` },
+      { name: 'WHERE IN (alt sorgu)', nameEn: 'WHERE IN (subquery)', sql: `SELECT *\nFROM urunler\nWHERE id IN (\n    SELECT urun_id\n    FROM siparis_detay\n    WHERE durum = 'tamamlandi'\n);` },
+      { name: 'EXISTS',               nameEn: 'EXISTS',              sql: `SELECT *\nFROM musteriler k\nWHERE EXISTS (\n    SELECT 1\n    FROM siparisler s\n    WHERE s.musteri_id = k.id\n      AND s.tarih >= '2024-01-01'\n);` },
+      { name: 'CTE (WITH)',           nameEn: 'CTE (WITH)',          sql: `WITH aylik_ozet AS (\n    SELECT\n        DATE_TRUNC('month', tarih) AS ay,\n        SUM(tutar) AS toplam\n    FROM siparisler\n    GROUP BY DATE_TRUNC('month', tarih)\n)\nSELECT ay, toplam,\n    LAG(toplam) OVER (ORDER BY ay) AS onceki_ay\nFROM aylik_ozet\nORDER BY ay;` },
     ]
   },
   {
-    category: 'Analitik & Pencere Fonksiyonları',
+    category: 'Analitik & Pencere Fonksiyonları', categoryEn: 'Analytics & Window Functions',
     templates: [
-      { name: 'ROW_NUMBER / RANK', sql: `SELECT\n    id, ad, satis, departman,\n    ROW_NUMBER() OVER (PARTITION BY departman ORDER BY satis DESC) AS sira,\n    RANK()       OVER (PARTITION BY departman ORDER BY satis DESC) AS rank\nFROM calisanlar;` },
-      { name: 'LAG / LEAD', sql: `SELECT\n    tarih,\n    tutar,\n    LAG(tutar, 1)  OVER (ORDER BY tarih) AS onceki_gun,\n    LEAD(tutar, 1) OVER (ORDER BY tarih) AS sonraki_gun\nFROM gunluk_satis\nORDER BY tarih;` },
+      { name: 'ROW_NUMBER / RANK', nameEn: 'ROW_NUMBER / RANK', sql: `SELECT\n    id, ad, satis, departman,\n    ROW_NUMBER() OVER (PARTITION BY departman ORDER BY satis DESC) AS sira,\n    RANK()       OVER (PARTITION BY departman ORDER BY satis DESC) AS rank\nFROM calisanlar;` },
+      { name: 'LAG / LEAD',        nameEn: 'LAG / LEAD',        sql: `SELECT\n    tarih,\n    tutar,\n    LAG(tutar, 1)  OVER (ORDER BY tarih) AS onceki_gun,\n    LEAD(tutar, 1) OVER (ORDER BY tarih) AS sonraki_gun\nFROM gunluk_satis\nORDER BY tarih;` },
     ]
   },
 ];
@@ -1591,7 +1598,7 @@ function buildKeywordCards(keywords, container) {
     kw.textContent = item.kw;
     const desc = document.createElement('div');
     desc.className = 'kw-desc';
-    desc.textContent = item.desc;
+    desc.textContent = (currentLang === 'en' && item.descEn) ? item.descEn : item.desc;
     card.appendChild(kw);
     card.appendChild(desc);
     grid.appendChild(card);
@@ -1612,7 +1619,7 @@ function buildSqlCheatsheet() {
     section.style.marginBottom = '28px';
 
     const h4 = document.createElement('h4');
-    h4.textContent = cat.category;
+    h4.textContent = (currentLang === 'en' && cat.categoryEn) ? cat.categoryEn : cat.category;
     h4.style.cssText = 'font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border);';
     section.appendChild(h4);
 
@@ -1625,7 +1632,7 @@ function buildSqlCheatsheet() {
 
       const name = document.createElement('div');
       name.className = 'sql-template-name';
-      name.textContent = tmpl.name;
+      name.textContent = (currentLang === 'en' && tmpl.nameEn) ? tmpl.nameEn : tmpl.name;
 
       const pre = document.createElement('pre');
       pre.className = 'sql-template-preview';
