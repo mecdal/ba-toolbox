@@ -149,8 +149,15 @@
               <input type="number" id="ci-rate" placeholder="45" step="0.01" min="0">
             </div>
             <div>
-              <label>Süre (Yıl)</label>
-              <input type="number" id="ci-time" placeholder="5" min="0">
+              <label>Vade</label>
+              <div style="display:flex; gap:6px; margin-bottom:12px;">
+                <input type="number" id="ci-time" placeholder="5" style="flex:2; margin:0;">
+                <select id="ci-unit" style="flex:1;">
+                  <option value="year" selected>Yıl</option>
+                  <option value="month">Ay</option>
+                  <option value="day">Gün</option>
+                </select>
+              </div>
             </div>
           </div>
           <div>
@@ -257,6 +264,36 @@
         </div><!-- /tab-savings -->
       </div><!-- /tool-card -->
     </div><!-- /panel-interest-calc -->
+
+    <!-- ===== LOAN CALCULATOR ===== -->
+    <div id="panel-loan-calc" class="tool-panel">
+      <div class="tool-card">
+        <h3>Kredi Hesaplama <span style="font-size:11px;font-weight:400;color:var(--text-muted);">— Aylık taksit ve amortisman tablosu</span></h3>
+        <div class="error-box" id="loan-error"></div>
+        <div class="grid-3">
+          <div>
+            <label>Kredi Tutarı (₺)</label>
+            <input type="number" id="loan-principal" placeholder="100000" min="0">
+          </div>
+          <div>
+            <label>Yıllık Faiz (%)</label>
+            <input type="number" id="loan-rate" placeholder="40" step="0.01" min="0">
+          </div>
+          <div>
+            <label>Vade (Ay)</label>
+            <input type="number" id="loan-months" placeholder="24" min="1" max="360">
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="calcLoanPayment()" style="margin-bottom:16px;">Hesapla</button>
+        <div id="loan-result-card" class="interest-result-card" style="display:none;"></div>
+        <div class="table-wrapper" id="loan-table-wrap" style="margin-top:12px; display:none;">
+          <table>
+            <thead><tr><th>Ay</th><th>Taksit</th><th>Anapara Payı</th><th>Faiz Payı</th><th>Kalan Borç</th></tr></thead>
+            <tbody id="loan-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
     <!-- ===== TIMESTAMP ===== -->
     <div id="panel-timestamp" class="tool-panel">

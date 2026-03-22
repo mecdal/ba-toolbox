@@ -78,6 +78,7 @@ const tools = [
   { id: 'lorem-ipsum',       label: 'Lorem Ipsum',           icon: '📄',  group: 'Metin' },
   // Hesaplama
   { id: 'interest-calc',     label: 'Faiz Hesaplama',        icon: '💰',  group: 'Hesaplama' },
+  { id: 'loan-calc',         label: 'Kredi Hesaplama',       icon: '🏦',  group: 'Hesaplama' },
   { id: 'color-picker',      label: 'Renk Dönüştürücü',      icon: '🎨',  group: 'Hesaplama' },
 ];
 
@@ -159,10 +160,11 @@ function initSearch() {
 function initTabs(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
+  const scope = container.parentElement;
   container.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      container.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      scope.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
       btn.classList.add('active');
       const target = document.getElementById(btn.dataset.tab);
       if (target) target.classList.add('active');
@@ -339,6 +341,7 @@ function calcCompoundInterest() {
   const P = parseFloat(document.getElementById('ci-principal').value);
   const R = parseFloat(document.getElementById('ci-rate').value);
   const T = parseFloat(document.getElementById('ci-time').value);
+  const unit = document.getElementById('ci-unit').value;
   const n = parseInt(document.getElementById('ci-freq').value);
 
   if (isNaN(P) || isNaN(R) || isNaN(T) || P <= 0 || T <= 0) {
@@ -346,21 +349,24 @@ function calcCompoundInterest() {
     return;
   }
 
-  const A = P * Math.pow(1 + (R / 100) / n, n * T);
+  const tYears = unit === 'day' ? T / 365 : unit === 'month' ? T / 12 : T;
+  const A = P * Math.pow(1 + (R / 100) / n, n * tYears);
   const grossInterest = A - P;
   const ts = getTaxSettings('ci');
   const tax = calcTaxAmount(grossInterest, ts);
 
   renderInterestResult('ci-result-card', { principal: P, grossInterest, breakdown: tax.breakdown, netInterest: tax.netInterest, total: P + tax.netInterest });
 
-  const steps = Math.min(T, 20);
-  const fmt = n => n.toLocaleString('tr-TR', { minimumFractionDigits: 2 });
+  const steps = unit === 'year' ? Math.min(T, 20) : unit === 'month' ? Math.min(T, 24) : Math.min(T, 30);
+  const unitLabel = unit === 'year' ? 'Yıl' : unit === 'month' ? 'Ay' : 'Gün';
+  const fmt = v => v.toLocaleString('tr-TR', { minimumFractionDigits: 2 });
   let rows = '';
   for (let i = 1; i <= steps; i++) {
-    const Ai = P * Math.pow(1 + (R / 100) / n, n * i);
+    const ti = unit === 'day' ? i / 365 : unit === 'month' ? i / 12 : i;
+    const Ai = P * Math.pow(1 + (R / 100) / n, n * ti);
     const gi = Ai - P;
     const t = calcTaxAmount(gi, ts);
-    rows += `<tr><td>${i}. Yıl</td><td>${fmt(P)}</td><td>${fmt(gi)}</td><td style="color:var(--error);">${fmt(t.totalTax)}</td><td>${fmt(t.netInterest)}</td><td><strong>${fmt(P + t.netInterest)}</strong></td></tr>`;
+    rows += `<tr><td>${i}. ${unitLabel}</td><td>${fmt(P)}</td><td>${fmt(gi)}</td><td style="color:var(--error);">${fmt(t.totalTax)}</td><td>${fmt(t.netInterest)}</td><td><strong>${fmt(P + t.netInterest)}</strong></td></tr>`;
   }
   document.getElementById('compound-table').innerHTML = rows;
   document.getElementById('ci-table-wrap').style.display = '';
@@ -728,10 +734,31 @@ function renderJsonGrid() {
   if (!input) return;
   try {
     const data = JSON.parse(input);
+    const toolbar = document.createElement('div');
+    toolbar.className = 'json-grid-toolbar';
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'btn btn-secondary';
+    copyBtn.style.cssText = 'font-size:11px; padding:4px 10px;';
+    copyBtn.textContent = 'Tablo Kopyala (TSV)';
+    copyBtn.addEventListener('click', () => copyJsonGridAsTable(copyBtn));
+    toolbar.appendChild(copyBtn);
+    container.appendChild(toolbar);
     container.appendChild(buildGridNode(data, 0));
   } catch (e) {
     showError('json-grid-error', 'JSON Hatası: ' + e.message);
   }
+}
+
+function copyJsonGridAsTable(btn) {
+  const table = document.querySelector('#json-grid-output table');
+  if (!table) { alert('Kopyalanacak tablo bulunamadı.'); return; }
+  const rows = [...table.querySelectorAll('tr')];
+  const tsv = rows.map(row =>
+    [...row.querySelectorAll('th, td')]
+      .map(cell => cell.textContent.trim().replace(/[\t\n]/g, ' '))
+      .join('\t')
+  ).join('\n');
+  copyToClipboard(tsv, btn);
 }
 
 function buildGridNode(data, depth) {
@@ -811,7 +838,20 @@ function setGridCell(td, val, depth) {
   if (val === undefined || val === null) {
     td.appendChild(createGridSpan('null', 'json-grid-null'));
   } else if (typeof val === 'object') {
-    td.appendChild(depth < 3 ? buildGridNode(val, depth + 1) : createGridSpan(Array.isArray(val) ? '[…]' : '{…}', 'json-grid-nested'));
+    if (depth >= 2) {
+      const isArr = Array.isArray(val);
+      const count = isArr ? val.length : Object.keys(val).length;
+      const details = document.createElement('details');
+      const summary = document.createElement('summary');
+      summary.className = 'json-grid-nested';
+      summary.style.cursor = 'pointer';
+      summary.textContent = isArr ? `[${count} öğe]` : `{${count} alan}`;
+      details.appendChild(summary);
+      details.appendChild(buildGridNode(val, depth + 1));
+      td.appendChild(details);
+    } else {
+      td.appendChild(buildGridNode(val, depth + 1));
+    }
   } else if (typeof val === 'boolean') {
     td.appendChild(createGridSpan(String(val), 'json-grid-bool'));
   } else if (typeof val === 'number') {
@@ -914,6 +954,23 @@ function formatKQL() {
 
 // ===== Tool: KQL Cheatsheet =====
 
+const kqlKeywords = [
+  { kw: 'where', desc: 'Satırları filtreler. SQL WHERE gibi. Örn: | where Level == "Error"' },
+  { kw: 'project', desc: 'Sütun seçer veya yeniden adlandırır. SQL SELECT gibi. Örn: | project TimeGenerated, Message' },
+  { kw: 'summarize', desc: 'Gruplama ve agregasyon yapar. SQL GROUP BY + COUNT/SUM/AVG gibi. Örn: | summarize count() by Category' },
+  { kw: 'extend', desc: 'Yeni hesaplanmış sütun ekler, mevcut sütunları korur. Örn: | extend FullName = strcat(Ad, " ", Soyad)' },
+  { kw: 'order by', desc: 'Sonuçları sıralar. asc veya desc belirtilebilir. Örn: | order by TimeGenerated desc' },
+  { kw: 'take / limit', desc: 'İlk N kayıtı döner. Büyük tablolarda keşif için kullanılır. Örn: | take 100' },
+  { kw: 'distinct', desc: 'Tekil değerleri döner. Örn: | distinct Category, Level' },
+  { kw: 'join', desc: 'İki tabloyu birleştirir. kind=inner, kind=leftouter, kind=anti gibi türleri vardır.' },
+  { kw: 'bin()', desc: 'Zaman veya sayısal değerleri gruplara böler. Zaman serisi sorgularında kullanılır. Örn: bin(TimeGenerated, 5m)' },
+  { kw: 'ago()', desc: 'Belirli süre öncesini ifade eder. Örn: ago(1h), ago(7d), ago(30m)' },
+  { kw: 'render', desc: 'Sorgu sonucunu görsel olarak sunar. timechart, barchart, piechart gibi seçenekler var.' },
+  { kw: 'let', desc: 'Değişken veya alt sorgu tanımlar. Okunabilirlik için kullanılır. Örn: let threshold = 1000;' },
+  { kw: 'parse', desc: 'Serbest metin alanlarından değer çıkartır. Örn: | parse Message with * "user=" User " " *' },
+  { kw: 'mv-expand', desc: 'Dizi veya dinamik değerleri birden fazla satıra açar. Etiket/liste alanlarını analiz etmek için kullanılır.' },
+];
+
 const kqlTemplates = [
   {
     category: 'Temel Sorgular',
@@ -953,7 +1010,6 @@ const kqlTemplates = [
     templates: [
       { name: 'Exception tracking', sql: `exceptions\n| where timestamp > ago(24h)\n| summarize Count=count() by type, outerMessage\n| order by Count desc\n| take 20` },
       { name: 'Yavaş istekler (P95)', sql: `requests\n| where timestamp > ago(1h)\n| summarize P95=percentile(duration, 95), Count=count() by name\n| where P95 > 1000\n| order by P95 desc` },
-      { name: 'Availability sonuçları', sql: `availabilityResults\n| where timestamp > ago(24h)\n| summarize\n    Total=count(),\n    Failed=countif(success == false)\n  by name\n| extend SuccessRate = round(100.0 * (Total - Failed) / Total, 2)` },
       { name: 'Bağımlılık hataları', sql: `dependencies\n| where timestamp > ago(1h)\n    and success == false\n| summarize Count=count() by target, name, type\n| order by Count desc` },
     ]
   },
@@ -962,7 +1018,6 @@ const kqlTemplates = [
     templates: [
       { name: 'Başarısız giriş denemeleri', sql: `SecurityEvent\n| where EventID == 4625\n    and TimeGenerated > ago(1h)\n| summarize Attempts=count() by Account, IpAddress\n| where Attempts > 10\n| order by Attempts desc` },
       { name: 'Yeni servis hesapları', sql: `SecurityEvent\n| where EventID == 4720\n    and TimeGenerated > ago(7d)\n| project TimeGenerated, TargetAccount, SubjectAccount, Computer` },
-      { name: 'Ağ bağlantıları', sql: `NetworkCommunicationEvents\n| where TimeGenerated > ago(1h)\n| summarize Connections=count() by RemoteIP, RemotePort\n| order by Connections desc\n| take 50` },
     ]
   },
   {
@@ -970,8 +1025,7 @@ const kqlTemplates = [
     templates: [
       { name: 'Let değişkeni', sql: `let threshold = 1000;\nlet startTime = ago(24h);\nTableName\n| where TimeGenerated > startTime\n    and Duration > threshold\n| order by Duration desc` },
       { name: 'Join', sql: `TableA\n| join kind=inner (\n    TableB\n    | where Condition == true\n  ) on $left.Id == $right.TableAId\n| project TimeGenerated, FieldA, FieldB` },
-      { name: 'Parse (regex)', sql: `TableName\n| parse Message with * "user=" User " " *\n| summarize count() by User` },
-      { name: 'mv-expand (dizi açma)', sql: `TableName\n| mv-expand Tags\n| summarize count() by tostring(Tags)` },
+      { name: 'Parse (metin ayrıştırma)', sql: `TableName\n| parse Message with * "user=" User " " *\n| summarize count() by User` },
     ]
   },
 ];
@@ -980,6 +1034,8 @@ function buildKqlCheatsheet() {
   const container = document.getElementById('kql-template-grid');
   if (!container) return;
   container.innerHTML = '';
+
+  buildKeywordCards(kqlKeywords, container);
 
   kqlTemplates.forEach(cat => {
     const section = document.createElement('div');
@@ -1081,6 +1137,48 @@ function copyShortUrl() {
   copyToClipboard(document.getElementById('url-short-output').textContent, document.getElementById('url-short-copy-btn'));
 }
 
+// ===== Tool: Loan Calculator =====
+
+function calcLoanPayment() {
+  hideError('loan-error');
+  const P = parseFloat(document.getElementById('loan-principal').value);
+  const annualRate = parseFloat(document.getElementById('loan-rate').value);
+  const months = parseInt(document.getElementById('loan-months').value);
+
+  if (isNaN(P) || isNaN(annualRate) || isNaN(months) || P <= 0 || months <= 0) {
+    showError('loan-error', 'Lütfen tüm alanları doğru doldurun.');
+    return;
+  }
+
+  const r = annualRate / 100 / 12;
+  const monthlyPayment = r === 0 ? P / months
+    : P * (r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1);
+  const totalPayment = monthlyPayment * months;
+  const totalInterest = totalPayment - P;
+  const fmt = n => n.toLocaleString('tr-TR', { minimumFractionDigits: 2 });
+
+  const cardEl = document.getElementById('loan-result-card');
+  let html = '<div class="irc-row irc-header"><span>KREDİ HESAPLAMA SONUCU</span></div>';
+  html += `<div class="irc-row"><span>Kredi Tutarı</span><span class="irc-val">₺ ${fmt(P)}</span></div>`;
+  html += `<div class="irc-row"><span>Aylık Taksit</span><span class="irc-val total">₺ ${fmt(monthlyPayment)}</span></div>`;
+  html += `<div class="irc-row"><span>Toplam Geri Ödeme</span><span class="irc-val">₺ ${fmt(totalPayment)}</span></div>`;
+  html += `<div class="irc-row irc-tax"><span>Toplam Faiz Maliyeti</span><span class="irc-val negative">− ₺ ${fmt(totalInterest)}</span></div>`;
+  html += `<div class="irc-row irc-total"><span>FAİZ YÜK ORANI</span><span class="irc-val total">${((totalInterest / P) * 100).toFixed(1)}%</span></div>`;
+  cardEl.innerHTML = html;
+  cardEl.style.display = 'block';
+
+  let remaining = P;
+  let rows = '';
+  for (let i = 1; i <= months; i++) {
+    const interestPayment = remaining * r;
+    const principalPayment = monthlyPayment - interestPayment;
+    remaining = Math.max(0, remaining - principalPayment);
+    rows += `<tr><td>${i}</td><td>${fmt(monthlyPayment)}</td><td>${fmt(principalPayment)}</td><td style="color:var(--error);">${fmt(interestPayment)}</td><td><strong>${fmt(remaining)}</strong></td></tr>`;
+  }
+  document.getElementById('loan-table').innerHTML = rows;
+  document.getElementById('loan-table-wrap').style.display = '';
+}
+
 // ===== Clear Panel =====
 
 const noClearPanels = new Set(['panel-sql-cheatsheet', 'panel-kql-cheatsheet']);
@@ -1110,20 +1208,38 @@ function clearPanel(panelId) {
   panel.querySelectorAll('.error-box').forEach(el => { el.textContent = ''; el.style.display = 'none'; });
   panel.querySelectorAll('.result-box').forEach(el => { el.innerHTML = ''; });
   panel.querySelectorAll('tbody').forEach(el => { el.innerHTML = ''; });
-  ['json-grid-output', 'diff-output', 'regex-preview', 'si-result-card', 'ci-result-card', 'sa-result-card', 'editor-stats', 'regex-count', 'diff-stats', 'file-b64-info', 'json-status', 'url-short-result'].forEach(id => {
+  ['json-grid-output', 'diff-output', 'regex-preview', 'si-result-card', 'ci-result-card', 'sa-result-card', 'loan-result-card', 'editor-stats', 'regex-count', 'diff-stats', 'file-b64-info', 'json-status', 'url-short-result'].forEach(id => {
     const el = panel.querySelector('#' + id);
     if (!el) return;
     if (id === 'url-short-result') { el.style.display = 'none'; }
     else if (id.endsWith('-card')) { el.innerHTML = ''; el.style.display = 'none'; }
     else { el.innerHTML = ''; el.textContent = ''; }
   });
-  ['si-table-wrap', 'ci-table-wrap', 'sa-table-wrap'].forEach(id => {
+  ['si-table-wrap', 'ci-table-wrap', 'sa-table-wrap', 'loan-table-wrap'].forEach(id => {
     const el = panel.querySelector('#' + id);
     if (el) el.style.display = 'none';
   });
 }
 
 // ===== Tool: SQL Cheatsheet =====
+
+const sqlKeywords = [
+  { kw: 'SELECT', desc: 'Hangi sütunları getireceğini belirtir. SELECT * tüm sütunları, SELECT a,b sadece a ve b sütunlarını döner.' },
+  { kw: 'FROM', desc: 'Verinin hangi tablodan okunacağını belirtir. Birden fazla tablo için JOIN kullanılır.' },
+  { kw: 'WHERE', desc: 'Satırları filtreler. Koşul sağlamayan satırlar sonuca dahil edilmez. Agregasyon sonrası filtre için HAVING kullanılır.' },
+  { kw: 'DISTINCT', desc: 'Tekrar eden satırları kaldırır. SELECT DISTINCT şehir: her şehri yalnızca bir kez döner.' },
+  { kw: 'JOIN', desc: 'İki tabloyu birleştirir. INNER: her iki tarafta eşleşen satırlar. LEFT: sol tablo tam + sağ taraf NULL olabilir. RIGHT: sağ tablo tam.' },
+  { kw: 'GROUP BY', desc: 'Satırları belirtilen sütuna göre gruplar. COUNT/SUM/AVG gibi agregasyon fonksiyonlarıyla kullanılır.' },
+  { kw: 'HAVING', desc: 'GROUP BY sonrası gruplara filtre uygular. WHERE satırlara filtre uygularken HAVING gruplara uygular.' },
+  { kw: 'ORDER BY', desc: 'Sonuçları sıralar. ASC artan (varsayılan), DESC azalan. Birden fazla sütunla kullanılabilir.' },
+  { kw: 'LIKE', desc: 'Metin arama deseni. % sıfır veya daha fazla karakter, _ tam olarak bir karakter. Örn: LIKE \'%ahmet%\'' },
+  { kw: 'COLLATE', desc: 'Metin karşılaştırma kuralını belirtir. Büyük/küçük harf ve aksan duyarlılığını kontrol eder. Örn: COLLATE utf8_turkish_ci' },
+  { kw: 'IN', desc: 'Değerin bir liste içinde olup olmadığını kontrol eder. WHERE şehir IN (\'İstanbul\', \'Ankara\') — OR zincirine alternatif.' },
+  { kw: 'BETWEEN', desc: 'Değerin bir aralıkta olup olmadığını kontrol eder (sınırlar dahil). Örn: WHERE fiyat BETWEEN 100 AND 500' },
+  { kw: 'IS NULL', desc: 'Değerin NULL (boş) olup olmadığını kontrol eder. = NULL kullanılmaz; IS NULL ya da IS NOT NULL kullanılır.' },
+  { kw: 'CASE WHEN', desc: 'Koşullu ifade (if-else). CASE WHEN koşul THEN değer ELSE varsayılan END. SELECT içinde hesaplanmış sütun yaratmak için kullanılır.' },
+  { kw: 'EXISTS', desc: 'Alt sorgunun en az bir satır döndürüp döndürmediğini kontrol eder. IN\'e göre büyük veri setlerinde daha performanslı olabilir.' },
+];
 
 const sqlTemplates = [
   {
@@ -1132,7 +1248,6 @@ const sqlTemplates = [
       { name: 'SELECT *', sql: `SELECT *\nFROM tablo_adi\nWHERE koşul = 'değer'\nORDER BY sütun ASC\nLIMIT 100;` },
       { name: 'SELECT belirli sütunlar', sql: `SELECT\n    id,\n    ad,\n    email,\n    olusturma_tarihi\nFROM kullanicilar\nWHERE aktif = 1\nORDER BY ad ASC;` },
       { name: 'INSERT INTO', sql: `INSERT INTO tablo_adi (sütun1, sütun2, sütun3)\nVALUES ('değer1', 'değer2', 'değer3');` },
-      { name: 'INSERT çoklu satır', sql: `INSERT INTO tablo_adi (sütun1, sütun2)\nVALUES\n    ('değer1a', 'değer1b'),\n    ('değer2a', 'değer2b'),\n    ('değer3a', 'değer3b');` },
       { name: 'UPDATE', sql: `UPDATE tablo_adi\nSET\n    sütun1 = 'yeni_değer1',\n    sütun2 = 'yeni_değer2'\nWHERE id = 1;` },
       { name: 'DELETE', sql: `DELETE FROM tablo_adi\nWHERE id = 1;` },
     ]
@@ -1143,7 +1258,6 @@ const sqlTemplates = [
       { name: 'INNER JOIN', sql: `SELECT\n    a.id,\n    a.ad,\n    b.sütun\nFROM tablo_a a\nINNER JOIN tablo_b b ON a.b_id = b.id\nWHERE a.aktif = 1;` },
       { name: 'LEFT JOIN', sql: `SELECT\n    a.id,\n    a.ad,\n    b.sütun\nFROM tablo_a a\nLEFT JOIN tablo_b b ON a.b_id = b.id;` },
       { name: 'Çoklu JOIN', sql: `SELECT\n    s.id AS siparis_id,\n    k.ad AS musteri,\n    u.ad AS urun,\n    sd.adet,\n    sd.birim_fiyat\nFROM siparisler s\nINNER JOIN musteriler k ON s.musteri_id = k.id\nINNER JOIN siparis_detay sd ON s.id = sd.siparis_id\nINNER JOIN urunler u ON sd.urun_id = u.id\nWHERE s.tarih >= '2024-01-01'\nORDER BY s.tarih DESC;` },
-      { name: 'SELF JOIN', sql: `SELECT\n    e.id,\n    e.ad AS calisan,\n    m.ad AS yonetici\nFROM calisanlar e\nLEFT JOIN calisanlar m ON e.yonetici_id = m.id;` },
     ]
   },
   {
@@ -1151,40 +1265,57 @@ const sqlTemplates = [
     templates: [
       { name: 'GROUP BY + COUNT/SUM', sql: `SELECT\n    kategori,\n    COUNT(*) AS adet,\n    SUM(tutar) AS toplam,\n    AVG(tutar) AS ortalama\nFROM siparisler\nWHERE tarih >= '2024-01-01'\nGROUP BY kategori\nHAVING COUNT(*) > 5\nORDER BY toplam DESC;` },
       { name: 'DISTINCT COUNT', sql: `SELECT\n    COUNT(*) AS toplam_siparis,\n    COUNT(DISTINCT musteri_id) AS tekil_musteri\nFROM siparisler\nWHERE YEAR(tarih) = 2024;` },
-      { name: 'ROLLUP', sql: `SELECT\n    departman,\n    pozisyon,\n    COUNT(*) AS calisan_sayisi,\n    AVG(maas) AS ort_maas\nFROM calisanlar\nGROUP BY departman, pozisyon WITH ROLLUP;` },
     ]
   },
   {
     category: 'Alt Sorgular & CTE',
     templates: [
-      { name: 'WHERE IN (alt sorgu)', sql: `SELECT *\nFROM urunler\nWHERE id IN (\n    SELECT urun_id\n    FROM siparis_detay\n    WHERE siparis_id IN (\n        SELECT id\n        FROM siparisler\n        WHERE durum = 'tamamlandi'\n    )\n);` },
+      { name: 'WHERE IN (alt sorgu)', sql: `SELECT *\nFROM urunler\nWHERE id IN (\n    SELECT urun_id\n    FROM siparis_detay\n    WHERE durum = 'tamamlandi'\n);` },
       { name: 'EXISTS', sql: `SELECT *\nFROM musteriler k\nWHERE EXISTS (\n    SELECT 1\n    FROM siparisler s\n    WHERE s.musteri_id = k.id\n      AND s.tarih >= '2024-01-01'\n);` },
-      { name: 'CTE (WITH)', sql: `WITH aylik_ozet AS (\n    SELECT\n        DATE_TRUNC('month', tarih) AS ay,\n        SUM(tutar) AS toplam\n    FROM siparisler\n    GROUP BY DATE_TRUNC('month', tarih)\n)\nSELECT\n    ay,\n    toplam,\n    LAG(toplam) OVER (ORDER BY ay) AS onceki_ay,\n    toplam - LAG(toplam) OVER (ORDER BY ay) AS degisim\nFROM aylik_ozet\nORDER BY ay;` },
+      { name: 'CTE (WITH)', sql: `WITH aylik_ozet AS (\n    SELECT\n        DATE_TRUNC('month', tarih) AS ay,\n        SUM(tutar) AS toplam\n    FROM siparisler\n    GROUP BY DATE_TRUNC('month', tarih)\n)\nSELECT ay, toplam,\n    LAG(toplam) OVER (ORDER BY ay) AS onceki_ay\nFROM aylik_ozet\nORDER BY ay;` },
     ]
   },
   {
     category: 'Analitik & Pencere Fonksiyonları',
     templates: [
-      { name: 'ROW_NUMBER / RANK', sql: `SELECT\n    id, ad, satis, departman,\n    ROW_NUMBER() OVER (PARTITION BY departman ORDER BY satis DESC) AS sira,\n    RANK()       OVER (PARTITION BY departman ORDER BY satis DESC) AS rank,\n    DENSE_RANK() OVER (PARTITION BY departman ORDER BY satis DESC) AS dense_rank\nFROM calisanlar;` },
-      { name: 'Kümülatif toplam', sql: `SELECT\n    tarih,\n    tutar,\n    SUM(tutar) OVER (ORDER BY tarih) AS kumulatif_toplam,\n    AVG(tutar) OVER (ORDER BY tarih ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS haftalik_ort\nFROM gunluk_satis\nORDER BY tarih;` },
-      { name: 'LAG / LEAD', sql: `SELECT\n    tarih,\n    tutar,\n    LAG(tutar, 1)  OVER (ORDER BY tarih) AS onceki_gun,\n    LEAD(tutar, 1) OVER (ORDER BY tarih) AS sonraki_gun,\n    tutar - LAG(tutar, 1) OVER (ORDER BY tarih) AS degisim\nFROM gunluk_satis\nORDER BY tarih;` },
-    ]
-  },
-  {
-    category: 'DDL (Tablo Yapısı)',
-    templates: [
-      { name: 'CREATE TABLE', sql: `CREATE TABLE kullanicilar (\n    id         INT AUTO_INCREMENT PRIMARY KEY,\n    uuid       CHAR(36) NOT NULL UNIQUE,\n    ad         VARCHAR(100) NOT NULL,\n    email      VARCHAR(255) NOT NULL UNIQUE,\n    aktif      TINYINT(1) DEFAULT 1,\n    olusturma  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n    guncelleme TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n);` },
-      { name: 'ALTER TABLE (sütun ekle)', sql: `ALTER TABLE tablo_adi\nADD COLUMN yeni_sutun VARCHAR(255) NULL AFTER mevcut_sutun;` },
-      { name: 'INDEX oluştur', sql: `CREATE INDEX idx_tablo_sutun\n    ON tablo_adi (sutun_adi);\n\nCREATE UNIQUE INDEX idx_kullanici_email\n    ON kullanicilar (email);` },
-      { name: 'FOREIGN KEY', sql: `ALTER TABLE siparis_detay\nADD CONSTRAINT fk_siparis\n    FOREIGN KEY (siparis_id)\n    REFERENCES siparisler (id)\n    ON DELETE CASCADE\n    ON UPDATE CASCADE;` },
+      { name: 'ROW_NUMBER / RANK', sql: `SELECT\n    id, ad, satis, departman,\n    ROW_NUMBER() OVER (PARTITION BY departman ORDER BY satis DESC) AS sira,\n    RANK()       OVER (PARTITION BY departman ORDER BY satis DESC) AS rank\nFROM calisanlar;` },
+      { name: 'LAG / LEAD', sql: `SELECT\n    tarih,\n    tutar,\n    LAG(tutar, 1)  OVER (ORDER BY tarih) AS onceki_gun,\n    LEAD(tutar, 1) OVER (ORDER BY tarih) AS sonraki_gun\nFROM gunluk_satis\nORDER BY tarih;` },
     ]
   },
 ];
+
+function buildKeywordCards(keywords, container) {
+  const section = document.createElement('div');
+  section.style.marginBottom = '28px';
+  const h4 = document.createElement('h4');
+  h4.textContent = 'Anahtar Kelime Rehberi';
+  h4.style.cssText = 'font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border);';
+  section.appendChild(h4);
+  const grid = document.createElement('div');
+  grid.className = 'kw-grid';
+  keywords.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'kw-card';
+    const kw = document.createElement('div');
+    kw.className = 'kw-name';
+    kw.textContent = item.kw;
+    const desc = document.createElement('div');
+    desc.className = 'kw-desc';
+    desc.textContent = item.desc;
+    card.appendChild(kw);
+    card.appendChild(desc);
+    grid.appendChild(card);
+  });
+  section.appendChild(grid);
+  container.appendChild(section);
+}
 
 function buildSqlCheatsheet() {
   const container = document.getElementById('sql-template-grid');
   if (!container) return;
   container.innerHTML = '';
+
+  buildKeywordCards(sqlKeywords, container);
 
   sqlTemplates.forEach(cat => {
     const section = document.createElement('div');
