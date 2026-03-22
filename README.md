@@ -2,7 +2,7 @@
 
 İş analistleri ve geliştiriciler için günlük kullanıma yönelik pratik web araçları koleksiyonu.
 
-🔗 **Canlı Demo:** _(Vercel deploy sonrası eklenecek)_
+🔗 **Canlı Demo:** https://ba-toolbox.vercel.app
 
 ---
 
