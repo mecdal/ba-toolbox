@@ -14,7 +14,7 @@
     <h1>🧰 BA Toolbox</h1>
     <p>İş Analisti Araç Seti by Mecdal</p>
   </div>
-  <input type="text" id="search-box" placeholder="Araç ara...">
+  <input type="text" id="search-box" data-i18n-placeholder="search.placeholder" placeholder="Araç ara...">
   <div id="tool-list"></div>
 </nav>
 
@@ -22,7 +22,10 @@
 <div id="main">
   <div id="topbar">
     <h2 id="topbar-title">Hoş geldiniz</h2>
-    <button id="theme-toggle">🌙 Karanlık Mod</button>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button id="lang-toggle" onclick="toggleLang()">🌐 EN</button>
+      <button id="theme-toggle">🌙 Karanlık Mod</button>
+    </div>
   </div>
 
   <div id="content">
@@ -30,8 +33,8 @@
     <!-- Welcome -->
     <div id="welcome">
       <div class="big-icon">🧰</div>
-      <h2>BA Toolbox'a Hoş Geldiniz</h2>
-      <p>Sol menüden bir araç seçerek başlayın. Tüm araçlar tarayıcınızda çalışır, internet bağlantısı gerekmez.</p>
+      <h2 data-i18n="welcome.title">BA Toolbox'a Hoş Geldiniz</h2>
+      <p data-i18n="welcome.subtitle">Sol menüden bir araç seçerek başlayın. Tüm araçlar tarayıcınızda çalışır, internet bağlantısı gerekmez.</p>
     </div>
 
     <!-- ===== JSON FORMATTER ===== -->
@@ -75,193 +78,53 @@
     <!-- ===== INTEREST CALCULATOR ===== -->
     <div id="panel-interest-calc" class="tool-panel">
       <div class="tool-card">
-        <div class="tab-bar" id="interest-tabs">
-          <button class="tab-btn active" data-tab="tab-simple">Basit Faiz</button>
-          <button class="tab-btn" data-tab="tab-compound">Bileşik Faiz</button>
-          <button class="tab-btn" data-tab="tab-savings">Birikim Hesabı</button>
-        </div>
+        <h3>Basit Faiz Hesaplama</h3>
         <div class="error-box" id="interest-error"></div>
-
-        <!-- Simple Interest -->
-        <div id="tab-simple" class="tab-content active">
-          <div class="grid-3">
-            <div>
-              <label>Ana Para (₺)</label>
-              <input type="number" id="si-principal" placeholder="10000" min="0">
-            </div>
-            <div>
-              <label>Yıllık Faiz (%)</label>
-              <input type="number" id="si-rate" placeholder="45" step="0.01" min="0">
-            </div>
-            <div>
-              <label>Vade</label>
-              <div style="display:flex; gap:6px; margin-bottom:12px;">
-                <input type="number" id="si-time" placeholder="30" style="flex:2; margin:0;">
-                <select id="si-unit" style="flex:1;">
-                  <option value="day">Gün</option>
-                  <option value="month" selected>Ay</option>
-                  <option value="year">Yıl</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="interest-tax-section">
-            <label>Vergi</label>
-            <select id="si-tax" onchange="onTaxChange('si')">
-              <option value="none">Vergisiz</option>
-              <option value="tr">🇹🇷 Türkiye — Stopaj</option>
-              <option value="de">🇩🇪 Almanya — Abgeltungssteuer (KPMG)</option>
-            </select>
-            <div id="si-tax-tr" class="tax-options" style="display:none;">
-              <label>Stopaj Oranı (%)</label>
-              <input type="number" id="si-stopaj" value="15" min="0" max="100" step="0.1">
-            </div>
-            <div id="si-tax-de" class="tax-options" style="display:none;">
-              <div class="tax-checkbox-row">
-                <label class="checkbox-label"><input type="checkbox" id="si-soli" checked> Solidaritätszuschlag (5,5%)</label>
-              </div>
-              <div class="tax-checkbox-row">
-                <label class="checkbox-label"><input type="checkbox" id="si-kist" onchange="onKistChange('si')"> Kirchensteuer</label>
-                <input type="number" id="si-kist-rate" placeholder="9" min="0" max="15" step="0.1" disabled class="kist-rate-input">
-                <span style="font-size:12px; color:var(--text-muted);">%</span>
-              </div>
-            </div>
-          </div>
-          <button class="btn btn-primary" onclick="calcSimpleInterest()" style="margin-bottom:16px;">Hesapla</button>
-          <div id="si-result-card" class="interest-result-card" style="display:none;"></div>
-          <div class="table-wrapper" id="si-table-wrap" style="margin-top:12px; display:none;">
-            <table>
-              <thead><tr><th>Dönem</th><th>Ana Para</th><th>Brüt Faiz</th><th>Vergi</th><th>Net Faiz</th><th>Toplam</th></tr></thead>
-              <tbody id="interest-table"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Compound Interest -->
-        <div id="tab-compound" class="tab-content">
-          <div class="grid-3">
-            <div>
-              <label>Ana Para (₺)</label>
-              <input type="number" id="ci-principal" placeholder="10000" min="0">
-            </div>
-            <div>
-              <label>Yıllık Faiz (%)</label>
-              <input type="number" id="ci-rate" placeholder="45" step="0.01" min="0">
-            </div>
-            <div>
-              <label>Vade</label>
-              <div style="display:flex; gap:6px; margin-bottom:12px;">
-                <input type="number" id="ci-time" placeholder="5" style="flex:2; margin:0;">
-                <select id="ci-unit" style="flex:1;">
-                  <option value="year" selected>Yıl</option>
-                  <option value="month">Ay</option>
-                  <option value="day">Gün</option>
-                </select>
-              </div>
-            </div>
+        <div class="grid-3">
+          <div>
+            <label>Ana Para (₺)</label>
+            <input type="number" id="si-principal" placeholder="10000" min="0">
           </div>
           <div>
-            <label>Bileşim Sıklığı</label>
-            <select id="ci-freq">
-              <option value="1">Yıllık</option>
-              <option value="4">3 Ayda Bir</option>
-              <option value="12" selected>Aylık</option>
-              <option value="365">Günlük</option>
-            </select>
+            <label>Yıllık Faiz (%)</label>
+            <input type="number" id="si-rate" placeholder="45" step="0.01" min="0">
           </div>
-          <div class="interest-tax-section">
-            <label>Vergi</label>
-            <select id="ci-tax" onchange="onTaxChange('ci')">
-              <option value="none">Vergisiz</option>
-              <option value="tr">🇹🇷 Türkiye — Stopaj</option>
-              <option value="de">🇩🇪 Almanya — Abgeltungssteuer (KPMG)</option>
-            </select>
-            <div id="ci-tax-tr" class="tax-options" style="display:none;">
-              <label>Stopaj Oranı (%)</label>
-              <input type="number" id="ci-stopaj" value="15" min="0" max="100" step="0.1">
-            </div>
-            <div id="ci-tax-de" class="tax-options" style="display:none;">
-              <div class="tax-checkbox-row">
-                <label class="checkbox-label"><input type="checkbox" id="ci-soli" checked> Solidaritätszuschlag (5,5%)</label>
-              </div>
-              <div class="tax-checkbox-row">
-                <label class="checkbox-label"><input type="checkbox" id="ci-kist" onchange="onKistChange('ci')"> Kirchensteuer</label>
-                <input type="number" id="ci-kist-rate" placeholder="9" min="0" max="15" step="0.1" disabled class="kist-rate-input">
-                <span style="font-size:12px; color:var(--text-muted);">%</span>
-              </div>
-            </div>
-          </div>
-          <button class="btn btn-primary" onclick="calcCompoundInterest()" style="margin-bottom:16px;">Hesapla</button>
-          <div id="ci-result-card" class="interest-result-card" style="display:none;"></div>
-          <div class="table-wrapper" id="ci-table-wrap" style="margin-top:12px; display:none;">
-            <table>
-              <thead><tr><th>Yıl</th><th>Ana Para</th><th>Brüt Faiz</th><th>Vergi</th><th>Net Faiz</th><th>Toplam</th></tr></thead>
-              <tbody id="compound-table"></tbody>
-            </table>
-          </div>
-        </div><!-- /tab-compound -->
-
-        <!-- Savings Account -->
-        <div id="tab-savings" class="tab-content">
-          <div class="grid-3">
-            <div>
-              <label>Başlangıç Tutarı (₺)</label>
-              <input type="number" id="sa-initial" placeholder="0" value="0" min="0">
-            </div>
-            <div>
-              <label>Aylık Katkı (₺)</label>
-              <input type="number" id="sa-monthly" placeholder="1000" min="0">
-            </div>
-            <div>
-              <label>Yıllık Faiz (%)</label>
-              <input type="number" id="sa-rate" placeholder="45" step="0.01" min="0">
-            </div>
-          </div>
-          <div class="grid-2">
-            <div>
-              <label>Süre (Ay)</label>
-              <input type="number" id="sa-months" placeholder="12" min="0">
-            </div>
-            <div>
-              <label>Faiz Ödenme Sıklığı</label>
-              <select id="sa-freq">
-                <option value="12" selected>Aylık</option>
-                <option value="4">3 Ayda Bir</option>
-                <option value="1">Yıllık</option>
+          <div>
+            <label>Vade</label>
+            <div style="display:flex; gap:6px; margin-bottom:12px;">
+              <input type="number" id="si-time" placeholder="30" style="flex:2; margin:0;">
+              <select id="si-unit" style="flex:1;">
+                <option value="day">Gün</option>
+                <option value="month" selected>Ay</option>
+                <option value="year">Yıl</option>
               </select>
             </div>
           </div>
-          <div class="interest-tax-section">
-            <label>Vergi</label>
-            <select id="sa-tax" onchange="onTaxChange('sa')">
-              <option value="none">Vergisiz</option>
-              <option value="tr">🇹🇷 Türkiye — Stopaj</option>
-              <option value="de">🇩🇪 Almanya — Abgeltungssteuer (KPMG)</option>
-            </select>
-            <div id="sa-tax-tr" class="tax-options" style="display:none;">
-              <label>Stopaj Oranı (%)</label>
-              <input type="number" id="sa-stopaj" value="15" min="0" max="100" step="0.1">
+        </div>
+        <div class="interest-tax-section">
+          <label>Vergi</label>
+          <select id="si-tax" onchange="onTaxChange('si')">
+            <option value="none">Vergisiz</option>
+            <option value="tr">🇹🇷 Türkiye — Stopaj</option>
+            <option value="de">🇩🇪 Almanya — Abgeltungssteuer (KPMG)</option>
+          </select>
+          <div id="si-tax-tr" class="tax-options" style="display:none;">
+            <label>Stopaj Oranı (%)</label>
+            <input type="number" id="si-stopaj" value="15" min="0" max="100" step="0.1">
+          </div>
+          <div id="si-tax-de" class="tax-options" style="display:none;">
+            <div class="tax-checkbox-row">
+              <label class="checkbox-label"><input type="checkbox" id="si-soli" checked> Solidaritätszuschlag (5,5%)</label>
             </div>
-            <div id="sa-tax-de" class="tax-options" style="display:none;">
-              <div class="tax-checkbox-row">
-                <label class="checkbox-label"><input type="checkbox" id="sa-soli" checked> Solidaritätszuschlag (5,5%)</label>
-              </div>
-              <div class="tax-checkbox-row">
-                <label class="checkbox-label"><input type="checkbox" id="sa-kist" onchange="onKistChange('sa')"> Kirchensteuer</label>
-                <input type="number" id="sa-kist-rate" placeholder="9" min="0" max="15" step="0.1" disabled class="kist-rate-input">
-                <span style="font-size:12px; color:var(--text-muted);">%</span>
-              </div>
+            <div class="tax-checkbox-row">
+              <label class="checkbox-label"><input type="checkbox" id="si-kist" onchange="onKistChange('si')"> Kirchensteuer</label>
+              <input type="number" id="si-kist-rate" placeholder="9" min="0" max="15" step="0.1" disabled class="kist-rate-input">
+              <span style="font-size:12px; color:var(--text-muted);">%</span>
             </div>
           </div>
-          <button class="btn btn-primary" onclick="calcSavings()" style="margin-bottom:16px;">Hesapla</button>
-          <div id="sa-result-card" class="interest-result-card" style="display:none;"></div>
-          <div class="table-wrapper" id="sa-table-wrap" style="margin-top:12px; display:none;">
-            <table>
-              <thead><tr><th>Ay</th><th>Aylık Katkı</th><th>Toplam Katkı</th><th>Brüt Faiz</th><th>Vergi</th><th>Net Faiz</th><th>Bakiye</th></tr></thead>
-              <tbody id="savings-table"></tbody>
-            </table>
-          </div>
-        </div><!-- /tab-savings -->
+        </div>
+        <button class="btn btn-primary" onclick="calcSimpleInterest()">Hesapla</button>
+        <div id="si-result-card" class="interest-result-card" style="display:none; margin-top:16px;"></div>
       </div><!-- /tool-card -->
     </div><!-- /panel-interest-calc -->
 
@@ -414,32 +277,6 @@
       </div>
     </div>
 
-    <!-- ===== REGEX TESTER ===== -->
-    <div id="panel-regex-tester" class="tool-panel">
-      <div class="tool-card">
-        <h3>Regex Test</h3>
-        <div class="error-box" id="regex-error"></div>
-        <label>Pattern</label>
-        <input type="text" id="regex-pattern" placeholder="[a-z]+" oninput="runRegex()">
-        <div style="display:flex; gap:16px; margin-bottom:12px;">
-          <label style="display:flex; align-items:center; gap:6px; text-transform:none; font-size:13px;">
-            <input type="checkbox" class="regex-flag" value="g" checked style="width:auto; margin:0;" onchange="runRegex()"> Global (g)
-          </label>
-          <label style="display:flex; align-items:center; gap:6px; text-transform:none; font-size:13px;">
-            <input type="checkbox" class="regex-flag" value="i" style="width:auto; margin:0;" onchange="runRegex()"> Case-insensitive (i)
-          </label>
-          <label style="display:flex; align-items:center; gap:6px; text-transform:none; font-size:13px;">
-            <input type="checkbox" class="regex-flag" value="m" style="width:auto; margin:0;" onchange="runRegex()"> Multiline (m)
-          </label>
-        </div>
-        <label>Test Metni</label>
-        <textarea id="regex-text" placeholder="Test edilecek metin..." oninput="runRegex()"></textarea>
-        <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;" id="regex-count"></div>
-        <label>Eşleşmeler (vurgulu)</label>
-        <div id="regex-preview" style="background:var(--input-bg); border:1px solid var(--border); border-radius:6px; padding:12px; min-height:60px; font-size:13px; line-height:1.6;"></div>
-      </div>
-    </div>
-
     <!-- ===== WORD COUNTER ===== -->
     <div id="panel-word-counter" class="tool-panel">
       <div class="tool-card">
@@ -520,82 +357,6 @@
         <label>Encoded</label>
         <textarea id="url-encoded" placeholder="https%3A%2F%2F..."></textarea>
         <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('url-encoded').value, this)">Encoded'ı Kopyala</button>
-      </div>
-    </div>
-
-    <!-- ===== HASH GENERATOR ===== -->
-    <div id="panel-hash-generator" class="tool-panel">
-      <div class="tool-card">
-        <h3>Hash Üretici</h3>
-        <label>Metin</label>
-        <textarea id="hash-input" placeholder="Hash'lenecek metni yazın..." style="min-height:80px;"></textarea>
-        <button class="btn btn-primary" onclick="generateHash()">Hash Üret</button>
-        <div style="margin-top:16px; display:flex; flex-direction:column; gap:10px;">
-          <div>
-            <label>SHA-1</label>
-            <div class="result-box" id="hash-sha1" style="font-size:12px;"></div>
-          </div>
-          <div>
-            <label>SHA-256</label>
-            <div class="result-box" id="hash-sha256" style="font-size:12px;"></div>
-          </div>
-          <div>
-            <label>SHA-512</label>
-            <div class="result-box" id="hash-sha512" style="font-size:11px; word-break:break-all;"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== COLOR PICKER ===== -->
-    <div id="panel-color-picker" class="tool-panel">
-      <div class="tool-card">
-        <h3>Renk Dönüştürücü</h3>
-        <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px;">
-          <input type="color" id="color-picker-input" value="#3498db" style="width:60px; height:60px; border:none; cursor:pointer; border-radius:8px; padding:0;">
-          <div id="color-preview" style="width:60px; height:60px; border-radius:8px; background:#3498db; border:1px solid var(--border);"></div>
-        </div>
-        <div class="grid-3">
-          <div>
-            <label>HEX</label>
-            <input type="text" id="color-hex" value="#3498db" oninput="updateColorFromHex(this.value)">
-          </div>
-          <div>
-            <label>RGB</label>
-            <input type="text" id="color-rgb" readonly>
-          </div>
-          <div>
-            <label>HSL</label>
-            <input type="text" id="color-hsl" readonly>
-          </div>
-        </div>
-        <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('color-hex').value, this)">HEX Kopyala</button>
-      </div>
-    </div>
-
-    <!-- ===== LOREM IPSUM ===== -->
-    <div id="panel-lorem-ipsum" class="tool-panel">
-      <div class="tool-card">
-        <h3>Lorem Ipsum Üretici</h3>
-        <div class="grid-2">
-          <div>
-            <label>Tür</label>
-            <select id="lorem-type">
-              <option value="words">Kelime</option>
-              <option value="sentences">Cümle</option>
-              <option value="paragraphs" selected>Paragraf</option>
-            </select>
-          </div>
-          <div>
-            <label>Adet</label>
-            <input type="number" id="lorem-count" value="3" min="1" max="50">
-          </div>
-        </div>
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick="generateLorem()">Üret</button>
-          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('lorem-output').value, this)">Kopyala</button>
-        </div>
-        <textarea id="lorem-output" readonly style="min-height:200px;"></textarea>
       </div>
     </div>
 
@@ -698,6 +459,26 @@
         <label>Escape Edilmiş (JSON String)</label>
         <textarea id="json-escape-output" placeholder='"Merhaba \"D\u00fcnya\"\nYeni sat\u0131r\tTab"'></textarea>
         <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('json-escape-output').value, this)">Kopyala</button>
+      </div>
+    </div>
+
+    <!-- ===== JSON DIFF ===== -->
+    <div id="panel-json-diff" class="tool-panel">
+      <div class="tool-card">
+        <h3>JSON Karşılaştırma <span style="font-size:11px; font-weight:400; color:var(--text-muted);">— Yapısal JSON diff (path bazlı)</span></h3>
+        <div class="error-box" id="json-diff-error"></div>
+        <div class="grid-2">
+          <div>
+            <label>Sol JSON (Eski / A)</label>
+            <textarea id="json-diff-left" placeholder='{"name": "Ali", "age": 30}'></textarea>
+          </div>
+          <div>
+            <label>Sağ JSON (Yeni / B)</label>
+            <textarea id="json-diff-right" placeholder='{"name": "Ali", "age": 31, "city": "İstanbul"}'></textarea>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="diffJson()">Karşılaştır</button>
+        <div id="json-diff-output" style="margin-top:16px;"></div>
       </div>
     </div>
 

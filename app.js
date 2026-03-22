@@ -45,41 +45,127 @@ function toggleTheme() {
 
 function updateThemeBtn(theme) {
   const btn = document.getElementById('theme-toggle');
-  if (btn) btn.textContent = theme === 'dark' ? '☀️ Açık Mod' : '🌙 Karanlık Mod';
+  if (btn) btn.textContent = theme === 'dark' ? t('theme.light') : t('theme.dark');
+}
+
+// ===== Language / i18n =====
+
+let currentLang = localStorage.getItem('ba-lang') || 'tr';
+
+const translations = {
+  tr: {
+    'welcome.title': 'BA Toolbox\'a Hoş Geldiniz',
+    'welcome.subtitle': 'Sol menüden bir araç seçerek başlayın. Tüm araçlar tarayıcınızda çalışır, internet bağlantısı gerekmez.',
+    'search.placeholder': 'Araç ara...',
+    'theme.dark': '🌙 Karanlık Mod',
+    'theme.light': '☀️ Açık Mod',
+    'group.veri': 'Veri & Format',
+    'group.veritabani': 'Veritabanı',
+    'group.gelistirici': 'Geliştirici',
+    'group.hesaplama': 'Hesaplama',
+    'group.metin': 'Metin',
+  },
+  en: {
+    'welcome.title': 'Welcome to BA Toolbox',
+    'welcome.subtitle': 'Select a tool from the left menu to get started. All tools run in your browser — no internet required.',
+    'search.placeholder': 'Search tools...',
+    'theme.dark': '🌙 Dark Mode',
+    'theme.light': '☀️ Light Mode',
+    'group.veri': 'Data & Format',
+    'group.veritabani': 'Database',
+    'group.gelistirici': 'Developer',
+    'group.hesaplama': 'Calculation',
+    'group.metin': 'Text',
+  },
+};
+
+const groupKeyMap = {
+  'Veri & Format': 'group.veri',
+  'Veritabanı': 'group.veritabani',
+  'Geliştirici': 'group.gelistirici',
+  'Hesaplama': 'group.hesaplama',
+  'Metin': 'group.metin',
+};
+
+function t(key) {
+  return (translations[currentLang] || translations.tr)[key] || key;
+}
+
+function applyLang() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    el.textContent = t(key);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    el.placeholder = t(el.dataset.i18nPlaceholder);
+  });
+  const btn = document.getElementById('lang-toggle');
+  if (btn) btn.textContent = currentLang === 'tr' ? '🌐 EN' : '🌐 TR';
+
+  // Refresh nav group labels
+  document.querySelectorAll('.tool-group-label').forEach(el => {
+    const key = el.dataset.groupKey;
+    if (key) el.textContent = t(key);
+  });
+
+  // Refresh nav item labels
+  document.querySelectorAll('.tool-nav-item').forEach(el => {
+    const toolId = el.dataset.tool;
+    const tool = tools.find(t2 => t2.id === toolId);
+    if (!tool) return;
+    const label = (currentLang === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
+    el.querySelector('span:last-child').textContent = label;
+  });
+
+  // Update topbar title if currently showing a tool
+  const activeItem = document.querySelector('.tool-nav-item.active');
+  if (activeItem) {
+    const toolId = activeItem.dataset.tool;
+    const tool = tools.find(t2 => t2.id === toolId);
+    if (tool) {
+      const label = (currentLang === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
+      document.getElementById('topbar-title').textContent = label;
+    }
+  }
+
+  // Update theme button text
+  updateThemeBtn(document.documentElement.getAttribute('data-theme'));
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'tr' ? 'en' : 'tr';
+  localStorage.setItem('ba-lang', currentLang);
+  applyLang();
 }
 
 // ===== Navigation =====
 
 const tools = [
   // Veri & Format
-  { id: 'json-formatter',    label: 'JSON Formatlayıcı',     icon: '{}',  group: 'Veri & Format' },
-  { id: 'json-grid',         label: 'JSON Grid Görünüm',     icon: '⊞',   group: 'Veri & Format' },
-  { id: 'json-escape',       label: 'JSON Escape/Unescape',  icon: '\\{}', group: 'Veri & Format' },
-  { id: 'csv-to-json',       label: 'CSV → JSON',            icon: '📊',  group: 'Veri & Format' },
-  { id: 'base64',            label: 'Base64 / Dosya',        icon: '🔐',  group: 'Veri & Format' },
-  // Geliştirici
-  { id: 'jwt-decoder',       label: 'JWT Decoder',           icon: '🎟️',  group: 'Geliştirici' },
-  { id: 'url-encoder',       label: 'URL Encode/Decode',     icon: '🔗',  group: 'Geliştirici' },
-  { id: 'hash-generator',    label: 'Hash Üretici',          icon: '#',   group: 'Geliştirici' },
-  { id: 'uuid-generator',    label: 'UUID Üretici',          icon: '🔑',  group: 'Geliştirici' },
-  { id: 'regex-tester',      label: 'Regex Test',            icon: '.*',  group: 'Geliştirici' },
-  { id: 'timestamp',         label: 'Timestamp Dönüştürücü', icon: '🕐',  group: 'Geliştirici' },
-  // Geliştirici (URL shortener eklendi)
-  { id: 'url-shortener',     label: 'URL Kısaltıcı',         icon: '✂️',  group: 'Geliştirici' },
+  { id: 'json-formatter',    label: 'JSON Formatlayıcı',     labelEn: 'JSON Formatter',      icon: '{}',  group: 'Veri & Format' },
+  { id: 'json-grid',         label: 'JSON Grid Görünüm',     labelEn: 'JSON Grid View',       icon: '⊞',   group: 'Veri & Format' },
+  { id: 'json-diff',         label: 'JSON Karşılaştırma',    labelEn: 'JSON Diff',            icon: '⟺',   group: 'Veri & Format' },
+  { id: 'json-escape',       label: 'JSON Escape/Unescape',  labelEn: 'JSON Escape/Unescape', icon: '\\{}', group: 'Veri & Format' },
+  { id: 'csv-to-json',       label: 'CSV → JSON',            labelEn: 'CSV → JSON',           icon: '📊',  group: 'Veri & Format' },
+  { id: 'base64',            label: 'Base64 / Dosya',        labelEn: 'Base64 / File',        icon: '🔐',  group: 'Veri & Format' },
   // Veritabanı
-  { id: 'sql-formatter',     label: 'SQL Formatlayıcı',      icon: '🗄️',  group: 'Veritabanı' },
-  { id: 'sql-cheatsheet',    label: 'SQL Şablonları',        icon: '📋',  group: 'Veritabanı' },
-  { id: 'kql-formatter',     label: 'KQL Formatlayıcı',      icon: '☁️',  group: 'Veritabanı' },
-  { id: 'kql-cheatsheet',    label: 'KQL Şablonları',        icon: '📋',  group: 'Veritabanı' },
-  // Metin
-  { id: 'diff-checker',      label: 'Metin Karşılaştırma',   icon: '🔍',  group: 'Metin' },
-  { id: 'word-counter',      label: 'Kelime Sayacı',         icon: '📝',  group: 'Metin' },
-  { id: 'text-editor',       label: 'Metin Editörü',         icon: '✏️',  group: 'Metin' },
-  { id: 'lorem-ipsum',       label: 'Lorem Ipsum',           icon: '📄',  group: 'Metin' },
+  { id: 'sql-formatter',     label: 'SQL Formatlayıcı',      labelEn: 'SQL Formatter',        icon: '🗄️',  group: 'Veritabanı' },
+  { id: 'sql-cheatsheet',    label: 'SQL Şablonları',        labelEn: 'SQL Templates',        icon: '📋',  group: 'Veritabanı' },
+  { id: 'kql-formatter',     label: 'KQL Formatlayıcı',      labelEn: 'KQL Formatter',        icon: '☁️',  group: 'Veritabanı' },
+  { id: 'kql-cheatsheet',    label: 'KQL Şablonları',        labelEn: 'KQL Templates',        icon: '📋',  group: 'Veritabanı' },
+  // Geliştirici
+  { id: 'uuid-generator',    label: 'UUID Üretici',          labelEn: 'UUID Generator',       icon: '🔑',  group: 'Geliştirici' },
+  { id: 'url-encoder',       label: 'URL Encode/Decode',     labelEn: 'URL Encode/Decode',    icon: '🔗',  group: 'Geliştirici' },
+  { id: 'timestamp',         label: 'Timestamp Dönüştürücü', labelEn: 'Timestamp Converter',  icon: '🕐',  group: 'Geliştirici' },
+  { id: 'url-shortener',     label: 'URL Kısaltıcı',         labelEn: 'URL Shortener',        icon: '✂️',  group: 'Geliştirici' },
+  { id: 'jwt-decoder',       label: 'JWT Decoder',           labelEn: 'JWT Decoder',          icon: '🎟️',  group: 'Geliştirici' },
   // Hesaplama
-  { id: 'interest-calc',     label: 'Faiz Hesaplama',        icon: '💰',  group: 'Hesaplama' },
-  { id: 'loan-calc',         label: 'Kredi Hesaplama',       icon: '🏦',  group: 'Hesaplama' },
-  { id: 'color-picker',      label: 'Renk Dönüştürücü',      icon: '🎨',  group: 'Hesaplama' },
+  { id: 'interest-calc',     label: 'Faiz Hesaplama',        labelEn: 'Interest Calculator',  icon: '💰',  group: 'Hesaplama' },
+  { id: 'loan-calc',         label: 'Kredi Hesaplama',       labelEn: 'Loan Calculator',      icon: '🏦',  group: 'Hesaplama' },
+  // Metin
+  { id: 'diff-checker',      label: 'Metin Karşılaştırma',   labelEn: 'Text Diff',            icon: '🔍',  group: 'Metin' },
+  { id: 'word-counter',      label: 'Kelime Sayacı',         icon: '📝',  group: 'Metin' },
+  { id: 'text-editor',       label: 'Metin Editörü',         labelEn: 'Text Editor',          icon: '✏️',  group: 'Metin' },
 ];
 
 function buildNav() {
@@ -92,16 +178,19 @@ function buildNav() {
 
   Object.entries(groups).forEach(([group, items]) => {
     const label = document.createElement('div');
+    const groupKey = groupKeyMap[group] || group;
     label.className = 'tool-group-label';
-    label.textContent = group;
+    label.dataset.groupKey = groupKey;
+    label.textContent = t(groupKey);
     list.appendChild(label);
 
-    items.forEach(t => {
+    items.forEach(tool => {
       const item = document.createElement('div');
       item.className = 'tool-nav-item';
-      item.dataset.tool = t.id;
-      item.innerHTML = `<span class="icon">${t.icon}</span><span>${t.label}</span>`;
-      item.addEventListener('click', () => navigate(t.id));
+      item.dataset.tool = tool.id;
+      const displayLabel = (currentLang === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
+      item.innerHTML = `<span class="icon">${tool.icon}</span><span>${displayLabel}</span>`;
+      item.addEventListener('click', () => navigate(tool.id));
       list.appendChild(item);
     });
   });
@@ -119,8 +208,11 @@ function navigate(toolId) {
   if (panel) panel.classList.add('active');
 
   // Update topbar title
-  const tool = tools.find(t => t.id === toolId);
-  document.getElementById('topbar-title').textContent = tool ? tool.label : '';
+  const tool = tools.find(t2 => t2.id === toolId);
+  if (tool) {
+    const label = (currentLang === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
+    document.getElementById('topbar-title').textContent = label;
+  }
 
   // Hide welcome
   const welcome = document.getElementById('welcome');
@@ -321,92 +413,6 @@ function calcSimpleInterest() {
   const tax = calcTaxAmount(grossInterest, ts);
 
   renderInterestResult('si-result-card', { principal: P, grossInterest, breakdown: tax.breakdown, netInterest: tax.netInterest, total: P + tax.netInterest });
-
-  const steps = Math.min(T, 12);
-  const fmt = n => n.toLocaleString('tr-TR', { minimumFractionDigits: 2 });
-  let rows = '';
-  for (let i = 1; i <= steps; i++) {
-    const tStep = unit === 'day' ? i / 365 : unit === 'month' ? i / 12 : i;
-    const gi = P * (R / 100) * tStep;
-    const t = calcTaxAmount(gi, ts);
-    const label = unit === 'year' ? `${i}. Yıl` : unit === 'month' ? `${i}. Ay` : `${i}. Gün`;
-    rows += `<tr><td>${label}</td><td>${fmt(P)}</td><td>${fmt(gi)}</td><td style="color:var(--error);">${fmt(t.totalTax)}</td><td>${fmt(t.netInterest)}</td><td><strong>${fmt(P + t.netInterest)}</strong></td></tr>`;
-  }
-  document.getElementById('interest-table').innerHTML = rows;
-  document.getElementById('si-table-wrap').style.display = '';
-}
-
-function calcCompoundInterest() {
-  hideError('interest-error');
-  const P = parseFloat(document.getElementById('ci-principal').value);
-  const R = parseFloat(document.getElementById('ci-rate').value);
-  const T = parseFloat(document.getElementById('ci-time').value);
-  const unit = document.getElementById('ci-unit').value;
-  const n = parseInt(document.getElementById('ci-freq').value);
-
-  if (isNaN(P) || isNaN(R) || isNaN(T) || P <= 0 || T <= 0) {
-    showError('interest-error', 'Lütfen tüm alanları doğru doldurun.');
-    return;
-  }
-
-  const tYears = unit === 'day' ? T / 365 : unit === 'month' ? T / 12 : T;
-  const A = P * Math.pow(1 + (R / 100) / n, n * tYears);
-  const grossInterest = A - P;
-  const ts = getTaxSettings('ci');
-  const tax = calcTaxAmount(grossInterest, ts);
-
-  renderInterestResult('ci-result-card', { principal: P, grossInterest, breakdown: tax.breakdown, netInterest: tax.netInterest, total: P + tax.netInterest });
-
-  const steps = unit === 'year' ? Math.min(T, 20) : unit === 'month' ? Math.min(T, 24) : Math.min(T, 30);
-  const unitLabel = unit === 'year' ? 'Yıl' : unit === 'month' ? 'Ay' : 'Gün';
-  const fmt = v => v.toLocaleString('tr-TR', { minimumFractionDigits: 2 });
-  let rows = '';
-  for (let i = 1; i <= steps; i++) {
-    const ti = unit === 'day' ? i / 365 : unit === 'month' ? i / 12 : i;
-    const Ai = P * Math.pow(1 + (R / 100) / n, n * ti);
-    const gi = Ai - P;
-    const t = calcTaxAmount(gi, ts);
-    rows += `<tr><td>${i}. ${unitLabel}</td><td>${fmt(P)}</td><td>${fmt(gi)}</td><td style="color:var(--error);">${fmt(t.totalTax)}</td><td>${fmt(t.netInterest)}</td><td><strong>${fmt(P + t.netInterest)}</strong></td></tr>`;
-  }
-  document.getElementById('compound-table').innerHTML = rows;
-  document.getElementById('ci-table-wrap').style.display = '';
-}
-
-function calcSavings() {
-  hideError('interest-error');
-  const P = parseFloat(document.getElementById('sa-initial').value) || 0;
-  const M = parseFloat(document.getElementById('sa-monthly').value);
-  const R = parseFloat(document.getElementById('sa-rate').value);
-  const months = parseInt(document.getElementById('sa-months').value);
-
-  if (isNaN(M) || isNaN(R) || isNaN(months) || months <= 0) {
-    showError('interest-error', 'Lütfen tüm alanları doğru doldurun.');
-    return;
-  }
-
-  const monthlyRate = R / 100 / 12;
-  const ts = getTaxSettings('sa');
-  let balance = P;
-  let totalContrib = P;
-  let totalGross = 0, totalTaxAmt = 0;
-  let rows = '';
-  const fmt = x => x.toLocaleString('tr-TR', { minimumFractionDigits: 2 });
-
-  for (let i = 1; i <= months; i++) {
-    balance += M;
-    totalContrib += M;
-    const gi = balance * monthlyRate;
-    totalGross += gi;
-    const t = calcTaxAmount(gi, ts);
-    totalTaxAmt += t.totalTax;
-    balance += t.netInterest;
-    rows += `<tr><td>${i}. Ay</td><td>${fmt(M)}</td><td>${fmt(totalContrib)}</td><td>${fmt(totalGross)}</td><td style="color:var(--error);">${fmt(totalTaxAmt)}</td><td>${fmt(totalGross - totalTaxAmt)}</td><td><strong>${fmt(balance)}</strong></td></tr>`;
-  }
-
-  const taxBreakdown = totalTaxAmt > 0 ? [{ label: 'Toplam Vergi Kesintisi', amount: totalTaxAmt }] : [];
-  renderInterestResult('sa-result-card', { principalLabel: 'Toplam Yatırılan', principal: totalContrib, grossInterest: totalGross, breakdown: taxBreakdown, netInterest: totalGross - totalTaxAmt, total: balance });
-  document.getElementById('savings-table').innerHTML = rows;
-  document.getElementById('sa-table-wrap').style.display = '';
 }
 
 // ===== Tool: Timestamp =====
@@ -520,32 +526,7 @@ function runDiff() {
 }
 
 function escapeHtml(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-// ===== Tool: Regex Tester =====
-
-function runRegex() {
-  hideError('regex-error');
-  const pattern = document.getElementById('regex-pattern').value;
-  const flags = [...document.querySelectorAll('.regex-flag:checked')].map(c => c.value).join('');
-  const text = document.getElementById('regex-text').value;
-  const preview = document.getElementById('regex-preview');
-
-  if (!pattern) { preview.innerHTML = escapeHtml(text); return; }
-
-  try {
-    const re = new RegExp(pattern, flags.includes('g') ? flags : flags + 'g');
-    const matches = [...text.matchAll(re)];
-    document.getElementById('regex-count').textContent = `${matches.length} eşleşme bulundu`;
-
-    const highlighted = text.replace(new RegExp(pattern, flags.includes('g') ? flags : flags + 'g'),
-      m => `<mark>${escapeHtml(m)}</mark>`);
-    preview.innerHTML = highlighted.replace(/\n/g, '<br>');
-  } catch (e) {
-    showError('regex-error', 'Geçersiz regex: ' + e.message);
-    preview.innerHTML = escapeHtml(text);
-  }
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 // ===== Tool: Word Counter =====
@@ -626,103 +607,6 @@ function decodeJWT() {
 
 // ===== Tool: URL Encoder =====
 // (listeners initialized in DOMContentLoaded below)
-
-// ===== Tool: Hash Generator =====
-
-async function generateHash() {
-  const input = document.getElementById('hash-input').value;
-  const encoder = new TextEncoder();
-  const data = encoder.encode(input);
-
-  async function digest(algo) {
-    const buf = await crypto.subtle.digest(algo, data);
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-
-  document.getElementById('hash-sha256').textContent = await digest('SHA-256');
-  document.getElementById('hash-sha512').textContent = await digest('SHA-512');
-  try {
-    document.getElementById('hash-sha1').textContent = await digest('SHA-1');
-  } catch {
-    document.getElementById('hash-sha1').textContent = '(Bu tarayıcıda desteklenmiyor)';
-  }
-}
-
-// ===== Tool: Color Picker =====
-
-function initColorPicker() {
-  const picker = document.getElementById('color-picker-input');
-  if (!picker) return;
-  picker.addEventListener('input', () => updateColorFromHex(picker.value));
-}
-
-function updateColorFromHex(hex) {
-  document.getElementById('color-picker-input').value = hex;
-  document.getElementById('color-hex').value = hex;
-  document.getElementById('color-preview').style.background = hex;
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  document.getElementById('color-rgb').value = `rgb(${r}, ${g}, ${b})`;
-  const hsl = rgbToHsl(r, g, b);
-  document.getElementById('color-hsl').value = `hsl(${hsl[0]}, ${hsl[1]}%, ${hsl[2]}%)`;
-}
-
-function rgbToHsl(r, g, b) {
-  r /= 255; g /= 255; b /= 255;
-  const max = Math.max(r, g, b), min = Math.min(r, g, b);
-  let h, s, l = (max + min) / 2;
-  if (max === min) { h = s = 0; }
-  else {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
-      case g: h = ((b - r) / d + 2) / 6; break;
-      case b: h = ((r - g) / d + 4) / 6; break;
-    }
-  }
-  return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
-}
-
-// ===== Tool: Lorem Ipsum =====
-
-const loremWords = 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure dolor reprehenderit voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt culpa qui officia deserunt mollit anim id est laborum'.split(' ');
-
-function generateLorem() {
-  const type = document.getElementById('lorem-type').value;
-  const count = parseInt(document.getElementById('lorem-count').value) || 1;
-  let result = '';
-
-  if (type === 'words') {
-    const words = [];
-    for (let i = 0; i < count; i++) words.push(loremWords[i % loremWords.length]);
-    result = words.join(' ');
-  } else if (type === 'sentences') {
-    for (let i = 0; i < count; i++) {
-      const len = 8 + Math.floor(Math.random() * 8);
-      const words = [];
-      for (let j = 0; j < len; j++) words.push(loremWords[Math.floor(Math.random() * loremWords.length)]);
-      words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
-      result += words.join(' ') + '. ';
-    }
-  } else {
-    for (let i = 0; i < count; i++) {
-      const sentenceCount = 3 + Math.floor(Math.random() * 4);
-      const sentences = [];
-      for (let s = 0; s < sentenceCount; s++) {
-        const len = 8 + Math.floor(Math.random() * 8);
-        const words = [];
-        for (let j = 0; j < len; j++) words.push(loremWords[Math.floor(Math.random() * loremWords.length)]);
-        words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
-        sentences.push(words.join(' ') + '.');
-      }
-      result += sentences.join(' ') + '\n\n';
-    }
-  }
-
-  document.getElementById('lorem-output').value = result.trim();
-}
 
 // ===== Tool: JSON Grid =====
 
@@ -885,6 +769,83 @@ function jsonUnescapeStr() {
       typeof parsed === 'string' ? parsed : JSON.stringify(parsed, null, 2);
   } catch (e) {
     showError('json-escape-error', 'Parse hatası: ' + e.message);
+  }
+}
+
+// ===== Tool: JSON Diff =====
+
+function diffJson() {
+  hideError('json-diff-error');
+  const leftText = document.getElementById('json-diff-left').value.trim();
+  const rightText = document.getElementById('json-diff-right').value.trim();
+  const output = document.getElementById('json-diff-output');
+
+  if (!leftText || !rightText) {
+    showError('json-diff-error', 'Her iki alana da JSON girin.');
+    return;
+  }
+
+  let leftObj, rightObj;
+  try { leftObj = JSON.parse(leftText); } catch (e) {
+    showError('json-diff-error', 'Sol JSON hatalı: ' + e.message); return;
+  }
+  try { rightObj = JSON.parse(rightText); } catch (e) {
+    showError('json-diff-error', 'Sağ JSON hatalı: ' + e.message); return;
+  }
+
+  const diffs = [];
+  jsonDiffRecurse(leftObj, rightObj, '', diffs);
+
+  if (diffs.length === 0) {
+    output.innerHTML = '<div style="color:var(--success); padding:12px; font-weight:600;">✓ İki JSON aynı — fark yok.</div>';
+    return;
+  }
+
+  const html = diffs.map(d => {
+    const icons = { added: '＋', removed: '－', changed: '≠', type: '⚑' };
+    const colors = { added: 'var(--success)', removed: 'var(--error)', changed: 'var(--accent)', type: '#e67e22' };
+    const icon = icons[d.type] || '?';
+    const color = colors[d.type] || 'var(--text)';
+    let detail = '';
+    if (d.type === 'changed') detail = `<span style="color:var(--error);">${escapeHtml(JSON.stringify(d.left))}</span> → <span style="color:var(--success);">${escapeHtml(JSON.stringify(d.right))}</span>`;
+    else if (d.type === 'added') detail = `<span style="color:var(--success);">${escapeHtml(JSON.stringify(d.right))}</span>`;
+    else if (d.type === 'removed') detail = `<span style="color:var(--error);">${escapeHtml(JSON.stringify(d.left))}</span>`;
+    else if (d.type === 'type') detail = `<span style="color:var(--error);">${typeof d.left}</span> → <span style="color:var(--success);">${typeof d.right}</span>`;
+    return `<div class="diff-row" style="border-left:3px solid ${color}; padding:6px 10px; margin-bottom:4px; background:var(--input-bg); border-radius:0 4px 4px 0;">
+      <span style="color:${color}; font-weight:700; margin-right:8px;">${icon}</span>
+      <code style="color:var(--accent); margin-right:8px;">${escapeHtml(d.path || '(root)')}</code>
+      ${detail}
+    </div>`;
+  }).join('');
+
+  output.innerHTML = `<div style="margin-bottom:8px; font-size:12px; color:var(--text-muted);">${diffs.length} fark bulundu</div>` + html;
+}
+
+function jsonDiffRecurse(left, right, path, diffs) {
+  if (typeof left !== typeof right || (Array.isArray(left) !== Array.isArray(right))) {
+    diffs.push({ type: 'type', path, left, right });
+    return;
+  }
+  if (left === null || right === null || typeof left !== 'object') {
+    if (left !== right) diffs.push({ type: 'changed', path, left, right });
+    return;
+  }
+  if (Array.isArray(left)) {
+    const maxLen = Math.max(left.length, right.length);
+    for (let i = 0; i < maxLen; i++) {
+      const p = `${path}[${i}]`;
+      if (i >= left.length) diffs.push({ type: 'added', path: p, right: right[i] });
+      else if (i >= right.length) diffs.push({ type: 'removed', path: p, left: left[i] });
+      else jsonDiffRecurse(left[i], right[i], p, diffs);
+    }
+    return;
+  }
+  const allKeys = new Set([...Object.keys(left), ...Object.keys(right)]);
+  for (const key of allKeys) {
+    const p = path ? `${path}.${key}` : key;
+    if (!(key in left)) diffs.push({ type: 'added', path: p, right: right[key] });
+    else if (!(key in right)) diffs.push({ type: 'removed', path: p, left: left[key] });
+    else jsonDiffRecurse(left[key], right[key], p, diffs);
   }
 }
 
@@ -1121,10 +1082,10 @@ async function shortenUrl() {
   const outputEl = document.getElementById('url-short-output');
   resultEl.style.display = 'none';
   try {
-    const res = await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(url)}`);
+    const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
     if (!res.ok) throw new Error('API hatası: ' + res.status);
     const shortUrl = (await res.text()).trim();
-    if (!shortUrl.startsWith('http')) throw new Error(shortUrl);
+    if (!shortUrl.startsWith('http')) throw new Error('Beklenmedik yanıt');
     outputEl.textContent = shortUrl;
     outputEl.href = shortUrl;
     resultEl.style.display = 'block';
@@ -1208,14 +1169,14 @@ function clearPanel(panelId) {
   panel.querySelectorAll('.error-box').forEach(el => { el.textContent = ''; el.style.display = 'none'; });
   panel.querySelectorAll('.result-box').forEach(el => { el.innerHTML = ''; });
   panel.querySelectorAll('tbody').forEach(el => { el.innerHTML = ''; });
-  ['json-grid-output', 'diff-output', 'regex-preview', 'si-result-card', 'ci-result-card', 'sa-result-card', 'loan-result-card', 'editor-stats', 'regex-count', 'diff-stats', 'file-b64-info', 'json-status', 'url-short-result'].forEach(id => {
+  ['json-grid-output', 'diff-output', 'si-result-card', 'loan-result-card', 'editor-stats', 'diff-stats', 'file-b64-info', 'json-status', 'url-short-result'].forEach(id => {
     const el = panel.querySelector('#' + id);
     if (!el) return;
     if (id === 'url-short-result') { el.style.display = 'none'; }
     else if (id.endsWith('-card')) { el.innerHTML = ''; el.style.display = 'none'; }
     else { el.innerHTML = ''; el.textContent = ''; }
   });
-  ['si-table-wrap', 'ci-table-wrap', 'sa-table-wrap', 'loan-table-wrap'].forEach(id => {
+  ['loan-table-wrap'].forEach(id => {
     const el = panel.querySelector('#' + id);
     if (el) el.style.display = 'none';
   });
@@ -1234,6 +1195,7 @@ const sqlKeywords = [
   { kw: 'ORDER BY', desc: 'Sonuçları sıralar. ASC artan (varsayılan), DESC azalan. Birden fazla sütunla kullanılabilir.' },
   { kw: 'LIKE', desc: 'Metin arama deseni. % sıfır veya daha fazla karakter, _ tam olarak bir karakter. Örn: LIKE \'%ahmet%\'' },
   { kw: 'COLLATE', desc: 'Metin karşılaştırma kuralını belirtir. Büyük/küçük harf ve aksan duyarlılığını kontrol eder. Örn: COLLATE utf8_turkish_ci' },
+  { kw: 'COALESCE', desc: 'İlk NULL olmayan değeri döner. COALESCE(a, b, c): a NULL ise b\'ye, o da NULL ise c\'ye bakar. NULL alanları varsayılan değerle doldurmak için kullanılır.' },
   { kw: 'IN', desc: 'Değerin bir liste içinde olup olmadığını kontrol eder. WHERE şehir IN (\'İstanbul\', \'Ankara\') — OR zincirine alternatif.' },
   { kw: 'BETWEEN', desc: 'Değerin bir aralıkta olup olmadığını kontrol eder (sınırlar dahil). Örn: WHERE fiyat BETWEEN 100 AND 500' },
   { kw: 'IS NULL', desc: 'Değerin NULL (boş) olup olmadığını kontrol eder. = NULL kullanılmaz; IS NULL ya da IS NOT NULL kullanılır.' },
@@ -1381,8 +1343,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   buildNav();
   initSearch();
-  initColorPicker();
-  initTabs('interest-tabs');
+  applyLang();
   initTabs('base64-tabs');
   buildSqlCheatsheet();
   buildKqlCheatsheet();
