@@ -65,6 +65,7 @@ const translations = {
     'group.gelistirici': 'Geliştirici',
     'group.hesaplama': 'Hesaplama',
     'group.metin': 'Metin',
+    'group.analiz': 'Analiz & Gereksinim',
     // Shared actions
     'copy': 'Kopyala',
     'copied': 'Kopyalandı!',
@@ -202,6 +203,29 @@ const translations = {
     'editor.filename': 'Dosya Adı',
     'editor.format': 'Format',
     'editor.placeholder': 'Metni buraya yazın...',
+    // User Story
+    'us.title': 'User Story Yazıcı',
+    'us.role': 'Rol',
+    'us.role.ph': 'Örn: iş analisti, müşteri, sistem yöneticisi',
+    'us.action': 'Aksiyon',
+    'us.action.ph': 'Örn: aylık satış raporlarını otomatik oluşturmak',
+    'us.benefit': 'Fayda',
+    'us.benefit.ph': 'Örn: verileri hızlıca analiz edebilmek için',
+    'us.add-ac': 'Acceptance Criteria Ekle',
+    'us.generate': 'Oluştur',
+    'us.clear': 'Temizle',
+    'us.output': 'Çıktı',
+    'us.copy': '📋 Kopyala',
+    'us.copy-md': 'Markdown Kopyala',
+    'us.ac-label': 'KABUL KRİTERİ',
+    'us.given': 'Given',
+    'us.when': 'When',
+    'us.then': 'Then',
+    'us.given.ph': 'Bağlam / ön koşul...',
+    'us.when.ph': 'Gerçekleşen olay / aksiyon...',
+    'us.then.ph': 'Beklenen sonuç...',
+    // Feedback
+    'feedback.btn': 'Geri Bildirim',
     // URL Shortener
     'url-short.title': 'URL Kısaltıcı',
     'url-short.label': 'Uzun URL',
@@ -249,6 +273,7 @@ const translations = {
     'group.gelistirici': 'Developer',
     'group.hesaplama': 'Calculation',
     'group.metin': 'Text',
+    'group.analiz': 'Analysis & Requirements',
     // Shared actions
     'copy': 'Copy',
     'copied': 'Copied!',
@@ -394,6 +419,29 @@ const translations = {
     'editor.filename': 'File Name',
     'editor.format': 'Format',
     'editor.placeholder': 'Type text here...',
+    // User Story
+    'us.title': 'User Story Writer',
+    'us.role': 'Role',
+    'us.role.ph': 'e.g. business analyst, customer, system admin',
+    'us.action': 'Action',
+    'us.action.ph': 'e.g. generate monthly sales reports automatically',
+    'us.benefit': 'Benefit',
+    'us.benefit.ph': 'e.g. to analyse data quickly',
+    'us.add-ac': 'Add Acceptance Criteria',
+    'us.generate': 'Generate',
+    'us.clear': 'Clear',
+    'us.output': 'Output',
+    'us.copy': '📋 Copy',
+    'us.copy-md': 'Copy as Markdown',
+    'us.ac-label': 'ACCEPTANCE CRITERIA',
+    'us.given': 'Given',
+    'us.when': 'When',
+    'us.then': 'Then',
+    'us.given.ph': 'Context / precondition...',
+    'us.when.ph': 'The event / action that occurs...',
+    'us.then.ph': 'Expected outcome...',
+    // Feedback
+    'feedback.btn': 'Feedback',
     // URL Shortener
     'url-short.title': 'URL Shortener',
     'url-short.label': 'Long URL',
@@ -429,6 +477,7 @@ const groupKeyMap = {
   'Geliştirici': 'group.gelistirici',
   'Hesaplama': 'group.hesaplama',
   'Metin': 'group.metin',
+  'Analiz & Gereksinim': 'group.analiz',
 };
 
 function t(key) {
@@ -524,6 +573,8 @@ const tools = [
   { id: 'diff-checker',      label: 'Metin Karşılaştırma',   labelEn: 'Text Diff',            icon: '🔍',  group: 'Metin' },
   { id: 'word-counter',      label: 'Kelime Sayacı',         labelEn: 'Word Counter',         icon: '📝',  group: 'Metin' },
   { id: 'text-editor',       label: 'Metin Editörü',         labelEn: 'Text Editor',          icon: '✏️',  group: 'Metin' },
+  // Analiz & Gereksinim
+  { id: 'user-story',        label: 'User Story Yazıcı',     labelEn: 'User Story Writer',    icon: '📖',  group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
 ];
 
 function buildNav() {
@@ -1475,9 +1526,98 @@ function calcLoanPayment() {
   document.getElementById('loan-table-wrap').style.display = '';
 }
 
+// ===== User Story Writer =====
+
+let acCount = 0;
+
+function addAcBlock() {
+  acCount++;
+  const n = acCount;
+  const list = document.getElementById('ac-list');
+  const block = document.createElement('div');
+  block.className = 'ac-block';
+  block.dataset.ac = n;
+  block.innerHTML = `
+    <div class="ac-block-title">${t('us.ac-label')} #${n}</div>
+    <button class="ac-remove" onclick="removeAcBlock(${n})" title="Kaldır">✕</button>
+    <div class="ac-row">
+      <label>${t('us.given')}</label>
+      <input type="text" id="us-given-${n}" placeholder="${t('us.given.ph')}">
+    </div>
+    <div class="ac-row">
+      <label>${t('us.when')}</label>
+      <input type="text" id="us-when-${n}" placeholder="${t('us.when.ph')}">
+    </div>
+    <div class="ac-row">
+      <label>${t('us.then')}</label>
+      <input type="text" id="us-then-${n}" placeholder="${t('us.then.ph')}">
+    </div>`;
+  list.appendChild(block);
+}
+
+function removeAcBlock(n) {
+  const block = document.querySelector(`.ac-block[data-ac="${n}"]`);
+  if (block) block.remove();
+}
+
+function buildUserStory() {
+  const role    = document.getElementById('us-role').value.trim();
+  const action  = document.getElementById('us-action').value.trim();
+  const benefit = document.getElementById('us-benefit').value.trim();
+
+  if (!role && !action && !benefit) return;
+
+  let text = `As a ${role || '...'},\nI want to ${action || '...'},\nSo that ${benefit || '...'}.`;
+
+  const blocks = document.querySelectorAll('#ac-list .ac-block');
+  if (blocks.length > 0) {
+    text += '\n\nAcceptance Criteria:';
+    blocks.forEach(block => {
+      const n = block.dataset.ac;
+      const given = document.getElementById(`us-given-${n}`)?.value.trim() || '...';
+      const when  = document.getElementById(`us-when-${n}`)?.value.trim()  || '...';
+      const then  = document.getElementById(`us-then-${n}`)?.value.trim()  || '...';
+      text += `\n  Given ${given},\n  When ${when},\n  Then ${then}.`;
+    });
+  }
+
+  const out = document.getElementById('us-output');
+  out.value = text;
+  document.getElementById('us-output-card').style.display = '';
+}
+
+function clearUserStory() {
+  ['us-role','us-action','us-benefit'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('ac-list').innerHTML = '';
+  acCount = 0;
+  document.getElementById('us-output').value = '';
+  document.getElementById('us-output-card').style.display = 'none';
+}
+
+function copyUserStory() {
+  const out = document.getElementById('us-output');
+  if (!out.value) return;
+  navigator.clipboard.writeText(out.value);
+}
+
+function copyUserStoryMd() {
+  const out = document.getElementById('us-output');
+  if (!out.value) return;
+  const md = out.value
+    .replace(/^(As a .+)$/m, '**$1**')
+    .replace(/^(I want to .+)$/m, '**$1**')
+    .replace(/^(So that .+)$/m, '**$1**')
+    .replace(/^(Acceptance Criteria:)$/m, '\n### $1')
+    .replace(/^  (Given|When|Then) /gm, '- **$1** ');
+  navigator.clipboard.writeText(md);
+}
+
 // ===== Clear Panel =====
 
-const noClearPanels = new Set(['panel-sql-cheatsheet', 'panel-kql-cheatsheet']);
+const noClearPanels = new Set(['panel-sql-cheatsheet', 'panel-kql-cheatsheet', 'panel-user-story']);
 
 function addClearButtons() {
   document.querySelectorAll('.tool-panel').forEach(panel => {

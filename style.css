@@ -663,8 +663,92 @@ mark { background: #fef08a; color: #713f12; border-radius: 2px; }
 
 .file-drop-area:hover { border-color: var(--accent); }
 
+/* ===== Feedback Button ===== */
+#feedback-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 20px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(52,152,219,0.4);
+  transition: opacity 0.15s, transform 0.1s;
+}
+#feedback-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+/* ===== User Story — AC Block ===== */
+.ac-block {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.ac-block-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.ac-row {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.ac-row:last-child { margin-bottom: 0; }
+.ac-row label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0;
+}
+.ac-row input { margin-bottom: 0; }
+.ac-remove {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1;
+}
+.ac-remove:hover { color: var(--error); background: var(--bg); }
+.btn-add-ac {
+  width: 100%;
+  padding: 7px;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 14px;
+  transition: background 0.15s;
+}
+.btn-add-ac:hover { background: var(--input-bg); }
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   #sidebar { width: 200px; min-width: 200px; }
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  #feedback-btn { bottom: 16px; right: 16px; }
 }

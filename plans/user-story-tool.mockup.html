@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BA Toolbox — User Story Yazıcı Mockup</title>
+<style>
+  :root {
+    --bg: #1a1f2e;
+    --sidebar-bg: #111827;
+    --sidebar-text: #9ca3af;
+    --sidebar-hover: #1f2937;
+    --sidebar-active: #3b82f6;
+    --card-bg: #1f2937;
+    --text: #f9fafb;
+    --text-muted: #6b7280;
+    --border: #374151;
+    --input-bg: #111827;
+    --accent: #3b82f6;
+    --success: #10b981;
+    --error: #ef4444;
+    --shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 240px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  .sidebar-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-header h1 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .sidebar-header p {
+    font-size: 11px;
+    color: var(--sidebar-text);
+    opacity: 0.7;
+    margin-top: 2px;
+  }
+
+  .sidebar-search {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-search input {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+  }
+
+  .tool-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+
+  .tool-group-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    padding: 12px 14px 4px;
+  }
+
+  .tool-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    margin: 1px 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--sidebar-text);
+    transition: background 0.15s;
+  }
+
+  .tool-nav-item:hover { background: var(--sidebar-hover); }
+
+  .tool-nav-item.active {
+    background: rgba(59,130,246,0.15);
+    color: var(--sidebar-active);
+  }
+
+  .tool-nav-item .icon {
+    font-size: 14px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  /* ── Main ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  .topbar {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--sidebar-bg);
+  }
+
+  .topbar-title { font-size: 14px; font-weight: 600; }
+
+  .topbar-actions { display: flex; gap: 8px; }
+
+  .topbar-btn {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--sidebar-text);
+    cursor: pointer;
+  }
+
+  .content { flex: 1; overflow-y: auto; padding: 24px; }
+
+  /* ── Cards ── */
+  .tool-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .tool-card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+  }
+
+  input[type="text"], textarea, select {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 13px;
+    color: var(--text);
+    font-family: inherit;
+    margin-bottom: 12px;
+    outline: none;
+  }
+
+  input[type="text"]:focus, textarea:focus {
+    border-color: var(--accent);
+  }
+
+  textarea {
+    font-family: 'Consolas', 'Monaco', monospace;
+    resize: vertical;
+    min-height: 130px;
+    line-height: 1.6;
+  }
+
+  /* Buttons */
+  .btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+  }
+
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-secondary { background: var(--border); color: var(--text); }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-outline {
+    background: transparent;
+    border: 1px dashed var(--border);
+    color: var(--accent);
+    width: 100%;
+    padding: 7px;
+    font-size: 13px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+
+  .btn-group { display: flex; gap: 8px; margin-bottom: 12px; }
+
+  /* AC block */
+  .ac-block {
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+
+  .ac-block .ac-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .ac-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .ac-row .ac-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    width: 50px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0;
+  }
+
+  .ac-row input {
+    flex: 1;
+    margin-bottom: 0;
+  }
+
+  /* Output */
+  .output-area {
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+    min-height: 120px;
+    margin-bottom: 8px;
+    white-space: pre-wrap;
+  }
+
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 16px 0;
+  }
+
+  /* ── Floating Feedback Button ── */
+  .feedback-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(59,130,246,0.4);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 1000;
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h1>🧰 BA Toolbox</h1>
+    <p>İş Analisti Araç Seti</p>
+  </div>
+  <div class="sidebar-search">
+    <input type="text" placeholder="Araç ara...">
+  </div>
+  <div class="tool-list">
+
+    <div class="tool-group-label">Veri & Format</div>
+    <div class="tool-nav-item"><span class="icon">{}</span><span>JSON Formatlayıcı</span></div>
+    <div class="tool-nav-item"><span class="icon">📊</span><span>CSV → JSON</span></div>
+
+    <div class="tool-group-label">Veritabanı</div>
+    <div class="tool-nav-item"><span class="icon">🗄️</span><span>SQL Formatlayıcı</span></div>
+    <div class="tool-nav-item"><span class="icon">☁️</span><span>KQL Formatlayıcı</span></div>
+
+    <!-- NEW GROUP -->
+    <div class="tool-group-label">Analiz & Gereksinim</div>
+    <div class="tool-nav-item active"><span class="icon">📖</span><span>User Story Yazıcı</span></div>
+    <div class="tool-nav-item"><span class="icon">✅</span><span>AC Formatter</span></div>
+    <div class="tool-nav-item"><span class="icon">🎯</span><span>INVEST Kontrolü</span></div>
+
+    <div class="tool-group-label">Metin</div>
+    <div class="tool-nav-item"><span class="icon">🔍</span><span>Metin Karşılaştırma</span></div>
+    <div class="tool-nav-item"><span class="icon">📝</span><span>Kelime Sayacı</span></div>
+  </div>
+</nav>
+
+<!-- Main content -->
+<div class="main">
+  <div class="topbar">
+    <span class="topbar-title">User Story Yazıcı</span>
+    <div class="topbar-actions">
+      <button class="topbar-btn">🌐 EN</button>
+      <button class="topbar-btn">🌙 Dark Mode</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="tool-card">
+      <h3>User Story Girdisi</h3>
+
+      <label>Rol</label>
+      <input type="text" value="iş analisti" placeholder="Örn: müşteri, sistem yöneticisi, kullanıcı...">
+
+      <label>Aksiyon</label>
+      <input type="text" value="aylık satış raporlarını otomatik oluşturmak" placeholder="Ne yapmak istiyor?">
+
+      <label>Fayda</label>
+      <input type="text" value="verileri hızlıca analiz edebilmek için" placeholder="Neden yapıyor / ne kazanacak?">
+
+      <hr class="section-divider">
+
+      <!-- AC Block -->
+      <div class="ac-block">
+        <div class="ac-title">📋 Acceptance Criteria #1</div>
+        <div class="ac-row">
+          <label class="ac-label">Given</label>
+          <input type="text" value="kullanıcı dashboard'da olduğunda">
+        </div>
+        <div class="ac-row">
+          <label class="ac-label">When</label>
+          <input type="text" value="'Rapor Oluştur' butonuna tıkladığında">
+        </div>
+        <div class="ac-row">
+          <label class="ac-label">Then</label>
+          <input type="text" value="sistem son 30 günün raporunu PDF olarak indirmelidir">
+        </div>
+      </div>
+
+      <button class="btn-outline">+ Acceptance Criteria Ekle</button>
+
+      <div class="btn-group">
+        <button class="btn btn-primary">Oluştur</button>
+        <button class="btn btn-secondary">Temizle</button>
+      </div>
+    </div>
+
+    <!-- Output -->
+    <div class="tool-card">
+      <h3>Çıktı</h3>
+      <div class="output-area">As an iş analisti,
+I want to aylık satış raporlarını otomatik oluşturmak,
+So that verileri hızlıca analiz edebilmek için.
+
+Acceptance Criteria:
+  Given kullanıcı dashboard'da olduğunda,
+  When 'Rapor Oluştur' butonuna tıkladığında,
+  Then sistem son 30 günün raporunu PDF olarak indirmelidir.</div>
+      <div class="btn-group">
+        <button class="btn btn-success">📋 Kopyala</button>
+        <button class="btn btn-secondary">Markdown olarak kopyala</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Feedback Button -->
+<button class="feedback-btn">
+  💬 Feedback
+</button>
+
+</body>
+</html>

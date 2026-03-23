@@ -19,7 +19,7 @@ test.beforeEach(async ({ page }) => {
 
 test('welcome screen shows on load', async ({ page }) => {
   await expect(page.locator('#welcome')).toBeVisible();
-  await expect(page.locator('.tool-nav-item')).toHaveCount(20);
+  await expect(page.locator('.tool-nav-item')).toHaveCount(21);
 });
 
 test('nav groups are in correct order', async ({ page }) => {
@@ -236,4 +236,48 @@ test('SQL and KQL template descriptions translate correctly', async ({ page }) =
   // Check that descriptions are back to Turkish (Satırları filtreler)
   const sqlDescTr = page.locator('.kw-desc').first();
   await expect(sqlDescTr).toContainText('Satırları filtreler');
+});
+
+// ===== User Story Writer =====
+
+test('user story tool generates output', async ({ page }) => {
+  await openTool(page, 'user-story');
+  const panel = page.locator('#panel-user-story');
+
+  await panel.locator('#us-role').fill('iş analisti');
+  await panel.locator('#us-action').fill('rapor oluşturmak');
+  await panel.locator('#us-benefit').fill('verileri analiz etmek');
+
+  await panel.locator('button[onclick="buildUserStory()"]').click();
+
+  const output = await panel.locator('#us-output').inputValue();
+  expect(output).toContain('As a iş analisti');
+  expect(output).toContain('I want to rapor oluşturmak');
+  expect(output).toContain('So that verileri analiz etmek');
+});
+
+test('user story tool adds and includes acceptance criteria', async ({ page }) => {
+  await openTool(page, 'user-story');
+  const panel = page.locator('#panel-user-story');
+
+  await panel.locator('#us-role').fill('kullanıcı');
+  await panel.locator('#us-action').fill('giriş yapmak');
+  await panel.locator('#us-benefit').fill('sisteme erişmek');
+
+  await panel.locator('.btn-add-ac').click();
+  await panel.locator('#us-given-1').fill('kullanıcı login sayfasındayken');
+  await panel.locator('#us-when-1').fill('şifresini girdiğinde');
+  await panel.locator('#us-then-1').fill('sisteme yönlendirilmeli');
+
+  await panel.locator('button[onclick="buildUserStory()"]').click();
+
+  const output = await panel.locator('#us-output').inputValue();
+  expect(output).toContain('Acceptance Criteria');
+  expect(output).toContain('Given kullanıcı login sayfasındayken');
+  expect(output).toContain('When şifresini girdiğinde');
+  expect(output).toContain('Then sisteme yönlendirilmeli');
+});
+
+test('feedback button is visible', async ({ page }) => {
+  await expect(page.locator('#feedback-btn')).toBeVisible();
 });

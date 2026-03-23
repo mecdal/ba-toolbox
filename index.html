@@ -496,8 +496,47 @@
       </div>
     </div>
 
+    <!-- ===== USER STORY YAZICI ===== -->
+    <div id="panel-user-story" class="tool-panel">
+      <div class="tool-card">
+        <h3 data-i18n="us.title">User Story Yazıcı</h3>
+
+        <label data-i18n="us.role">Rol</label>
+        <input type="text" id="us-role" data-i18n-placeholder="us.role.ph" placeholder="Örn: iş analisti, müşteri, sistem yöneticisi">
+
+        <label data-i18n="us.action">Aksiyon</label>
+        <input type="text" id="us-action" data-i18n-placeholder="us.action.ph" placeholder="Örn: aylık satış raporlarını otomatik oluşturmak">
+
+        <label data-i18n="us.benefit">Fayda</label>
+        <input type="text" id="us-benefit" data-i18n-placeholder="us.benefit.ph" placeholder="Örn: verileri hızlıca analiz edebilmek için">
+
+        <div id="ac-list"></div>
+
+        <button class="btn-add-ac" onclick="addAcBlock()">+ <span data-i18n="us.add-ac">Acceptance Criteria Ekle</span></button>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="buildUserStory()" data-i18n="us.generate">Oluştur</button>
+          <button class="btn btn-secondary" onclick="clearUserStory()" data-i18n="us.clear">Temizle</button>
+        </div>
+      </div>
+
+      <div class="tool-card" id="us-output-card" style="display:none;">
+        <h3 data-i18n="us.output">Çıktı</h3>
+        <textarea id="us-output" readonly style="min-height:160px; font-family:'Consolas','Monaco',monospace; font-size:13px; line-height:1.7;"></textarea>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="copyUserStory()" data-i18n="us.copy">📋 Kopyala</button>
+          <button class="btn btn-secondary" onclick="copyUserStoryMd()" data-i18n="us.copy-md">Markdown Kopyala</button>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /content -->
 </div><!-- /main -->
+
+<!-- Feedback Butonu -->
+<a id="feedback-btn" href="mailto:mecdalyildirim@gmail.com?subject=[BA%20Toolbox%20Feedback]" target="_blank">
+  💬 <span data-i18n="feedback.btn">Feedback</span>
+</a>
 
 <script src="app.js"></script>
 </body>
