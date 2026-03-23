@@ -192,3 +192,48 @@ test('UUID generator üretir', async ({ page }) => {
   const result = await page.locator('#uuid-output').inputValue();
   expect(result).toMatch(/[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/i);
 });
+
+// ===== Word Counter Language Switching =====
+
+test('word counter labels translate to English', async ({ page }) => {
+  // Open word counter
+  await openTool(page, 'word-counter');
+
+  // Switch to English
+  await page.locator('#lang-toggle').click();
+
+  // Check labels within the active word counter panel
+  const panel = page.locator('#panel-word-counter');
+  await expect(panel.locator('[data-i18n="wc.chars"]')).toHaveText('CHARACTERS');
+  await expect(panel.locator('[data-i18n="wc.words"]')).toHaveText('WORDS');
+  await expect(panel.locator('[data-i18n="wc.sentences"]')).toHaveText('SENTENCES');
+  await expect(panel.locator('[data-i18n="wc.paragraphs"]')).toHaveText('PARAGRAPHS');
+
+  // Check nav item also translates
+  await expect(page.locator('.tool-nav-item[data-tool="word-counter"] span:last-child')).toHaveText('Word Counter');
+
+  // Switch back to Turkish
+  await page.locator('#lang-toggle').click();
+
+  await expect(panel.locator('[data-i18n="wc.chars"]')).toHaveText('KARAKTER');
+  await expect(panel.locator('[data-i18n="wc.words"]')).toHaveText('KELİME');
+});
+
+test('SQL and KQL template descriptions translate correctly', async ({ page }) => {
+  // Open SQL cheatsheet
+  await openTool(page, 'sql-cheatsheet');
+
+  // Switch to English
+  await page.locator('#lang-toggle').click();
+
+  // Check that descriptions are in English (Filters rows. Like SQL WHERE.)
+  const sqlDescEn = page.locator('.kw-desc').first();
+  await expect(sqlDescEn).toContainText('Filters rows');
+
+  // Switch back to Turkish
+  await page.locator('#lang-toggle').click();
+
+  // Check that descriptions are back to Turkish (Satırları filtreler)
+  const sqlDescTr = page.locator('.kw-desc').first();
+  await expect(sqlDescTr).toContainText('Satırları filtreler');
+});

@@ -522,7 +522,7 @@ const tools = [
   { id: 'loan-calc',         label: 'Kredi Hesaplama',       labelEn: 'Loan Calculator',      icon: '🏦',  group: 'Hesaplama' },
   // Metin
   { id: 'diff-checker',      label: 'Metin Karşılaştırma',   labelEn: 'Text Diff',            icon: '🔍',  group: 'Metin' },
-  { id: 'word-counter',      label: 'Kelime Sayacı',         icon: '📝',  group: 'Metin' },
+  { id: 'word-counter',      label: 'Kelime Sayacı',         labelEn: 'Word Counter',         icon: '📝',  group: 'Metin' },
   { id: 'text-editor',       label: 'Metin Editörü',         labelEn: 'Text Editor',          icon: '✏️',  group: 'Metin' },
 ];
 

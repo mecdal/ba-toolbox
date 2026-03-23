@@ -6,7 +6,7 @@ module.exports = defineConfig({
   retries: 1,
   reporter: [['list'], ['html', { outputFolder: 'playwright-report', open: 'never' }]],
   use: {
-    baseURL: 'https://ba-toolbox.vercel.app',
+    baseURL: process.env.BASE_URL || 'https://ba-toolbox.vercel.app',
     headless: true,
     screenshot: 'only-on-failure',
     actionTimeout: 8000,
