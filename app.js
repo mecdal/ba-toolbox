@@ -226,6 +226,8 @@ const translations = {
     'us.then.ph': 'Beklenen sonuç...',
     // Feedback
     'feedback.btn': 'Geri Bildirim',
+    'feedback.email': 'E-posta Gönder',
+    'feedback.github': 'GitHub Issue Aç',
     // URL Shortener
     'url-short.title': 'URL Kısaltıcı',
     'url-short.label': 'Uzun URL',
@@ -442,6 +444,8 @@ const translations = {
     'us.then.ph': 'Expected outcome...',
     // Feedback
     'feedback.btn': 'Feedback',
+    'feedback.email': 'Send Email',
+    'feedback.github': 'Open GitHub Issue',
     // URL Shortener
     'url-short.title': 'URL Shortener',
     'url-short.label': 'Long URL',
@@ -1614,6 +1618,19 @@ function copyUserStoryMd() {
     .replace(/^  (Given|When|Then) /gm, '- **$1** ');
   navigator.clipboard.writeText(md);
 }
+
+// ===== Feedback Widget =====
+
+function toggleFeedbackMenu() {
+  document.getElementById('feedback-widget').classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  const widget = document.getElementById('feedback-widget');
+  if (widget && !widget.contains(e.target)) {
+    widget.classList.remove('open');
+  }
+});
 
 // ===== Clear Panel =====
 

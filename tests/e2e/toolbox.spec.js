@@ -278,6 +278,10 @@ test('user story tool adds and includes acceptance criteria', async ({ page }) =
   expect(output).toContain('Then sisteme yönlendirilmeli');
 });
 
-test('feedback button is visible', async ({ page }) => {
-  await expect(page.locator('#feedback-btn')).toBeVisible();
+test('feedback button is visible and shows menu on click', async ({ page }) => {
+  const toggle = page.locator('#feedback-toggle');
+  await expect(toggle).toBeVisible();
+  await toggle.click();
+  await expect(page.locator('#feedback-menu')).toBeVisible();
+  await expect(page.locator('#feedback-menu a').first()).toBeVisible();
 });

@@ -663,12 +663,18 @@ mark { background: #fef08a; color: #713f12; border-radius: 2px; }
 
 .file-drop-area:hover { border-color: var(--accent); }
 
-/* ===== Feedback Button ===== */
-#feedback-btn {
+/* ===== Feedback Widget ===== */
+#feedback-widget {
   position: fixed;
   bottom: 24px;
   right: 24px;
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+#feedback-toggle {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -678,11 +684,36 @@ mark { background: #fef08a; color: #713f12; border-radius: 2px; }
   color: #fff;
   font-size: 13px;
   font-weight: 500;
-  text-decoration: none;
+  border: none;
+  cursor: pointer;
   box-shadow: 0 4px 16px rgba(52,152,219,0.4);
   transition: opacity 0.15s, transform 0.1s;
 }
-#feedback-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+#feedback-toggle:hover { opacity: 0.88; transform: translateY(-1px); }
+#feedback-menu {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  min-width: 180px;
+}
+#feedback-widget.open #feedback-menu { display: flex; }
+#feedback-menu a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 13px;
+  transition: background 0.15s;
+}
+#feedback-menu a:hover { background: var(--hover); }
 
 /* ===== User Story — AC Block ===== */
 .ac-block {
@@ -750,5 +781,5 @@ mark { background: #fef08a; color: #713f12; border-radius: 2px; }
 @media (max-width: 768px) {
   #sidebar { width: 200px; min-width: 200px; }
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
-  #feedback-btn { bottom: 16px; right: 16px; }
+  #feedback-widget { bottom: 16px; right: 16px; }
 }

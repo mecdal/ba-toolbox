@@ -533,10 +533,20 @@
   </div><!-- /content -->
 </div><!-- /main -->
 
-<!-- Feedback Butonu -->
-<a id="feedback-btn" href="mailto:mecdalyildirim@gmail.com?subject=[BA%20Toolbox%20Feedback]" target="_blank">
-  💬 <span data-i18n="feedback.btn">Feedback</span>
-</a>
+<!-- Feedback Widget -->
+<div id="feedback-widget">
+  <button id="feedback-toggle" onclick="toggleFeedbackMenu()">
+    💬 <span data-i18n="feedback.btn">Feedback</span>
+  </button>
+  <div id="feedback-menu">
+    <a href="mailto:mecdal06@gmail.com?subject=[BA%20Toolbox%20Feedback]" target="_blank">
+      ✉️ <span data-i18n="feedback.email">E-posta Gönder</span>
+    </a>
+    <a href="https://github.com/mecdal/ba-toolbox/issues/new" target="_blank">
+      🐛 <span data-i18n="feedback.github">GitHub Issue Aç</span>
+    </a>
+  </div>
+</div>
 
 <script src="app.js"></script>
 </body>
