@@ -50,9 +50,25 @@
           <span id="json-status" style="align-self:center; font-size:13px;"></span>
         </div>
         <div class="error-box" id="json-error"></div>
-        <label data-i18n="output">Çıktı</label>
-        <textarea id="json-output" readonly></textarea>
-        <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('json-output').value, this)" data-i18n="copy">Kopyala</button>
+
+        <!-- Output view toggle -->
+        <div class="btn-group" style="margin-bottom:8px;">
+          <label data-i18n="output" style="margin-bottom:0;align-self:center;">Çıktı</label>
+          <button class="btn btn-sm" id="json-view-raw" onclick="setJsonView('raw')" data-i18n="json-fmt.raw">Raw</button>
+          <button class="btn btn-sm" id="json-view-tree" onclick="setJsonView('tree')" data-i18n="json-fmt.tree">Tree</button>
+        </div>
+
+        <!-- Raw view -->
+        <div id="json-raw-view">
+          <textarea id="json-output" readonly></textarea>
+          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('json-output').value, this)" data-i18n="copy">Kopyala</button>
+        </div>
+
+        <!-- Tree view -->
+        <div id="json-tree-view" style="display:none;">
+          <input type="text" id="json-tree-search" data-i18n-placeholder="json-fmt.search.ph" placeholder="Anahtar veya değer ara..." style="margin-bottom:8px;">
+          <div id="json-tree-output" class="json-tree-container"></div>
+        </div>
       </div>
     </div>
 
@@ -82,7 +98,7 @@
         <div class="error-box" id="interest-error"></div>
         <div class="grid-3">
           <div>
-            <label data-i18n="interest.principal">Ana Para (₺)</label>
+            <label data-i18n="interest.principal">Ana Para</label>
             <input type="number" id="si-principal" placeholder="10000" min="0">
           </div>
           <div>
@@ -101,12 +117,23 @@
             </div>
           </div>
         </div>
+        <!-- Currency Selector -->
+        <div style="margin-bottom:12px;">
+          <label data-i18n="currency.label">Para Birimi</label>
+          <select id="si-currency" style="width:auto; min-width:140px;">
+            <option value="TRY">₺ TRY</option>
+            <option value="EUR">€ EUR</option>
+            <option value="USD">$ USD</option>
+            <option value="GBP">£ GBP</option>
+          </select>
+        </div>
         <div class="interest-tax-section">
           <label data-i18n="interest.tax">Vergi</label>
           <select id="si-tax" onchange="onTaxChange('si')">
             <option value="none" data-i18n="interest.tax.none">Vergisiz</option>
             <option value="tr" data-i18n="interest.tax.tr">🇹🇷 Türkiye — Stopaj</option>
             <option value="de" data-i18n="interest.tax.de">🇩🇪 Almanya — Abgeltungssteuer (KPMG)</option>
+            <option value="custom" data-i18n="interest.tax.custom">Özel Vergi</option>
           </select>
           <div id="si-tax-tr" class="tax-options" style="display:none;">
             <label data-i18n="interest.stopaj">Stopaj Oranı (%)</label>
@@ -114,13 +141,17 @@
           </div>
           <div id="si-tax-de" class="tax-options" style="display:none;">
             <div class="tax-checkbox-row">
-              <label class="checkbox-label"><input type="checkbox" id="si-soli" checked> Solidaritätszuschlag (5,5%)</label>
+              <label class="checkbox-label"><input type="checkbox" id="si-soli" checked> <span data-i18n="interest.de.soli">Solidaritätszuschlag (5,5%)</span></label>
             </div>
             <div class="tax-checkbox-row">
-              <label class="checkbox-label"><input type="checkbox" id="si-kist" onchange="onKistChange('si')"> Kirchensteuer</label>
+              <label class="checkbox-label"><input type="checkbox" id="si-kist" onchange="onKistChange('si')"> <span data-i18n="interest.de.kist">Kirchensteuer</span></label>
               <input type="number" id="si-kist-rate" placeholder="9" min="0" max="15" step="0.1" disabled class="kist-rate-input">
               <span style="font-size:12px; color:var(--text-muted);">%</span>
             </div>
+          </div>
+          <div id="si-tax-custom" class="tax-options" style="display:none;">
+            <label data-i18n="interest.custom-rate">Vergi Oranı (%)</label>
+            <input type="number" id="si-custom-rate" value="20" min="0" max="100" step="0.1">
           </div>
         </div>
         <button class="btn btn-primary" onclick="calcSimpleInterest()" data-i18n="calculate">Hesapla</button>
@@ -133,9 +164,19 @@
       <div class="tool-card">
         <h3><span data-i18n="loan.title">Kredi Hesaplama</span> <span style="font-size:11px;font-weight:400;color:var(--text-muted);" data-i18n="loan.subtitle">— Aylık taksit ve amortisman tablosu</span></h3>
         <div class="error-box" id="loan-error"></div>
+        <!-- Currency Selector -->
+        <div style="margin-bottom:12px;">
+          <label data-i18n="currency.label">Para Birimi</label>
+          <select id="loan-currency" style="width:auto; min-width:140px;">
+            <option value="TRY">₺ TRY</option>
+            <option value="EUR">€ EUR</option>
+            <option value="USD">$ USD</option>
+            <option value="GBP">£ GBP</option>
+          </select>
+        </div>
         <div class="grid-3">
           <div>
-            <label data-i18n="loan.amount">Kredi Tutarı (₺)</label>
+            <label data-i18n="loan.amount">Kredi Tutarı</label>
             <input type="number" id="loan-principal" placeholder="100000" min="0">
           </div>
           <div>
@@ -501,6 +542,50 @@
       <div class="tool-card">
         <h3 data-i18n="us.title">User Story Yazıcı</h3>
 
+        <!-- Metadata Row -->
+        <div class="grid-3" style="margin-bottom:4px;">
+          <div>
+            <label data-i18n="us.story-id">Story ID</label>
+            <input type="text" id="us-story-id" placeholder="US-001">
+          </div>
+          <div>
+            <label data-i18n="us.story-title">Başlık</label>
+            <input type="text" id="us-story-title" data-i18n-placeholder="us.story-title.ph" placeholder="Kısa açıklayıcı başlık">
+          </div>
+          <div>
+            <label data-i18n="us.epic">Epic / Tema</label>
+            <input type="text" id="us-epic" data-i18n-placeholder="us.epic.ph" placeholder="Örn: Kullanıcı Yönetimi">
+          </div>
+        </div>
+        <div class="grid-2" style="margin-bottom:4px;">
+          <div>
+            <label data-i18n="us.priority">Öncelik (MoSCoW)</label>
+            <select id="us-priority">
+              <option value="" data-i18n="us.priority.none">Seçiniz</option>
+              <option value="must" data-i18n="us.priority.must">Must Have</option>
+              <option value="should" data-i18n="us.priority.should">Should Have</option>
+              <option value="could" data-i18n="us.priority.could">Could Have</option>
+              <option value="wont" data-i18n="us.priority.wont">Won't Have</option>
+            </select>
+          </div>
+          <div>
+            <label data-i18n="us.points">Story Points</label>
+            <select id="us-points">
+              <option value="">-</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="5">5</option>
+              <option value="8">8</option>
+              <option value="13">13</option>
+              <option value="21">21</option>
+            </select>
+          </div>
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--border); margin:12px 0;">
+
+        <!-- Core Story -->
         <label data-i18n="us.role">Rol</label>
         <input type="text" id="us-role" data-i18n-placeholder="us.role.ph" placeholder="Örn: iş analisti, müşteri, sistem yöneticisi">
 
@@ -510,11 +595,72 @@
         <label data-i18n="us.benefit">Fayda</label>
         <input type="text" id="us-benefit" data-i18n-placeholder="us.benefit.ph" placeholder="Örn: verileri hızlıca analiz edebilmek için">
 
-        <div id="ac-list"></div>
+        <hr style="border:none; border-top:1px solid var(--border); margin:12px 0;">
 
-        <button class="btn-add-ac" onclick="addAcBlock()">+ <span data-i18n="us.add-ac">Acceptance Criteria Ekle</span></button>
+        <!-- Acceptance Criteria -->
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+          <label style="margin:0;" data-i18n="us.ac-section">Kabul Kriterleri</label>
+          <div class="btn-group" style="margin:0;">
+            <button class="btn btn-sm active" id="ac-mode-gherkin" onclick="setAcMode('gherkin')" data-i18n="us.ac-gherkin">Gherkin</button>
+            <button class="btn btn-sm" id="ac-mode-checklist" onclick="setAcMode('checklist')" data-i18n="us.ac-checklist">Checklist</button>
+          </div>
+        </div>
 
-        <div class="btn-group">
+        <!-- Gherkin mode -->
+        <div id="ac-gherkin-mode">
+          <div id="ac-list"></div>
+          <button class="btn-add-ac" onclick="addAcBlock()">+ <span data-i18n="us.add-ac">Acceptance Criteria Ekle</span></button>
+        </div>
+
+        <!-- Checklist mode -->
+        <div id="ac-checklist-mode" style="display:none;">
+          <div id="ac-checklist-list"></div>
+          <button class="btn-add-ac" onclick="addChecklistItem()">+ <span data-i18n="us.add-checklist">Kriter Ekle</span></button>
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--border); margin:12px 0;">
+
+        <!-- Additional Sections -->
+        <details>
+          <summary style="cursor:pointer; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:8px;" data-i18n="us.additional">Ek Alanlar (İş Kuralları, NFR, Bağımlılıklar)</summary>
+          <div style="padding:4px 0;">
+            <label data-i18n="us.business-rules">İş Kuralları</label>
+            <textarea id="us-business-rules" rows="3" data-i18n-placeholder="us.business-rules.ph" placeholder="Doğrulama kuralları, kısıtlamalar, politikalar..." style="min-height:60px;"></textarea>
+
+            <label data-i18n="us.nfr">Fonksiyonel Olmayan Gereksinimler</label>
+            <textarea id="us-nfr" rows="2" data-i18n-placeholder="us.nfr.ph" placeholder="Performans, güvenlik, erişilebilirlik..." style="min-height:60px;"></textarea>
+
+            <label data-i18n="us.dependencies">Bağımlılıklar & Varsayımlar</label>
+            <textarea id="us-dependencies" rows="2" data-i18n-placeholder="us.dependencies.ph" placeholder="Diğer story'ler, API'ler, varsayımlar..." style="min-height:60px;"></textarea>
+          </div>
+        </details>
+
+        <hr style="border:none; border-top:1px solid var(--border); margin:12px 0;">
+
+        <!-- INVEST Checklist -->
+        <label data-i18n="us.invest">INVEST Kontrol</label>
+        <div id="invest-checklist" class="invest-chips">
+          <button class="invest-chip" data-invest="I" onclick="toggleInvest(this)"><span class="invest-letter">I</span> <span data-i18n="us.invest.i">Independent</span></button>
+          <button class="invest-chip" data-invest="N" onclick="toggleInvest(this)"><span class="invest-letter">N</span> <span data-i18n="us.invest.n">Negotiable</span></button>
+          <button class="invest-chip" data-invest="V" onclick="toggleInvest(this)"><span class="invest-letter">V</span> <span data-i18n="us.invest.v">Valuable</span></button>
+          <button class="invest-chip" data-invest="E" onclick="toggleInvest(this)"><span class="invest-letter">E</span> <span data-i18n="us.invest.e">Estimable</span></button>
+          <button class="invest-chip" data-invest="S" onclick="toggleInvest(this)"><span class="invest-letter">S</span> <span data-i18n="us.invest.s">Small</span></button>
+          <button class="invest-chip" data-invest="T" onclick="toggleInvest(this)"><span class="invest-letter">T</span> <span data-i18n="us.invest.t">Testable</span></button>
+          <span id="invest-score" class="invest-score">0/6</span>
+        </div>
+
+        <!-- Definition of Done -->
+        <details style="margin-top:8px;">
+          <summary style="cursor:pointer; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:8px;" data-i18n="us.dod">Definition of Done</summary>
+          <div id="dod-list" class="dod-checklist">
+            <label class="checkbox-label"><input type="checkbox" class="dod-item"> <span data-i18n="us.dod.code-review">Kod incelemesi yapıldı</span></label>
+            <label class="checkbox-label"><input type="checkbox" class="dod-item"> <span data-i18n="us.dod.tests">Unit testler yazıldı</span></label>
+            <label class="checkbox-label"><input type="checkbox" class="dod-item"> <span data-i18n="us.dod.ac-verified">AC doğrulandı</span></label>
+            <label class="checkbox-label"><input type="checkbox" class="dod-item"> <span data-i18n="us.dod.docs">Dokümantasyon güncellendi</span></label>
+          </div>
+        </details>
+
+        <div class="btn-group" style="margin-top:16px;">
           <button class="btn btn-primary" onclick="buildUserStory()" data-i18n="us.generate">Oluştur</button>
           <button class="btn btn-secondary" onclick="clearUserStory()" data-i18n="us.clear">Temizle</button>
         </div>
@@ -522,10 +668,11 @@
 
       <div class="tool-card" id="us-output-card" style="display:none;">
         <h3 data-i18n="us.output">Çıktı</h3>
-        <textarea id="us-output" readonly style="min-height:160px; font-family:'Consolas','Monaco',monospace; font-size:13px; line-height:1.7;"></textarea>
+        <textarea id="us-output" readonly style="min-height:200px; font-family:'Consolas','Monaco',monospace; font-size:13px; line-height:1.7;"></textarea>
         <div class="btn-group">
-          <button class="btn btn-primary" onclick="copyUserStory()" data-i18n="us.copy">📋 Kopyala</button>
-          <button class="btn btn-secondary" onclick="copyUserStoryMd()" data-i18n="us.copy-md">Markdown Kopyala</button>
+          <button class="btn btn-primary" onclick="copyUserStory()" data-i18n="us.copy">Kopyala</button>
+          <button class="btn btn-secondary" onclick="copyUserStoryMd()" data-i18n="us.copy-md">Markdown</button>
+          <button class="btn btn-secondary" onclick="copyUserStoryJira()" data-i18n="us.copy-jira">Jira</button>
         </div>
       </div>
     </div>

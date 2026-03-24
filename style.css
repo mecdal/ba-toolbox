@@ -226,6 +226,15 @@ textarea {
   font-family: 'Consolas', 'Monaco', monospace;
   resize: vertical;
   min-height: 120px;
+  line-height: 1.5;
+}
+
+/* Taller textareas for JSON & Diff panels */
+#panel-json-formatter textarea,
+#panel-json-diff textarea,
+#panel-json-escape textarea,
+#panel-diff-checker textarea {
+  min-height: 220px;
 }
 
 /* ===== Buttons ===== */
@@ -521,6 +530,33 @@ mark { background: #fef08a; color: #713f12; border-radius: 2px; }
   margin-top: 16px;
 }
 
+/* ===== JSON Tree View ===== */
+.btn-sm { padding: 4px 12px; font-size: 11px; border-radius: 4px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); cursor: pointer; }
+.btn-sm.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.json-tree-container {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  background: var(--input-bg);
+  max-height: 500px;
+  overflow: auto;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.json-tree-container details { margin-left: 16px; }
+.json-tree-container details > summary { cursor: pointer; list-style: none; position: relative; padding-left: 16px; }
+.json-tree-container details > summary::before { content: '\25B6'; position: absolute; left: 0; font-size: 10px; color: var(--text-muted); transition: transform 0.15s; }
+.json-tree-container details[open] > summary::before { transform: rotate(90deg); }
+.json-tree-key { color: var(--accent); font-weight: 600; }
+.json-tree-string { color: #27ae60; }
+.json-tree-number { color: #e67e22; }
+.json-tree-bool { color: #9b59b6; font-weight: 600; }
+.json-tree-null { color: var(--text-muted); font-style: italic; }
+.json-tree-bracket { color: var(--text-muted); }
+.json-tree-highlight { background: #fef08a; color: #000; padding: 1px 2px; border-radius: 2px; }
+
 /* ===== JSON Grid ===== */
 .json-grid-toolbar {
   padding: 8px 0 10px;
@@ -776,6 +812,31 @@ mark { background: #fef08a; color: #713f12; border-radius: 2px; }
   transition: background 0.15s;
 }
 .btn-add-ac:hover { background: var(--input-bg); }
+
+/* ===== INVEST Chips ===== */
+.invest-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 12px; }
+.invest-chip {
+  display: flex; align-items: center; gap: 4px;
+  padding: 5px 10px; border-radius: 16px;
+  border: 1px solid var(--border); background: var(--input-bg);
+  color: var(--text-muted); font-size: 12px; cursor: pointer;
+  transition: all 0.15s;
+}
+.invest-chip.active { background: #27ae60; color: #fff; border-color: #27ae60; }
+.invest-letter { font-weight: 700; font-size: 13px; }
+.invest-score { font-size: 13px; font-weight: 700; padding: 4px 8px; border-radius: 12px; }
+.invest-score.low { color: var(--error); }
+.invest-score.mid { color: #e67e22; }
+.invest-score.high { color: #27ae60; }
+
+/* ===== DoD Checklist ===== */
+.dod-checklist { display: flex; flex-direction: column; gap: 6px; padding: 8px 0; }
+.dod-checklist .checkbox-label { font-size: 13px; text-transform: none; letter-spacing: 0; }
+
+/* ===== Checklist AC ===== */
+.checklist-item { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.checklist-item input[type="text"] { flex: 1; margin: 0; }
+.checklist-item .ac-remove { position: static; }
 
 /* ===== Responsive ===== */
 @media (max-width: 768px) {

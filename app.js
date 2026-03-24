@@ -92,13 +92,16 @@ const translations = {
     'json-fmt.beautify': 'Güzelleştir',
     'json-fmt.minify': 'Sıkıştır',
     'json-fmt.validate': 'Doğrula',
+    'json-fmt.raw': 'Ham',
+    'json-fmt.tree': 'Ağaç',
+    'json-fmt.search.ph': 'Anahtar veya değer ara...',
     // UUID
     'uuid.title': 'UUID Üretici (v4)',
     'uuid.count': 'Adet (1-100)',
     'uuid.placeholder': 'Üretilen UUID\'ler burada görünecek...',
     // Interest
     'interest.title': 'Basit Faiz Hesaplama',
-    'interest.principal': 'Ana Para (₺)',
+    'interest.principal': 'Ana Para',
     'interest.rate': 'Yıllık Faiz (%)',
     'interest.term': 'Vade',
     'interest.day': 'Gün',
@@ -108,16 +111,21 @@ const translations = {
     'interest.tax.none': 'Vergisiz',
     'interest.tax.tr': '🇹🇷 Türkiye — Stopaj',
     'interest.tax.de': '🇩🇪 Almanya — Abgeltungssteuer (KPMG)',
+    'interest.tax.custom': 'Özel Vergi',
     'interest.stopaj': 'Stopaj Oranı (%)',
+    'interest.custom-rate': 'Vergi Oranı (%)',
+    'interest.de.soli': 'Solidaritätszuschlag (5,5%)',
+    'interest.de.kist': 'Kirchensteuer',
     'interest.result.title': 'FAİZ HESAPLAMA SONUCU',
     'interest.gross': 'Brüt Faiz Geliri',
     'interest.net': 'Net Faiz Geliri',
     'interest.total': 'VADE SONU TOPLAM',
     'interest.principal.label': 'Ana Para',
+    'currency.label': 'Para Birimi',
     // Loan
     'loan.title': 'Kredi Hesaplama',
     'loan.subtitle': '— Aylık taksit ve amortisman tablosu',
-    'loan.amount': 'Kredi Tutarı (₺)',
+    'loan.amount': 'Kredi Tutarı',
     'loan.rate': 'Yıllık Faiz (%)',
     'loan.months': 'Vade (Ay)',
     'loan.result.title': 'KREDİ HESAPLAMA SONUCU',
@@ -204,19 +212,37 @@ const translations = {
     'editor.format': 'Format',
     'editor.placeholder': 'Metni buraya yazın...',
     // User Story
-    'us.title': 'User Story Yazıcı',
+    'us.title': 'User Story Yazıcı (BABOK)',
+    'us.story-id': 'Story ID',
+    'us.story-title': 'Başlık',
+    'us.story-title.ph': 'Kısa açıklayıcı başlık',
+    'us.epic': 'Epic / Tema',
+    'us.epic.ph': 'Örn: Kullanıcı Yönetimi',
+    'us.priority': 'Öncelik (MoSCoW)',
+    'us.priority.none': 'Seçiniz',
+    'us.priority.must': 'Olmalı (Must)',
+    'us.priority.should': 'Olması Gerekir (Should)',
+    'us.priority.could': 'Olabilir (Could)',
+    'us.priority.wont': 'Olmayacak (Won\'t)',
+    'us.points': 'Story Points',
     'us.role': 'Rol',
     'us.role.ph': 'Örn: iş analisti, müşteri, sistem yöneticisi',
     'us.action': 'Aksiyon',
     'us.action.ph': 'Örn: aylık satış raporlarını otomatik oluşturmak',
     'us.benefit': 'Fayda',
     'us.benefit.ph': 'Örn: verileri hızlıca analiz edebilmek için',
+    'us.ac-section': 'Kabul Kriterleri',
+    'us.ac-gherkin': 'Gherkin',
+    'us.ac-checklist': 'Checklist',
     'us.add-ac': 'Acceptance Criteria Ekle',
+    'us.add-checklist': 'Kriter Ekle',
+    'us.checklist-item.ph': 'Kabul kriteri...',
     'us.generate': 'Oluştur',
     'us.clear': 'Temizle',
     'us.output': 'Çıktı',
-    'us.copy': '📋 Kopyala',
-    'us.copy-md': 'Markdown Kopyala',
+    'us.copy': 'Kopyala',
+    'us.copy-md': 'Markdown',
+    'us.copy-jira': 'Jira',
     'us.ac-label': 'KABUL KRİTERİ',
     'us.given': 'Given',
     'us.when': 'When',
@@ -224,6 +250,25 @@ const translations = {
     'us.given.ph': 'Bağlam / ön koşul...',
     'us.when.ph': 'Gerçekleşen olay / aksiyon...',
     'us.then.ph': 'Beklenen sonuç...',
+    'us.additional': 'Ek Alanlar (İş Kuralları, NFR, Bağımlılıklar)',
+    'us.business-rules': 'İş Kuralları',
+    'us.business-rules.ph': 'Doğrulama kuralları, kısıtlamalar, politikalar...',
+    'us.nfr': 'Fonksiyonel Olmayan Gereksinimler',
+    'us.nfr.ph': 'Performans, güvenlik, erişilebilirlik...',
+    'us.dependencies': 'Bağımlılıklar & Varsayımlar',
+    'us.dependencies.ph': 'Diğer story\'ler, API\'ler, varsayımlar...',
+    'us.invest': 'INVEST Kontrol',
+    'us.invest.i': 'Independent',
+    'us.invest.n': 'Negotiable',
+    'us.invest.v': 'Valuable',
+    'us.invest.e': 'Estimable',
+    'us.invest.s': 'Small',
+    'us.invest.t': 'Testable',
+    'us.dod': 'Definition of Done',
+    'us.dod.code-review': 'Kod incelemesi yapıldı',
+    'us.dod.tests': 'Unit testler yazıldı',
+    'us.dod.ac-verified': 'AC doğrulandı',
+    'us.dod.docs': 'Dokümantasyon güncellendi',
     // Feedback
     'feedback.btn': 'Geri Bildirim',
     'feedback.email': 'E-posta Gönder',
@@ -302,13 +347,16 @@ const translations = {
     'json-fmt.beautify': 'Beautify',
     'json-fmt.minify': 'Minify',
     'json-fmt.validate': 'Validate',
+    'json-fmt.raw': 'Raw',
+    'json-fmt.tree': 'Tree',
+    'json-fmt.search.ph': 'Search keys or values...',
     // UUID
     'uuid.title': 'UUID Generator (v4)',
     'uuid.count': 'Count (1-100)',
     'uuid.placeholder': 'Generated UUIDs will appear here...',
     // Interest
     'interest.title': 'Simple Interest Calculator',
-    'interest.principal': 'Principal (₺)',
+    'interest.principal': 'Principal',
     'interest.rate': 'Annual Rate (%)',
     'interest.term': 'Term',
     'interest.day': 'Day',
@@ -318,16 +366,21 @@ const translations = {
     'interest.tax.none': 'No Tax',
     'interest.tax.tr': '🇹🇷 Turkey — Withholding Tax',
     'interest.tax.de': '🇩🇪 Germany — Abgeltungssteuer (KPMG)',
+    'interest.tax.custom': 'Custom Tax',
     'interest.stopaj': 'Withholding Rate (%)',
+    'interest.custom-rate': 'Tax Rate (%)',
+    'interest.de.soli': 'Solidarity Surcharge (5.5%)',
+    'interest.de.kist': 'Church Tax',
     'interest.result.title': 'INTEREST CALCULATION RESULT',
     'interest.gross': 'Gross Interest Income',
     'interest.net': 'Net Interest Income',
     'interest.total': 'MATURITY TOTAL',
     'interest.principal.label': 'Principal',
+    'currency.label': 'Currency',
     // Loan
     'loan.title': 'Loan Calculator',
     'loan.subtitle': '— Monthly installment & amortization table',
-    'loan.amount': 'Loan Amount (₺)',
+    'loan.amount': 'Loan Amount',
     'loan.rate': 'Annual Rate (%)',
     'loan.months': 'Term (Months)',
     'loan.result.title': 'LOAN CALCULATION RESULT',
@@ -422,19 +475,37 @@ const translations = {
     'editor.format': 'Format',
     'editor.placeholder': 'Type text here...',
     // User Story
-    'us.title': 'User Story Writer',
+    'us.title': 'User Story Writer (BABOK)',
+    'us.story-id': 'Story ID',
+    'us.story-title': 'Title',
+    'us.story-title.ph': 'Short descriptive title',
+    'us.epic': 'Epic / Theme',
+    'us.epic.ph': 'e.g. User Management',
+    'us.priority': 'Priority (MoSCoW)',
+    'us.priority.none': 'Select',
+    'us.priority.must': 'Must Have',
+    'us.priority.should': 'Should Have',
+    'us.priority.could': 'Could Have',
+    'us.priority.wont': "Won't Have",
+    'us.points': 'Story Points',
     'us.role': 'Role',
     'us.role.ph': 'e.g. business analyst, customer, system admin',
     'us.action': 'Action',
     'us.action.ph': 'e.g. generate monthly sales reports automatically',
     'us.benefit': 'Benefit',
     'us.benefit.ph': 'e.g. to analyse data quickly',
+    'us.ac-section': 'Acceptance Criteria',
+    'us.ac-gherkin': 'Gherkin',
+    'us.ac-checklist': 'Checklist',
     'us.add-ac': 'Add Acceptance Criteria',
+    'us.add-checklist': 'Add Criterion',
+    'us.checklist-item.ph': 'Acceptance criterion...',
     'us.generate': 'Generate',
     'us.clear': 'Clear',
     'us.output': 'Output',
-    'us.copy': '📋 Copy',
-    'us.copy-md': 'Copy as Markdown',
+    'us.copy': 'Copy',
+    'us.copy-md': 'Markdown',
+    'us.copy-jira': 'Jira',
     'us.ac-label': 'ACCEPTANCE CRITERIA',
     'us.given': 'Given',
     'us.when': 'When',
@@ -442,6 +513,25 @@ const translations = {
     'us.given.ph': 'Context / precondition...',
     'us.when.ph': 'The event / action that occurs...',
     'us.then.ph': 'Expected outcome...',
+    'us.additional': 'Additional Fields (Business Rules, NFR, Dependencies)',
+    'us.business-rules': 'Business Rules',
+    'us.business-rules.ph': 'Validation rules, constraints, policies...',
+    'us.nfr': 'Non-Functional Requirements',
+    'us.nfr.ph': 'Performance, security, accessibility...',
+    'us.dependencies': 'Dependencies & Assumptions',
+    'us.dependencies.ph': 'Other stories, APIs, assumptions...',
+    'us.invest': 'INVEST Check',
+    'us.invest.i': 'Independent',
+    'us.invest.n': 'Negotiable',
+    'us.invest.v': 'Valuable',
+    'us.invest.e': 'Estimable',
+    'us.invest.s': 'Small',
+    'us.invest.t': 'Testable',
+    'us.dod': 'Definition of Done',
+    'us.dod.code-review': 'Code reviewed',
+    'us.dod.tests': 'Unit tests written',
+    'us.dod.ac-verified': 'AC verified',
+    'us.dod.docs': 'Documentation updated',
     // Feedback
     'feedback.btn': 'Feedback',
     'feedback.email': 'Send Email',
@@ -722,6 +812,117 @@ function jsonValidate() {
   }
 }
 
+// ===== JSON Formatter: Tree View =====
+
+let jsonViewMode = 'raw';
+
+function setJsonView(mode) {
+  jsonViewMode = mode;
+  document.getElementById('json-raw-view').style.display = mode === 'raw' ? '' : 'none';
+  document.getElementById('json-tree-view').style.display = mode === 'tree' ? '' : 'none';
+  document.getElementById('json-view-raw').classList.toggle('active', mode === 'raw');
+  document.getElementById('json-view-tree').classList.toggle('active', mode === 'tree');
+  if (mode === 'tree') refreshJsonTree();
+}
+
+function refreshJsonTree() {
+  const container = document.getElementById('json-tree-output');
+  try {
+    const input = document.getElementById('json-input').value.trim();
+    if (!input) { container.innerHTML = ''; return; }
+    const parsed = JSON.parse(input);
+    container.innerHTML = renderJsonTree(parsed, '', true);
+  } catch (e) {
+    container.innerHTML = '<span style="color:var(--error)">Invalid JSON</span>';
+  }
+}
+
+function renderJsonTree(data, key, isRoot) {
+  if (data === null) return wrapTreeLeaf(key, '<span class="json-tree-null">null</span>');
+  if (typeof data === 'boolean') return wrapTreeLeaf(key, `<span class="json-tree-bool">${data}</span>`);
+  if (typeof data === 'number') return wrapTreeLeaf(key, `<span class="json-tree-number">${data}</span>`);
+  if (typeof data === 'string') return wrapTreeLeaf(key, `<span class="json-tree-string">"${escapeHtml(data)}"</span>`);
+
+  const isArray = Array.isArray(data);
+  const entries = isArray ? data.map((v, i) => [i, v]) : Object.entries(data);
+  const openBr = isArray ? '[' : '{';
+  const closeBr = isArray ? ']' : '}';
+  const count = entries.length;
+
+  const keyHtml = key !== '' ? `<span class="json-tree-key">"${escapeHtml(String(key))}"</span>: ` : '';
+  const summaryLabel = `${keyHtml}<span class="json-tree-bracket">${openBr}</span> <span style="color:var(--text-muted);font-size:11px;">${count} ${isArray ? 'items' : 'keys'}</span>`;
+
+  let children = '';
+  for (const [k, v] of entries) {
+    children += renderJsonTree(v, String(k), false);
+  }
+
+  return `<details${isRoot ? ' open' : ''}>
+    <summary>${summaryLabel}</summary>
+    ${children}
+    <div><span class="json-tree-bracket">${closeBr}</span></div>
+  </details>`;
+}
+
+function wrapTreeLeaf(key, valueHtml) {
+  const keyHtml = key !== '' ? `<span class="json-tree-key">"${escapeHtml(String(key))}"</span>: ` : '';
+  return `<div style="margin-left:16px;">${keyHtml}${valueHtml}</div>`;
+}
+
+// Tree search
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('json-tree-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      searchJsonTree(this.value.trim().toLowerCase());
+    });
+  }
+});
+
+function searchJsonTree(query) {
+  const container = document.getElementById('json-tree-output');
+  // Remove existing highlights
+  container.querySelectorAll('.json-tree-highlight').forEach(el => {
+    el.replaceWith(el.textContent);
+  });
+  if (!query) return;
+
+  // Highlight matching text in keys and values
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+  const matches = [];
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    if (node.textContent.toLowerCase().includes(query)) {
+      matches.push(node);
+    }
+  }
+  for (const node of matches) {
+    const text = node.textContent;
+    const idx = text.toLowerCase().indexOf(query);
+    if (idx === -1) continue;
+    const span = document.createElement('span');
+    span.className = 'json-tree-highlight';
+    span.textContent = text.substring(idx, idx + query.length);
+    const after = document.createTextNode(text.substring(idx + query.length));
+    const before = document.createTextNode(text.substring(0, idx));
+    const parent = node.parentNode;
+    parent.insertBefore(before, node);
+    parent.insertBefore(span, node);
+    parent.insertBefore(after, node);
+    parent.removeChild(node);
+    // Expand parent details
+    let el = span.closest('details');
+    while (el) { el.open = true; el = el.parentElement?.closest('details'); }
+  }
+}
+
+// Override beautify to also update tree
+const _origBeautify = jsonBeautify;
+jsonBeautify = function() {
+  _origBeautify();
+  if (jsonViewMode === 'tree') refreshJsonTree();
+};
+
 // ===== Tool: UUID Generator =====
 
 function generateUUIDs() {
@@ -737,6 +938,21 @@ function onTaxChange(prefix) {
   const val = document.getElementById(prefix + '-tax').value;
   document.getElementById(prefix + '-tax-tr').style.display = val === 'tr' ? 'block' : 'none';
   document.getElementById(prefix + '-tax-de').style.display = val === 'de' ? 'block' : 'none';
+  const customEl = document.getElementById(prefix + '-tax-custom');
+  if (customEl) customEl.style.display = val === 'custom' ? 'block' : 'none';
+}
+
+// ===== Currency Config =====
+const currencyConfigs = {
+  TRY: { symbol: '₺', locale: 'tr-TR' },
+  EUR: { symbol: '€', locale: 'de-DE' },
+  USD: { symbol: '$', locale: 'en-US' },
+  GBP: { symbol: '£', locale: 'en-GB' }
+};
+
+function getCurrencyConfig(selectorId) {
+  const code = document.getElementById(selectorId)?.value || 'TRY';
+  return { code, ...currencyConfigs[code] };
 }
 
 function onKistChange(prefix) {
@@ -754,6 +970,10 @@ function getTaxSettings(prefix) {
     const hasKiSt = document.getElementById(prefix + '-kist').checked;
     const kiStRate = hasKiSt ? (parseFloat(document.getElementById(prefix + '-kist-rate').value) / 100 || 0.09) : 0;
     return { country: 'de', hasSoli, hasKiSt, kiStRate };
+  }
+  if (country === 'custom') {
+    const rate = parseFloat(document.getElementById(prefix + '-custom-rate').value) / 100 || 0.20;
+    return { country: 'custom', customRate: rate };
   }
   return { country: 'none' };
 }
@@ -781,10 +1001,18 @@ function calcTaxAmount(grossInterest, ts) {
     const soli = ts.hasSoli ? abgelt * 0.055 : 0;
     const kist = (ts.hasKiSt && ts.kiStRate > 0) ? abgelt * ts.kiStRate : 0;
     const totalTax = abgelt + soli + kist;
-    const breakdown = [{ label: `🇩🇪 Abgeltungssteuer (%${(abgeltRate * 100).toFixed(3)})`, amount: abgelt }];
-    if (soli > 0) breakdown.push({ label: 'Solidaritätszuschlag (5,5%)', amount: soli });
-    if (kist > 0) breakdown.push({ label: `Kirchensteuer (%${(ts.kiStRate * 100).toFixed(1)})`, amount: kist });
+    const breakdown = [{ label: `🇩🇪 Abgeltungssteuer (${(abgeltRate * 100).toFixed(3)}%)`, amount: abgelt }];
+    if (soli > 0) breakdown.push({ label: `${t('interest.de.soli')}`, amount: soli });
+    if (kist > 0) breakdown.push({ label: `${t('interest.de.kist')} (${(ts.kiStRate * 100).toFixed(1)}%)`, amount: kist });
     return { totalTax, netInterest: grossInterest - totalTax, breakdown };
+  }
+
+  if (ts.country === 'custom') {
+    const tax = grossInterest * ts.customRate;
+    return {
+      totalTax: tax, netInterest: grossInterest - tax,
+      breakdown: [{ label: `${t('interest.tax.custom')} (${(ts.customRate * 100).toFixed(1)}%)`, amount: tax }]
+    };
   }
 
   return { totalTax: 0, netInterest: grossInterest, breakdown: [] };
@@ -793,17 +1021,18 @@ function calcTaxAmount(grossInterest, ts) {
 function renderInterestResult(containerId, data) {
   const el = document.getElementById(containerId);
   if (!el) return;
-  const fmt = n => Math.abs(n).toLocaleString('tr-TR', { minimumFractionDigits: 2 });
+  const cur = data.currency || { symbol: '₺', locale: 'tr-TR' };
+  const fmt = n => Math.abs(n).toLocaleString(cur.locale, { minimumFractionDigits: 2 });
   let html = `<div class="irc-row irc-header"><span>${t('interest.result.title')}</span></div>`;
-  html += `<div class="irc-row"><span>${data.principalLabel || t('interest.principal.label')}</span><span class="irc-val">₺ ${fmt(data.principal)}</span></div>`;
-  html += `<div class="irc-row"><span>${t('interest.gross')}</span><span class="irc-val positive">+ ₺ ${fmt(data.grossInterest)}</span></div>`;
+  html += `<div class="irc-row"><span>${data.principalLabel || t('interest.principal.label')}</span><span class="irc-val">${cur.symbol} ${fmt(data.principal)}</span></div>`;
+  html += `<div class="irc-row"><span>${t('interest.gross')}</span><span class="irc-val positive">+ ${cur.symbol} ${fmt(data.grossInterest)}</span></div>`;
   if (data.breakdown && data.breakdown.length > 0) {
     data.breakdown.forEach(b => {
-      html += `<div class="irc-row irc-tax"><span>${b.label}</span><span class="irc-val negative">− ₺ ${fmt(b.amount)}</span></div>`;
+      html += `<div class="irc-row irc-tax"><span>${b.label}</span><span class="irc-val negative">− ${cur.symbol} ${fmt(b.amount)}</span></div>`;
     });
-    html += `<div class="irc-row"><span>${t('interest.net')}</span><span class="irc-val positive">+ ₺ ${fmt(data.netInterest)}</span></div>`;
+    html += `<div class="irc-row"><span>${t('interest.net')}</span><span class="irc-val positive">+ ${cur.symbol} ${fmt(data.netInterest)}</span></div>`;
   }
-  html += `<div class="irc-row irc-total"><span>${t('interest.total')}</span><span class="irc-val total">₺ ${fmt(data.total)}</span></div>`;
+  html += `<div class="irc-row irc-total"><span>${t('interest.total')}</span><span class="irc-val total">${cur.symbol} ${fmt(data.total)}</span></div>`;
   el.innerHTML = html;
   el.style.display = 'block';
 }
@@ -825,7 +1054,8 @@ function calcSimpleInterest() {
   const ts = getTaxSettings('si');
   const tax = calcTaxAmount(grossInterest, ts);
 
-  renderInterestResult('si-result-card', { principal: P, grossInterest, breakdown: tax.breakdown, netInterest: tax.netInterest, total: P + tax.netInterest });
+  const cur = getCurrencyConfig('si-currency');
+  renderInterestResult('si-result-card', { principal: P, grossInterest, breakdown: tax.breakdown, netInterest: tax.netInterest, total: P + tax.netInterest, currency: cur });
 }
 
 // ===== Tool: Timestamp =====
@@ -1135,22 +1365,19 @@ function setGridCell(td, val, depth) {
   if (val === undefined || val === null) {
     td.appendChild(createGridSpan('null', 'json-grid-null'));
   } else if (typeof val === 'object') {
-    if (depth >= 2) {
-      const isArr = Array.isArray(val);
-      const count = isArr ? val.length : Object.keys(val).length;
-      const details = document.createElement('details');
-      const summary = document.createElement('summary');
-      summary.className = 'json-grid-nested';
-      summary.style.cursor = 'pointer';
-      summary.textContent = isArr
-        ? `[${count} ${currentLang === 'en' ? 'item' : 'öğe'}]`
-        : `{${count} ${currentLang === 'en' ? 'field' : 'alan'}}`;
-      details.appendChild(summary);
-      details.appendChild(buildGridNode(val, depth + 1));
-      td.appendChild(details);
-    } else {
-      td.appendChild(buildGridNode(val, depth + 1));
-    }
+    const isArr = Array.isArray(val);
+    const count = isArr ? val.length : Object.keys(val).length;
+    const details = document.createElement('details');
+    const summary = document.createElement('summary');
+    summary.className = 'json-grid-nested';
+    summary.style.cursor = 'pointer';
+    summary.textContent = isArr
+      ? `[${count} ${currentLang === 'en' ? 'item' : 'öğe'}]`
+      : `{${count} ${currentLang === 'en' ? 'field' : 'alan'}}`;
+    details.appendChild(summary);
+    details.appendChild(buildGridNode(val, depth + 1));
+    if (depth < 1) details.open = true;
+    td.appendChild(details);
   } else if (typeof val === 'boolean') {
     td.appendChild(createGridSpan(String(val), 'json-grid-bool'));
   } else if (typeof val === 'number') {
@@ -1506,14 +1733,15 @@ function calcLoanPayment() {
     : P * (r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1);
   const totalPayment = monthlyPayment * months;
   const totalInterest = totalPayment - P;
-  const fmt = n => n.toLocaleString('tr-TR', { minimumFractionDigits: 2 });
+  const cur = getCurrencyConfig('loan-currency');
+  const fmt = n => n.toLocaleString(cur.locale, { minimumFractionDigits: 2 });
 
   const cardEl = document.getElementById('loan-result-card');
   let html = `<div class="irc-row irc-header"><span>${t('loan.result.title')}</span></div>`;
-  html += `<div class="irc-row"><span>${t('loan.amount.label')}</span><span class="irc-val">₺ ${fmt(P)}</span></div>`;
-  html += `<div class="irc-row"><span>${t('loan.monthly')}</span><span class="irc-val total">₺ ${fmt(monthlyPayment)}</span></div>`;
-  html += `<div class="irc-row"><span>${t('loan.total.payment')}</span><span class="irc-val">₺ ${fmt(totalPayment)}</span></div>`;
-  html += `<div class="irc-row irc-tax"><span>${t('loan.total.interest')}</span><span class="irc-val negative">− ₺ ${fmt(totalInterest)}</span></div>`;
+  html += `<div class="irc-row"><span>${t('loan.amount.label')}</span><span class="irc-val">${cur.symbol} ${fmt(P)}</span></div>`;
+  html += `<div class="irc-row"><span>${t('loan.monthly')}</span><span class="irc-val total">${cur.symbol} ${fmt(monthlyPayment)}</span></div>`;
+  html += `<div class="irc-row"><span>${t('loan.total.payment')}</span><span class="irc-val">${cur.symbol} ${fmt(totalPayment)}</span></div>`;
+  html += `<div class="irc-row irc-tax"><span>${t('loan.total.interest')}</span><span class="irc-val negative">− ${cur.symbol} ${fmt(totalInterest)}</span></div>`;
   html += `<div class="irc-row irc-total"><span>${t('loan.interest.ratio')}</span><span class="irc-val total">${((totalInterest / P) * 100).toFixed(1)}%</span></div>`;
   cardEl.innerHTML = html;
   cardEl.style.display = 'block';
@@ -1533,6 +1761,16 @@ function calcLoanPayment() {
 // ===== User Story Writer =====
 
 let acCount = 0;
+let checklistCount = 0;
+let acMode = 'gherkin';
+
+function setAcMode(mode) {
+  acMode = mode;
+  document.getElementById('ac-gherkin-mode').style.display = mode === 'gherkin' ? '' : 'none';
+  document.getElementById('ac-checklist-mode').style.display = mode === 'checklist' ? '' : 'none';
+  document.getElementById('ac-mode-gherkin').classList.toggle('active', mode === 'gherkin');
+  document.getElementById('ac-mode-checklist').classList.toggle('active', mode === 'checklist');
+}
 
 function addAcBlock() {
   acCount++;
@@ -1564,24 +1802,110 @@ function removeAcBlock(n) {
   if (block) block.remove();
 }
 
+function addChecklistItem() {
+  checklistCount++;
+  const n = checklistCount;
+  const list = document.getElementById('ac-checklist-list');
+  const item = document.createElement('div');
+  item.className = 'checklist-item';
+  item.dataset.cl = n;
+  item.innerHTML = `
+    <input type="text" id="us-cl-${n}" data-i18n-placeholder="us.checklist-item.ph" placeholder="${t('us.checklist-item.ph') || 'Kabul kriteri...'}">
+    <button class="ac-remove" onclick="removeChecklistItem(${n})" title="Kaldır">✕</button>`;
+  list.appendChild(item);
+}
+
+function removeChecklistItem(n) {
+  const item = document.querySelector(`.checklist-item[data-cl="${n}"]`);
+  if (item) item.remove();
+}
+
+function toggleInvest(btn) {
+  btn.classList.toggle('active');
+  const score = document.querySelectorAll('.invest-chip.active').length;
+  const scoreEl = document.getElementById('invest-score');
+  scoreEl.textContent = `${score}/6`;
+  scoreEl.className = 'invest-score ' + (score < 4 ? 'low' : score < 6 ? 'mid' : 'high');
+}
+
+function getInvestScore() {
+  const chips = document.querySelectorAll('.invest-chip.active');
+  return Array.from(chips).map(c => c.dataset.invest).join('');
+}
+
 function buildUserStory() {
-  const role    = document.getElementById('us-role').value.trim();
-  const action  = document.getElementById('us-action').value.trim();
+  const storyId = document.getElementById('us-story-id').value.trim();
+  const storyTitle = document.getElementById('us-story-title').value.trim();
+  const epic = document.getElementById('us-epic').value.trim();
+  const priority = document.getElementById('us-priority').value;
+  const points = document.getElementById('us-points').value;
+  const role = document.getElementById('us-role').value.trim();
+  const action = document.getElementById('us-action').value.trim();
   const benefit = document.getElementById('us-benefit').value.trim();
 
   if (!role && !action && !benefit) return;
 
-  let text = `As a ${role || '...'},\nI want to ${action || '...'},\nSo that ${benefit || '...'}.`;
+  let text = '';
 
-  const blocks = document.querySelectorAll('#ac-list .ac-block');
-  if (blocks.length > 0) {
-    text += '\n\nAcceptance Criteria:';
-    blocks.forEach(block => {
-      const n = block.dataset.ac;
-      const given = document.getElementById(`us-given-${n}`)?.value.trim() || '...';
-      const when  = document.getElementById(`us-when-${n}`)?.value.trim()  || '...';
-      const then  = document.getElementById(`us-then-${n}`)?.value.trim()  || '...';
-      text += `\n  Given ${given},\n  When ${when},\n  Then ${then}.`;
+  // Header
+  if (storyId || storyTitle) {
+    text += `${storyId ? '[' + storyId + '] ' : ''}${storyTitle || ''}\n`;
+  }
+  if (epic) text += `Epic: ${epic}\n`;
+  if (priority) {
+    const pMap = { must: 'Must Have', should: 'Should Have', could: 'Could Have', wont: "Won't Have" };
+    text += `Priority: ${pMap[priority] || priority}\n`;
+  }
+  if (points) text += `Story Points: ${points}\n`;
+  if (storyId || storyTitle || epic || priority || points) text += '\n';
+
+  // Core story
+  text += `As a ${role || '...'},\nI want to ${action || '...'},\nSo that ${benefit || '...'}.`;
+
+  // AC
+  if (acMode === 'gherkin') {
+    const blocks = document.querySelectorAll('#ac-list .ac-block');
+    if (blocks.length > 0) {
+      text += '\n\nAcceptance Criteria:';
+      blocks.forEach(block => {
+        const n = block.dataset.ac;
+        const given = document.getElementById(`us-given-${n}`)?.value.trim() || '...';
+        const when  = document.getElementById(`us-when-${n}`)?.value.trim()  || '...';
+        const then  = document.getElementById(`us-then-${n}`)?.value.trim()  || '...';
+        text += `\n  Given ${given},\n  When ${when},\n  Then ${then}.`;
+      });
+    }
+  } else {
+    const items = document.querySelectorAll('#ac-checklist-list .checklist-item');
+    if (items.length > 0) {
+      text += '\n\nAcceptance Criteria:';
+      items.forEach(item => {
+        const n = item.dataset.cl;
+        const val = document.getElementById(`us-cl-${n}`)?.value.trim() || '...';
+        text += `\n  [ ] ${val}`;
+      });
+    }
+  }
+
+  // Additional sections
+  const rules = document.getElementById('us-business-rules').value.trim();
+  const nfr = document.getElementById('us-nfr').value.trim();
+  const deps = document.getElementById('us-dependencies').value.trim();
+  if (rules) text += `\n\nBusiness Rules:\n${rules}`;
+  if (nfr) text += `\n\nNon-Functional Requirements:\n${nfr}`;
+  if (deps) text += `\n\nDependencies & Assumptions:\n${deps}`;
+
+  // INVEST
+  const invest = getInvestScore();
+  if (invest) text += `\n\nINVEST: ${invest} (${invest.length}/6)`;
+
+  // DoD
+  const dodItems = document.querySelectorAll('.dod-item');
+  const dodChecked = Array.from(dodItems).filter(i => i.checked);
+  if (dodChecked.length > 0) {
+    text += '\n\nDefinition of Done:';
+    dodChecked.forEach(item => {
+      text += `\n  [x] ${item.parentElement.textContent.trim()}`;
     });
   }
 
@@ -1591,12 +1915,21 @@ function buildUserStory() {
 }
 
 function clearUserStory() {
-  ['us-role','us-action','us-benefit'].forEach(id => {
+  ['us-role','us-action','us-benefit','us-story-id','us-story-title','us-epic','us-business-rules','us-nfr','us-dependencies'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
+  document.getElementById('us-priority').value = '';
+  document.getElementById('us-points').value = '';
   document.getElementById('ac-list').innerHTML = '';
+  document.getElementById('ac-checklist-list').innerHTML = '';
   acCount = 0;
+  checklistCount = 0;
+  document.querySelectorAll('.invest-chip').forEach(c => c.classList.remove('active'));
+  const scoreEl = document.getElementById('invest-score');
+  scoreEl.textContent = '0/6';
+  scoreEl.className = 'invest-score';
+  document.querySelectorAll('.dod-item').forEach(i => { i.checked = false; });
   document.getElementById('us-output').value = '';
   document.getElementById('us-output-card').style.display = 'none';
 }
@@ -1610,13 +1943,34 @@ function copyUserStory() {
 function copyUserStoryMd() {
   const out = document.getElementById('us-output');
   if (!out.value) return;
-  const md = out.value
-    .replace(/^(As a .+)$/m, '**$1**')
-    .replace(/^(I want to .+)$/m, '**$1**')
-    .replace(/^(So that .+)$/m, '**$1**')
-    .replace(/^(Acceptance Criteria:)$/m, '\n### $1')
-    .replace(/^  (Given|When|Then) /gm, '- **$1** ');
+  let md = out.value;
+  md = md.replace(/^(\[.+?\].*)$/m, '## $1');
+  md = md.replace(/^(As a .+)$/m, '**$1**');
+  md = md.replace(/^(I want to .+)$/m, '**$1**');
+  md = md.replace(/^(So that .+)$/m, '**$1**');
+  md = md.replace(/^(Acceptance Criteria:)$/m, '\n### $1');
+  md = md.replace(/^(Business Rules:)$/m, '\n### $1');
+  md = md.replace(/^(Non-Functional Requirements:)$/m, '\n### $1');
+  md = md.replace(/^(Dependencies & Assumptions:)$/m, '\n### $1');
+  md = md.replace(/^(Definition of Done:)$/m, '\n### $1');
+  md = md.replace(/^  (Given|When|Then) /gm, '- **$1** ');
+  md = md.replace(/^  \[( |x)\] /gm, '- [$1] ');
   navigator.clipboard.writeText(md);
+}
+
+function copyUserStoryJira() {
+  const out = document.getElementById('us-output');
+  if (!out.value) return;
+  let jira = out.value;
+  jira = jira.replace(/^(\[.+?\].*)$/m, 'h2. $1');
+  jira = jira.replace(/^(Acceptance Criteria:)$/m, 'h3. $1');
+  jira = jira.replace(/^(Business Rules:)$/m, 'h3. $1');
+  jira = jira.replace(/^(Non-Functional Requirements:)$/m, 'h3. $1');
+  jira = jira.replace(/^(Dependencies & Assumptions:)$/m, 'h3. $1');
+  jira = jira.replace(/^(Definition of Done:)$/m, 'h3. $1');
+  jira = jira.replace(/^  (Given|When|Then) /gm, '* *$1* ');
+  jira = jira.replace(/^  \[( |x)\] /gm, '* ');
+  navigator.clipboard.writeText(jira);
 }
 
 // ===== Feedback Widget =====

@@ -264,7 +264,7 @@ test('user story tool adds and includes acceptance criteria', async ({ page }) =
   await panel.locator('#us-action').fill('giriş yapmak');
   await panel.locator('#us-benefit').fill('sisteme erişmek');
 
-  await panel.locator('.btn-add-ac').click();
+  await panel.locator('#ac-gherkin-mode .btn-add-ac').click();
   await panel.locator('#us-given-1').fill('kullanıcı login sayfasındayken');
   await panel.locator('#us-when-1').fill('şifresini girdiğinde');
   await panel.locator('#us-then-1').fill('sisteme yönlendirilmeli');
