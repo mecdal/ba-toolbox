@@ -1128,14 +1128,68 @@ function calcSimpleInterest() {
 
 // ===== Tool: Timestamp =====
 
+function tsISOWeek(d) {
+  const tmp = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  tmp.setUTCDate(tmp.getUTCDate() + 4 - (tmp.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(tmp.getUTCFullYear(), 0, 1));
+  return Math.ceil((((tmp - yearStart) / 86400000) + 1) / 7);
+}
+
+function tsRelative(ms) {
+  const diff = Date.now() - ms;
+  const abs  = Math.abs(diff);
+  const future = diff < 0;
+  const slots = [
+    { u: 'year',   ms: 31536000000 },
+    { u: 'month',  ms: 2592000000  },
+    { u: 'day',    ms: 86400000    },
+    { u: 'hour',   ms: 3600000     },
+    { u: 'minute', ms: 60000       },
+    { u: 'second', ms: 1000        },
+  ];
+  for (const { u, ms: unit } of slots) {
+    const n = Math.floor(abs / unit);
+    if (n >= 1) {
+      const label = n === 1 ? u : u + 's';
+      return future ? `in ${n} ${label}` : `${n} ${label} ago`;
+    }
+  }
+  return 'just now';
+}
+
 function tsToDate() {
-  const val = document.getElementById('ts-input').value.trim();
-  const num = parseInt(val);
-  if (isNaN(num)) { document.getElementById('ts-result').textContent = t('ts.invalid'); return; }
-  const ms = val.length >= 13 ? num : num * 1000;
-  const d = new Date(ms);
-  document.getElementById('ts-result').textContent =
-    `Yerel: ${d.toLocaleString('tr-TR')}\nUTC: ${d.toUTCString()}\nISO: ${d.toISOString()}`;
+  const raw = document.getElementById('ts-input').value.trim();
+  const out = document.getElementById('ts-result');
+  if (!raw || isNaN(raw)) { out.innerHTML = t('ts.invalid'); return; }
+
+  const ms = raw.length >= 13 ? parseInt(raw) : parseInt(raw) * 1000;
+  const d  = new Date(ms);
+  if (isNaN(d.getTime())) { out.innerHTML = t('ts.invalid'); return; }
+
+  const pad = n => String(n).padStart(2, '0');
+  const Y = d.getUTCFullYear(), M = pad(d.getUTCMonth() + 1), D = pad(d.getUTCDate());
+  const h = pad(d.getUTCHours()), m = pad(d.getUTCMinutes()), s = pad(d.getUTCSeconds());
+
+  const formats = [
+    { label: 'Local',        value: d.toLocaleString(currentLang === 'tr' ? 'tr-TR' : 'en-GB') },
+    { label: 'UTC',          value: d.toUTCString() },
+    { label: 'ISO 8601',     value: d.toISOString() },
+    { label: 'SQL Date',     value: `${Y}-${M}-${D}` },
+    { label: 'SQL DateTime', value: `${Y}-${M}-${D} ${h}:${m}:${s}` },
+    { label: 'Day of Week',  value: d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) },
+    { label: 'ISO Week',     value: `Week ${tsISOWeek(d)}, ${Y}` },
+    { label: 'Relative',     value: tsRelative(ms) },
+    { label: 'Unix (s)',     value: String(Math.floor(ms / 1000)) },
+    { label: 'Unix (ms)',    value: String(ms) },
+  ];
+
+  out.innerHTML = formats.map(f =>
+    `<div class="ts-row">
+       <span class="ts-label">${f.label}</span>
+       <span class="ts-value">${escapeHtml(f.value)}</span>
+       <button class="btn ts-copy" data-value="${escapeHtml(f.value)}" onclick="copyToClipboard(this.dataset.value,this)">Copy</button>
+     </div>`
+  ).join('');
 }
 
 function dateToTs() {
