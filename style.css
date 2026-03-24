@@ -1037,43 +1037,17 @@ mark { background: #fef08a; color: #713f12; border-radius: 2px; }
   #feedback-widget { bottom: 16px; right: 16px; }
 }
 
-/* ===== BPMN Modeler ===== */
+/* ===== BPMN Modeler (draw.io embed) ===== */
 .bpmn-card {
   padding: 0;
-  display: flex;
-  flex-direction: column;
   overflow: hidden;
   height: calc(100vh - 140px);
 }
 
-.bpmn-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-  flex-wrap: wrap;
-  gap: 10px;
+#bpmn-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: var(--radius-lg);
+  display: block;
 }
-
-.bpmn-topbar h3 { margin: 0; }
-
-.bpmn-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  color: var(--text-muted);
-  font-size: 14px;
-  gap: 10px;
-}
-
-#bpmn-container {
-  flex: 1;
-  overflow: hidden;
-  background: #fff;
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-}
-
-#bpmn-container .djs-container { height: 100%; }
