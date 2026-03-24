@@ -312,6 +312,14 @@ const translations = {
     // SQL Cheatsheet
     'sql-cs.subtitle': '— Hazır sorgular, tek tıkla SQL Formatlayıcı\'ya aktar',
     'sql.export': 'SQL\'e Aktar',
+    // BPMN
+    'bpmn.title': 'BPMN Modeler',
+    'bpmn.new': 'Yeni Diyagram',
+    'bpmn.import': 'XML İçe Aktar',
+    'bpmn.export-xml': 'XML Dışa Aktar',
+    'bpmn.export-svg': 'SVG İndir',
+    'bpmn.loading': 'BPMN editörü yükleniyor...',
+    'bpmn.error.import': 'Geçersiz BPMN XML',
   },
   en: {
     // Nav / global
@@ -572,6 +580,14 @@ const translations = {
     // SQL Cheatsheet
     'sql-cs.subtitle': '— Ready queries, export to SQL Formatter in one click',
     'sql.export': 'Export to SQL',
+    // BPMN
+    'bpmn.title': 'BPMN Modeler',
+    'bpmn.new': 'New Diagram',
+    'bpmn.import': 'Import XML',
+    'bpmn.export-xml': 'Export XML',
+    'bpmn.export-svg': 'Download SVG',
+    'bpmn.loading': 'Loading BPMN editor...',
+    'bpmn.error.import': 'Invalid BPMN XML',
   },
 };
 
@@ -740,7 +756,7 @@ function navigate(toolId) {
 
   // Lazy-init BPMN modeler on first visit
   if (toolId === 'bpmn-modeler') {
-    initDrawio();
+    initBpmn();
   }
 }
 
@@ -2272,14 +2288,106 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ===== Tool: BPMN Modeler (draw.io embed) =====
+// ===== Tool: BPMN Modeler (bpmn-js) =====
 
-let drawioInitialized = false;
+const BPMN_CDN = 'https://unpkg.com/bpmn-js@17/dist/';
+let bpmnInstance = null;
+let bpmnInitStarted = false;
 
-function initDrawio() {
-  if (drawioInitialized) return;
-  const frame = document.getElementById('bpmn-frame');
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  frame.src = `https://embed.diagrams.net/?embed=1&spin=1&libraries=1&dark=${isDark ? 1 : 0}`;
-  drawioInitialized = true;
+function loadBpmnScript(src) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('Script load failed: ' + src));
+    document.head.appendChild(s);
+  });
+}
+
+function loadBpmnCSS(href) {
+  if (document.querySelector(`link[href="${href}"]`)) return;
+  const l = document.createElement('link');
+  l.rel = 'stylesheet';
+  l.href = href;
+  document.head.appendChild(l);
+}
+
+async function initBpmn() {
+  if (bpmnInstance) return;
+  if (bpmnInitStarted) return;
+  bpmnInitStarted = true;
+
+  loadBpmnCSS(BPMN_CDN + 'assets/bpmn-js.css');
+  loadBpmnCSS(BPMN_CDN + 'assets/bpmn-font/css/bpmn-embedded.css');
+
+  try {
+    await loadBpmnScript(BPMN_CDN + 'bpmn-modeler.production.min.js');
+
+    bpmnInstance = new BpmnJS({
+      container: '#bpmn-canvas',
+      keyboard: { bindTo: window }
+    });
+
+    await bpmnInstance.createDiagram();
+    document.getElementById('bpmn-loading').style.display = 'none';
+  } catch (e) {
+    bpmnInitStarted = false;
+    showError('bpmn-error', 'BPMN editor could not be loaded. Check your internet connection.');
+    document.getElementById('bpmn-loading').style.display = 'none';
+  }
+}
+
+async function bpmnNew() {
+  if (!bpmnInstance) return;
+  hideError('bpmn-error');
+  await bpmnInstance.createDiagram();
+}
+
+async function bpmnExportXml() {
+  if (!bpmnInstance) return;
+  try {
+    const { xml } = await bpmnInstance.saveXML({ format: true });
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(new Blob([xml], { type: 'application/xml' })),
+      download: 'diagram.bpmn'
+    });
+    a.click();
+    URL.revokeObjectURL(a.href);
+  } catch (e) {
+    showError('bpmn-error', 'Export failed: ' + e.message);
+  }
+}
+
+async function bpmnExportSvg() {
+  if (!bpmnInstance) return;
+  try {
+    const { svg } = await bpmnInstance.saveSVG();
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' })),
+      download: 'diagram.svg'
+    });
+    a.click();
+    URL.revokeObjectURL(a.href);
+  } catch (e) {
+    showError('bpmn-error', 'Export failed: ' + e.message);
+  }
+}
+
+function bpmnImport() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.bpmn,.xml';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const text = await file.text();
+    try {
+      await bpmnInstance.importXML(text);
+      hideError('bpmn-error');
+    } catch {
+      showError('bpmn-error', t('bpmn.error.import'));
+    }
+  };
+  input.click();
 }

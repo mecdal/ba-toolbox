@@ -681,7 +681,21 @@
     <!-- ===== BPMN MODELER ===== -->
     <div id="panel-bpmn-modeler" class="tool-panel">
       <div class="tool-card bpmn-card">
-        <iframe id="bpmn-frame" src="about:blank" allowfullscreen></iframe>
+        <div class="bpmn-toolbar">
+          <h3 data-i18n="bpmn.title">BPMN Modeler</h3>
+          <div class="btn-group">
+            <button class="btn btn-secondary" onclick="bpmnNew()" data-i18n="bpmn.new">New Diagram</button>
+            <button class="btn btn-secondary" onclick="bpmnImport()" data-i18n="bpmn.import">Import XML</button>
+            <button class="btn btn-secondary" onclick="bpmnExportXml()" data-i18n="bpmn.export-xml">Export XML</button>
+            <button class="btn btn-secondary" onclick="bpmnExportSvg()" data-i18n="bpmn.export-svg">Download SVG</button>
+          </div>
+        </div>
+        <div class="error-box" id="bpmn-error"></div>
+        <div id="bpmn-loading" class="bpmn-loading">
+          <div class="bpmn-spinner"></div>
+          <span data-i18n="bpmn.loading">Loading BPMN editor...</span>
+        </div>
+        <div id="bpmn-canvas"></div>
       </div>
     </div>
 
