@@ -545,6 +545,53 @@ body {
   color: rgba(255, 255, 255, 0.64);
 }
 
+.compact-preview-shell {
+  grid-template-columns: 252px 1fr;
+  min-height: 640px;
+}
+
+.compact-sidebar-preview {
+  padding: 18px;
+}
+
+.compact-search {
+  padding: 11px 14px;
+  margin-bottom: 14px;
+}
+
+.compact-nav-group .group-label {
+  margin-bottom: 10px;
+}
+
+.compact-nav-item {
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  line-height: 1.15;
+}
+
+.compact-active {
+  box-shadow: 0 10px 22px rgba(56, 104, 255, 0.18);
+}
+
+.scroll-hint {
+  margin-top: 14px;
+  padding-top: 10px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(22, 22, 22, 0.45);
+  border-top: 1px solid rgba(22, 22, 22, 0.08);
+}
+
+.compact-sidebar-notes {
+  background: rgba(255, 255, 255, 0.56);
+}
+
+.compact-layout-notes {
+  grid-template-columns: 1.1fr 0.9fr;
+}
+
 .stat-stack {
   display: grid;
   gap: 10px;
