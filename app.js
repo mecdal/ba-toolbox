@@ -92,6 +92,7 @@ const translations = {
     'json-fmt.beautify': 'Güzelleştir',
     'json-fmt.minify': 'Sıkıştır',
     'json-fmt.validate': 'Doğrula',
+    'json-fmt.remove-nulls': 'Null Temizle',
     'json-fmt.raw': 'Ham',
     'json-fmt.tree': 'Ağaç',
     'json-fmt.search.ph': 'Anahtar veya değer ara...',
@@ -347,6 +348,7 @@ const translations = {
     'json-fmt.beautify': 'Beautify',
     'json-fmt.minify': 'Minify',
     'json-fmt.validate': 'Validate',
+    'json-fmt.remove-nulls': 'Remove Nulls',
     'json-fmt.raw': 'Raw',
     'json-fmt.tree': 'Tree',
     'json-fmt.search.ph': 'Search keys or values...',
@@ -794,6 +796,42 @@ function jsonMinify() {
     document.getElementById('json-output').value = JSON.stringify(parsed);
   } catch (e) {
     showError('json-error', t('json.error') + e.message);
+  }
+}
+
+function removeNullsDeep(value) {
+  if (Array.isArray(value)) {
+    return value
+      .filter(item => item !== null)
+      .map(item => removeNullsDeep(item));
+  }
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value)
+        .filter(([, v]) => v !== null)
+        .map(([k, v]) => [k, removeNullsDeep(v)])
+    );
+  }
+  return value;
+}
+
+function jsonRemoveNulls() {
+  hideError('json-error');
+  try {
+    const input = document.getElementById('json-input').value.trim();
+    if (!input) return;
+    const parsed = JSON.parse(input);
+    const cleaned = removeNullsDeep(parsed);
+    document.getElementById('json-output').value = JSON.stringify(cleaned, null, 2);
+    document.getElementById('json-status').textContent = t('json.valid');
+    document.getElementById('json-status').style.color = 'var(--success)';
+    if (jsonViewMode === 'tree') {
+      document.getElementById('json-tree-output').innerHTML = renderJsonTree(cleaned, '', true);
+    }
+  } catch (e) {
+    showError('json-error', t('json.error') + e.message);
+    document.getElementById('json-status').textContent = t('json.invalid');
+    document.getElementById('json-status').style.color = 'var(--error)';
   }
 }
 
