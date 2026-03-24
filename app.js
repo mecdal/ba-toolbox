@@ -50,7 +50,7 @@ function updateThemeBtn(theme) {
 
 // ===== Language / i18n =====
 
-let currentLang = localStorage.getItem('ba-lang') || 'tr';
+let currentLang = localStorage.getItem('ba-lang') || 'en';
 
 const translations = {
   tr: {
@@ -58,6 +58,10 @@ const translations = {
     'welcome.title': 'BA Toolbox\'a Hoş Geldiniz',
     'welcome.subtitle': 'Sol menüden bir araç seçerek başlayın. Tüm araçlar tarayıcınızda çalışır, internet bağlantısı gerekmez.',
     'search.placeholder': 'Araç ara...',
+    'sidebar.subtitle': 'İş Analisti Araç Seti by Mecdal',
+    'topbar.welcome': 'Hoş Geldiniz',
+    'csv.input.ph': 'isim,yas,sehir\nAhmet,30,Istanbul\nAyse,25,Ankara',
+    'json-grid.input.ph': '[{"id": 1, "ad": "Ahmet", "sehir": "Istanbul"}, {"id": 2, "ad": "Ayse", "sehir": "Ankara"}]',
     'theme.dark': '🌙 Karanlık Mod',
     'theme.light': '☀️ Açık Mod',
     'group.veri': 'Veri & Format',
@@ -314,6 +318,10 @@ const translations = {
     'welcome.title': 'Welcome to BA Toolbox',
     'welcome.subtitle': 'Select a tool from the left menu to get started. All tools run in your browser — no internet required.',
     'search.placeholder': 'Search tools...',
+    'sidebar.subtitle': 'Business Analyst Toolkit by Mecdal',
+    'topbar.welcome': 'Welcome',
+    'csv.input.ph': 'name,age,city\nJohn,30,London\nJane,25,Paris',
+    'json-grid.input.ph': '[{"id": 1, "name": "John", "city": "London"}, {"id": 2, "name": "Jane", "city": "Paris"}]',
     'theme.dark': '🌙 Dark Mode',
     'theme.light': '☀️ Light Mode',
     'group.veri': 'Data & Format',

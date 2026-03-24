@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr" data-theme="light">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,7 @@
 <nav id="sidebar">
   <div id="sidebar-header">
     <h1>🧰 BA Toolbox</h1>
-    <p>İş Analisti Araç Seti by Mecdal</p>
+    <p data-i18n="sidebar.subtitle">Business Analyst Toolkit by Mecdal</p>
   </div>
   <input type="text" id="search-box" data-i18n-placeholder="search.placeholder" placeholder="Araç ara...">
   <div id="tool-list"></div>
@@ -21,10 +21,10 @@
 <!-- ===== MAIN ===== -->
 <div id="main">
   <div id="topbar">
-    <h2 id="topbar-title">Hoş geldiniz</h2>
+    <h2 id="topbar-title" data-i18n="topbar.welcome">Welcome</h2>
     <div class="topbar-actions">
       <button id="lang-toggle" onclick="toggleLang()">🌐 EN</button>
-      <button id="theme-toggle">🌙 Karanlık Mod</button>
+      <button id="theme-toggle">🌙 Dark Mode</button>
     </div>
   </div>
 
@@ -295,7 +295,7 @@
           </div>
         </div>
         <label data-i18n="csv.input">CSV Giriş</label>
-        <textarea id="csv-input" placeholder="isim,yaş,şehir&#10;Ahmet,30,İstanbul&#10;Ayşe,25,Ankara"></textarea>
+        <textarea id="csv-input" data-i18n-placeholder="csv.input.ph" placeholder="name,age,city&#10;John,30,London&#10;Jane,25,Paris"></textarea>
         <button class="btn btn-primary" onclick="csvToJson()" data-i18n="convert">Dönüştür</button>
         <label data-i18n="csv.output">JSON Çıktı</label>
         <textarea id="csv-output" readonly></textarea>
@@ -401,7 +401,7 @@
       <div class="tool-card">
         <h3>URL Encode / Decode</h3>
         <label data-i18n="url-enc.raw">Ham URL / Metin</label>
-        <textarea id="url-raw" placeholder="https://example.com/search?q=merhaba dünya"></textarea>
+        <textarea id="url-raw" placeholder="https://example.com/search?q=hello world"></textarea>
         <label data-i18n="url-enc.encoded">Encoded</label>
         <textarea id="url-encoded" placeholder="https%3A%2F%2F..."></textarea>
         <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('url-encoded').value, this)" data-i18n="url-enc.copy">Encoded'ı Kopyala</button>
@@ -487,7 +487,7 @@
         <h3><span data-i18n="json-grid.title">JSON Grid Görünümü</span> <span style="font-size:11px; font-weight:400; color:var(--text-muted);" data-i18n="json-grid.subtitle">— Altova XMLSpy tarzı tablo görünümü</span></h3>
         <div class="error-box" id="json-grid-error"></div>
         <label data-i18n="json-grid.input">JSON Giriş</label>
-        <textarea id="json-grid-input" placeholder='[{"id": 1, "ad": "Ahmet", "sehir": "İstanbul"}, {"id": 2, "ad": "Ayşe", "sehir": "Ankara"}]'></textarea>
+        <textarea id="json-grid-input" data-i18n-placeholder="json-grid.input.ph" placeholder='[{"id": 1, "name": "John", "city": "London"}, {"id": 2, "name": "Jane", "city": "Paris"}]'></textarea>
         <button class="btn btn-primary" onclick="renderJsonGrid()" data-i18n="json-grid.show">Grid Göster</button>
         <div id="json-grid-output" class="json-grid-container" style="margin-top:16px;"></div>
       </div>
@@ -499,7 +499,7 @@
         <h3>JSON Escape / Unescape</h3>
         <div class="error-box" id="json-escape-error"></div>
         <label data-i18n="json-esc.raw">Ham Metin</label>
-        <textarea id="json-escape-input" placeholder='Merhaba "Dünya"&#10;Yeni satır\tTab'></textarea>
+        <textarea id="json-escape-input" placeholder='Hello "World"&#10;New line\tTab'></textarea>
         <div class="btn-group">
           <button class="btn btn-primary" onclick="jsonEscapeStr()">↓ Escape</button>
           <button class="btn btn-secondary" onclick="jsonUnescapeStr()">↑ Unescape</button>
@@ -522,7 +522,7 @@
           </div>
           <div>
             <label data-i18n="json-diff.right">Sağ JSON (Yeni / B)</label>
-            <textarea id="json-diff-right" placeholder='{"name": "Ali", "age": 31, "city": "İstanbul"}'></textarea>
+            <textarea id="json-diff-right" placeholder='{"name": "Jane", "age": 31, "city": "London"}'></textarea>
           </div>
         </div>
         <button class="btn btn-primary" onclick="diffJson()" data-i18n="compare">Karşılaştır</button>
