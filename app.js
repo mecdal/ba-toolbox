@@ -312,6 +312,15 @@ const translations = {
     // SQL Cheatsheet
     'sql-cs.subtitle': '— Hazır sorgular, tek tıkla SQL Formatlayıcı\'ya aktar',
     'sql.export': 'SQL\'e Aktar',
+    // BPMN Modeler
+    'bpmn.title': 'BPMN Modeler',
+    'bpmn.new': 'Yeni Diyagram',
+    'bpmn.import': 'XML İçe Aktar',
+    'bpmn.export-xml': 'XML Dışa Aktar',
+    'bpmn.export-svg': 'SVG İndir',
+    'bpmn.loading': 'BPMN editörü yükleniyor...',
+    'bpmn.error.load': 'Yükleme hatası: ',
+    'bpmn.error.import': 'Geçersiz BPMN XML',
   },
   en: {
     // Nav / global
@@ -572,6 +581,15 @@ const translations = {
     // SQL Cheatsheet
     'sql-cs.subtitle': '— Ready queries, export to SQL Formatter in one click',
     'sql.export': 'Export to SQL',
+    // BPMN Modeler
+    'bpmn.title': 'BPMN Modeler',
+    'bpmn.new': 'New Diagram',
+    'bpmn.import': 'Import XML',
+    'bpmn.export-xml': 'Export XML',
+    'bpmn.export-svg': 'Download SVG',
+    'bpmn.loading': 'Loading BPMN editor...',
+    'bpmn.error.load': 'Load error: ',
+    'bpmn.error.import': 'Invalid BPMN XML',
   },
 };
 
@@ -679,6 +697,7 @@ const tools = [
   { id: 'text-editor',       label: 'Metin Editörü',         labelEn: 'Text Editor',          icon: '✏️',  group: 'Metin' },
   // Analiz & Gereksinim
   { id: 'user-story',        label: 'User Story Yazıcı',     labelEn: 'User Story Writer',    icon: '📖',  group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
+  { id: 'bpmn-modeler',      label: 'BPMN Modeler',          labelEn: 'BPMN Modeler',         icon: '⬡',   group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
 ];
 
 function buildNav() {
@@ -736,6 +755,11 @@ function navigate(toolId) {
 
   // Save last used
   saveRecent(toolId);
+
+  // Lazy-init BPMN modeler on first visit
+  if (toolId === 'bpmn-modeler') {
+    initBpmn().catch(err => showError('bpmn-error', t('bpmn.error.load') + err.message));
+  }
 }
 
 function saveRecent(toolId) {
@@ -2265,3 +2289,98 @@ document.addEventListener('DOMContentLoaded', () => {
     navigate(hash);
   }
 });
+
+// ===== Tool: BPMN Modeler =====
+
+let bpmnModeler = null;
+let bpmnReady = false;
+
+const BPMN_CDN = 'https://unpkg.com/bpmn-js@17/dist/';
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('Failed to load ' + src));
+    document.head.appendChild(s);
+  });
+}
+
+function loadStylesheet(href) {
+  if (document.querySelector(`link[href="${href}"]`)) return;
+  const l = document.createElement('link');
+  l.rel = 'stylesheet';
+  l.href = href;
+  document.head.appendChild(l);
+}
+
+async function initBpmn() {
+  if (bpmnReady) return;
+
+  loadStylesheet(BPMN_CDN + 'assets/bpmn-js.css');
+  loadStylesheet(BPMN_CDN + 'assets/bpmn-font/css/bpmn-embedded.css');
+
+  await loadScript(BPMN_CDN + 'bpmn-modeler.production.min.js');
+
+  bpmnModeler = new BpmnJS({ container: '#bpmn-container' });
+  await bpmnModeler.createDiagram();
+
+  document.getElementById('bpmn-loading').style.display = 'none';
+  hideError('bpmn-error');
+  bpmnReady = true;
+}
+
+async function bpmnNew() {
+  if (!bpmnReady) return;
+  await bpmnModeler.createDiagram();
+}
+
+async function bpmnExportXml() {
+  if (!bpmnReady) return;
+  try {
+    const { xml } = await bpmnModeler.saveXML({ format: true });
+    const blob = new Blob([xml], { type: 'application/xml' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'diagram.bpmn';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  } catch (e) {
+    showError('bpmn-error', t('bpmn.error.load') + e.message);
+  }
+}
+
+async function bpmnExportSvg() {
+  if (!bpmnReady) return;
+  try {
+    const { svg } = await bpmnModeler.saveSVG();
+    const blob = new Blob([svg], { type: 'image/svg+xml' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'diagram.svg';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  } catch (e) {
+    showError('bpmn-error', t('bpmn.error.load') + e.message);
+  }
+}
+
+function bpmnImport() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.bpmn,.xml';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      await bpmnModeler.importXML(text);
+      hideError('bpmn-error');
+    } catch {
+      showError('bpmn-error', t('bpmn.error.import'));
+    }
+  };
+  input.click();
+}
