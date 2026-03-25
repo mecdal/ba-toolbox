@@ -72,6 +72,7 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
+  z-index: -1;
   background:
     repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(0, 150, 200, 0.035) 40px),
     repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(0, 150, 200, 0.035) 40px);
@@ -1186,23 +1187,28 @@ mark { background: #fef08a; color: #713f12; border-radius: 2px; }
   position: relative;
 }
 
-/* Prevent global theme CSS from bleeding into bpmn-js internals */
-#bpmn-canvas .djs-palette,
-#bpmn-canvas .djs-context-pad,
-#bpmn-canvas .djs-popup {
-  all: revert;
-  font-family: inherit;
+/* Reset only harmful global styles inside bpmn-js — do NOT use all:revert */
+#bpmn-canvas button {
+  border-radius: 0;
+  text-transform: none;
+  letter-spacing: normal;
+  padding: revert;
+  font-size: revert;
+  font-weight: revert;
+  background: revert;
+  border: revert;
+  color: revert;
+  box-shadow: none;
+  transition: none;
 }
 
-#bpmn-canvas .djs-palette {
-  display: block;
-  position: absolute;
-}
-
-/* bpmn-js buttons — don't inherit our .btn styles */
-#bpmn-canvas button,
-#bpmn-canvas input,
-#bpmn-canvas select {
-  all: revert;
-  font-family: inherit;
+#bpmn-canvas input {
+  border-radius: 0;
+  padding: revert;
+  font-size: revert;
+  background: revert;
+  border: revert;
+  box-shadow: none;
+  transition: none;
+  margin-bottom: 0;
 }
