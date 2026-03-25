@@ -2372,6 +2372,7 @@ async function initBpmn() {
   if (bpmnInitStarted) return;
   bpmnInitStarted = true;
 
+  loadBpmnCSS(BPMN_CDN + 'assets/diagram-js.css');
   loadBpmnCSS(BPMN_CDN + 'assets/bpmn-js.css');
   loadBpmnCSS(BPMN_CDN + 'assets/bpmn-font/css/bpmn-embedded.css');
 

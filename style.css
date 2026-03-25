@@ -1183,4 +1183,26 @@ mark { background: #fef08a; color: #713f12; border-radius: 2px; }
   overflow: hidden;
   background: #fff;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  position: relative;
+}
+
+/* Prevent global theme CSS from bleeding into bpmn-js internals */
+#bpmn-canvas .djs-palette,
+#bpmn-canvas .djs-context-pad,
+#bpmn-canvas .djs-popup {
+  all: revert;
+  font-family: inherit;
+}
+
+#bpmn-canvas .djs-palette {
+  display: block;
+  position: absolute;
+}
+
+/* bpmn-js buttons — don't inherit our .btn styles */
+#bpmn-canvas button,
+#bpmn-canvas input,
+#bpmn-canvas select {
+  all: revert;
+  font-family: inherit;
 }
