@@ -498,15 +498,19 @@
       <div class="tool-card">
         <h3>JSON Escape / Unescape</h3>
         <div class="error-box" id="json-escape-error"></div>
-        <label data-i18n="json-esc.raw">Ham Metin</label>
-        <textarea id="json-escape-input" placeholder='Hello "World"&#10;New line\tTab'></textarea>
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick="jsonEscapeStr()">↓ Escape</button>
-          <button class="btn btn-secondary" onclick="jsonUnescapeStr()">↑ Unescape</button>
+        <label data-i18n="json-esc.raw">Raw Text</label>
+        <textarea id="json-escape-input" placeholder='Hello "World"&#10;New line&#10;Tab&#9;here'></textarea>
+        <div class="btn-group" style="justify-content:center; margin: 4px 0;">
+          <button class="btn btn-primary" onclick="jsonEscapeStr()" data-i18n="json-esc.escape-btn">↓ Escape</button>
+          <button class="btn btn-secondary" onclick="jsonSwap()" title="Swap">⇅</button>
+          <button class="btn btn-secondary" onclick="jsonUnescapeStr()" data-i18n="json-esc.unescape-btn">↑ Unescape</button>
         </div>
-        <label data-i18n="json-esc.escaped.label">Escape Edilmiş (JSON String)</label>
-        <textarea id="json-escape-output" placeholder='"Merhaba \"D\u00fcnya\"\nYeni sat\u0131r\tTab"'></textarea>
-        <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('json-escape-output').value, this)" data-i18n="copy">Kopyala</button>
+        <label data-i18n="json-esc.escaped.label">Escaped (JSON String)</label>
+        <textarea id="json-escape-output" placeholder='Hello \"World\"\nNew line\nTab\there'></textarea>
+        <div class="btn-group">
+          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('json-escape-output').value, this)" data-i18n="copy">Copy</button>
+          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('json-escape-input').value, this)" data-i18n="json-esc.copy-raw">Copy Raw</button>
+        </div>
       </div>
     </div>
 

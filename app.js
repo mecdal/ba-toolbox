@@ -296,6 +296,9 @@ const translations = {
     'jwt.error.decode': 'Decode hatası: ',
     // JSON Escape
     'json-esc.error': 'Parse hatası: ',
+    'json-esc.escape-btn': '↓ Escape',
+    'json-esc.unescape-btn': '↑ Unescape',
+    'json-esc.copy-raw': 'Ham Metni Kopyala',
     // URL Shortener
     'url-short.error.invalid': 'Geçerli bir URL girin (https:// ile başlamalı).',
     'url-short.error.failed': 'Kısaltılamadı: ',
@@ -471,6 +474,9 @@ const translations = {
     'jwt.error.decode': 'Decode error: ',
     // JSON Escape
     'json-esc.error': 'Parse error: ',
+    'json-esc.escape-btn': '↓ Escape',
+    'json-esc.unescape-btn': '↑ Unescape',
+    'json-esc.copy-raw': 'Copy Raw',
     // URL Shortener
     'url-short.error.invalid': 'Enter a valid URL (must start with https://).',
     'url-short.error.failed': 'Shortening failed: ',
@@ -1521,19 +1527,31 @@ function createGridSpan(text, className) {
 function jsonEscapeStr() {
   hideError('json-escape-error');
   const input = document.getElementById('json-escape-input').value;
-  document.getElementById('json-escape-output').value = JSON.stringify(input);
+  // JSON.stringify wraps with outer quotes — strip them to give just the escaped content
+  document.getElementById('json-escape-output').value = JSON.stringify(input).slice(1, -1);
 }
 
 function jsonUnescapeStr() {
   hideError('json-escape-error');
-  const input = document.getElementById('json-escape-output').value.trim();
+  const raw = document.getElementById('json-escape-output').value.trim();
+  if (!raw) return;
+  // Wrap in quotes if not already present, so JSON.parse can handle bare escaped strings
+  const toparse = (raw.startsWith('"') && raw.endsWith('"')) ? raw : '"' + raw + '"';
   try {
-    const parsed = JSON.parse(input);
-    document.getElementById('json-escape-input').value =
-      typeof parsed === 'string' ? parsed : JSON.stringify(parsed, null, 2);
+    const parsed = JSON.parse(toparse);
+    document.getElementById('json-escape-input').value = parsed;
   } catch (e) {
     showError('json-escape-error', t('json-esc.error') + e.message);
   }
+}
+
+function jsonSwap() {
+  const top = document.getElementById('json-escape-input');
+  const bot = document.getElementById('json-escape-output');
+  const tmp = top.value;
+  top.value = bot.value;
+  bot.value = tmp;
+  hideError('json-escape-error');
 }
 
 // ===== Tool: JSON Diff =====
