@@ -732,16 +732,63 @@ function buildNav() {
   });
 }
 
-function navigate(toolId) {
-  // Update nav active state
-  document.querySelectorAll('.tool-nav-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.tool === toolId);
-  });
+// ===== Tab System =====
 
-  // Update panels
+const MAX_TABS = 5;
+let tabs = [];       // ordered list of open tool IDs
+let activeTab = null;
+
+function renderTabs() {
+  const bar = document.getElementById('tab-bar');
+  if (!bar) return;
+  bar.style.display = tabs.length > 0 ? 'flex' : 'none';
+  bar.innerHTML = tabs.map(id => {
+    const tool = tools.find(t2 => t2.id === id);
+    if (!tool) return '';
+    const label = (currentLang === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
+    const isActive = id === activeTab;
+    return `<div class="tab${isActive ? ' active' : ''}" data-tool="${id}" onclick="switchTab('${id}')">
+      <span class="tab-icon">${tool.icon}</span>
+      <span class="tab-label">${label}</span>
+      <button class="tab-close" title="Close" onclick="event.stopPropagation();closeTab('${id}')">×</button>
+    </div>`;
+  }).join('') + (tabs.length >= MAX_TABS
+    ? `<div class="tab-limit-hint" id="tab-limit-hint" style="display:none">MAX ${MAX_TABS}</div>`
+    : '');
+}
+
+function openTab(toolId) {
+  if (tabs.includes(toolId)) {
+    switchTab(toolId);
+    return;
+  }
+  if (tabs.length >= MAX_TABS) {
+    // Flash the limit hint briefly
+    const hint = document.getElementById('tab-limit-hint');
+    if (hint) {
+      hint.style.display = 'flex';
+      clearTimeout(hint._timer);
+      hint._timer = setTimeout(() => { hint.style.display = 'none'; }, 1800);
+    }
+    return;
+  }
+  tabs = [...tabs, toolId];
+  switchTab(toolId);
+}
+
+function switchTab(toolId) {
+  activeTab = toolId;
+  renderTabs();
+
+  // Activate correct panel
   document.querySelectorAll('.tool-panel').forEach(el => el.classList.remove('active'));
   const panel = document.getElementById('panel-' + toolId);
   if (panel) panel.classList.add('active');
+
+  // Sync sidebar highlight
+  document.querySelectorAll('.tool-nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.tool === toolId);
+  });
 
   // Update topbar title
   const tool = tools.find(t2 => t2.id === toolId);
@@ -754,16 +801,39 @@ function navigate(toolId) {
   const welcome = document.getElementById('welcome');
   if (welcome) welcome.style.display = 'none';
 
-  // Update URL hash
   window.location.hash = toolId;
-
-  // Save last used
   saveRecent(toolId);
 
-  // Lazy-init BPMN modeler on first visit
-  if (toolId === 'bpmn-modeler') {
-    initBpmn();
+  if (toolId === 'bpmn-modeler') initBpmn();
+}
+
+function closeTab(toolId) {
+  const idx = tabs.indexOf(toolId);
+  const newTabs = tabs.filter(id => id !== toolId);
+  tabs = newTabs;
+
+  if (activeTab === toolId) {
+    if (tabs.length > 0) {
+      // Switch to the nearest tab
+      switchTab(tabs[Math.min(idx, tabs.length - 1)]);
+    } else {
+      activeTab = null;
+      renderTabs();
+      document.querySelectorAll('.tool-panel').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tool-nav-item').forEach(el => el.classList.remove('active'));
+      const welcome = document.getElementById('welcome');
+      if (welcome) welcome.style.display = '';
+      const titleEl = document.getElementById('topbar-title');
+      titleEl.textContent = t('topbar.welcome');
+      window.location.hash = '';
+    }
+  } else {
+    renderTabs();
   }
+}
+
+function navigate(toolId) {
+  openTab(toolId);
 }
 
 function saveRecent(toolId) {
