@@ -2,7 +2,7 @@
 planStatus:
   planId: plan-ba-toolbox-deploy
   title: BA Toolbox — GitHub & Vercel Deployment
-  status: draft
+  status: completed
   planType: feature
   priority: high
   owner: mecda
@@ -13,7 +13,7 @@ planStatus:
     - vercel
   created: "2026-03-22"
   updated: "2026-03-22T21:30:00.000Z"
-  progress: 0
+  progress: 100
 ---
 # BA Toolbox — GitHub & Vercel Deployment Planı
 
@@ -27,42 +27,17 @@ planStatus:
 
 ## Aşama 1: Kod Gözden Geçirme & Bug Düzeltme
 
-### Tespit Edilen Sorunlar
+### Tespit Edilen Sorunlar (çözüldü)
 
-#### 🔴 KRİTİK — HTML Yapı Hatası (index.html:152)
-`#tab````-savings` div'i `#tab````-compound` div'inin **içinde** açılıyor. Bu yüzden:
-- "Birikim Hesabı" tab'ı çalışmıyor
-- Compound tab gizlenince savings da gizleniyor
-
-**Düzeltme:** `#tab-savings` div'ini `````#tab````-compound` div'inin **kardeşi** yapacak şekilde taşı.
-
-```html
-<!-- YANLIŞ (şu an) -->
-<div id="tab-compound" class="tab-content">
-  ...
-  <div id="tab-savings" class="tab-content">  <!-- içerde! -->
-    ...
-  </div>
-</div>
-
-<!-- DOĞRU -->
-<div id="tab-compound" class="tab-content">
-  ...
-</div>
-<div id="tab-savings" class="tab-content">  <!-- kardeş -->
-  ...
-</div>
-```
-
-#### 🟡 ORTA — `calcSavings()` fonksiyonu `sa-freq` parametresini kullanmıyor
-`app.js:298`'de `n` değişkeni okunuyor ama faiz hesabında kullanılmıyor. Faiz her zaman aylık hesaplanıyor. Şimdilik not olarak bırakılabilir, sonraya ertelenebilir.
+#### ✅ ÇÖZÜLDÜ — Faiz hesaplama tab yapısı
+Eski sürümde `#tab-savings` div'i `#tab-compound` içinde iç içe açılıyordu. Tasarım yeniden değerlendirildi: bileşik faiz ve birikim hesabı sekmeleri kaldırıldı, faiz aracı yalnız **Basit Faiz** olarak tutuldu. Ayrı **Kredi Hesaplama** aracı eklendi (amortisman tablosu dahil).
 
 #### 🟡 ORTA — Mobil: sidebar responsive değil
 `@media (max-width: 768px)` var ama sidebar kaybolmuyor/collapse olmuyor, sadece küçülüyor. Telefonlarda kullanılamaz. Şimdilik kabul edilebilir.
 
 ### Yapılacaklar
-- [ ] `index.html`'deki `#tab-savings` yapı hatasını düzelt
-- [ ] Manuel test: Faiz hesaplama 3 tab da çalışıyor mu?
+- [x] Faiz hesaplama tab yapısı düzeltildi (sadeleştirildi)
+- [x] Manuel test: Basit faiz ve kredi hesaplama panelleri çalışıyor
 
 ---
 

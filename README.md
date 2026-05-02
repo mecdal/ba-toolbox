@@ -13,7 +13,8 @@
 |------|----------|
 | **JSON Formatlayıcı** | JSON güzelleştirme, küçültme ve doğrulama |
 | **UUID Üretici** | Tek veya toplu UUID/GUID üretimi |
-| **Faiz Hesaplama** | Basit faiz, bileşik faiz ve birikim hesabı |
+| **Basit Faiz Hesaplama** | TR Stopaj ve DE Abgeltungssteuer destekli faiz hesabı |
+| **Kredi Hesaplama** | Aylık taksit ve amortisman tablosu |
 
 ### Veri Araçları
 | Araç | Açıklama |
