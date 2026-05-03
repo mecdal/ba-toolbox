@@ -692,6 +692,145 @@
       </div>
     </div>
 
+    <!-- ===== YAML <-> JSON ===== -->
+    <div id="panel-yaml-json" class="tool-panel">
+      <div class="tool-card">
+        <h3><span data-i18n="yaml.title">YAML ↔ JSON Dönüştürücü</span> <span class="tool-subtitle" data-i18n="yaml.subtitle">— K8s manifest, GitHub Actions, Helm config</span></h3>
+        <div class="error-box" id="yaml-error"></div>
+        <div class="grid-2">
+          <div>
+            <label data-i18n="yaml.label">YAML</label>
+            <textarea id="yaml-input" data-i18n-placeholder="yaml.input.ph" placeholder="name: my-app&#10;version: 1.0.0&#10;ports:&#10;  - 8080&#10;  - 8443"></textarea>
+            <button class="btn btn-primary" onclick="yamlToJson()" data-i18n="yaml.to-json">YAML → JSON</button>
+          </div>
+          <div>
+            <label data-i18n="yaml.json.label">JSON</label>
+            <textarea id="yaml-json-output" data-i18n-placeholder="yaml.json.ph" placeholder='{"name":"my-app","version":"1.0.0","ports":[8080,8443]}'></textarea>
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="jsonToYaml()" data-i18n="yaml.to-yaml">JSON → YAML</button>
+              <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('yaml-json-output').value, this)" data-i18n="copy">Kopyala</button>
+            </div>
+          </div>
+        </div>
+        <p class="tool-footnote" data-i18n="yaml.footnote">İlk kullanımda js-yaml CDN'den yüklenir. Sonra çevrimdışı çalışır.</p>
+      </div>
+    </div>
+
+    <!-- ===== REGEX BUILDER ===== -->
+    <div id="panel-regex-builder" class="tool-panel">
+      <div class="tool-card">
+        <h3><span data-i18n="regex.title">Regex Builder</span> <span class="tool-subtitle" data-i18n="regex.subtitle">— Log parsing & pattern testing</span></h3>
+        <div class="error-box" id="regex-error"></div>
+        <div class="regex-row">
+          <span class="regex-slash">/</span>
+          <input type="text" id="regex-pattern" data-i18n-placeholder="regex.pattern.ph" placeholder="\\b[A-Z]\\w+\\b" oninput="runRegex()">
+          <span class="regex-slash">/</span>
+          <input type="text" id="regex-flags" placeholder="gim" maxlength="6" oninput="runRegex()" class="regex-flags">
+        </div>
+        <div class="regex-flag-hints">
+          <label class="checkbox-label"><input type="checkbox" id="regex-flag-g" checked onchange="syncRegexFlags()"> <code>g</code> <span data-i18n="regex.flag.g">global</span></label>
+          <label class="checkbox-label"><input type="checkbox" id="regex-flag-i" onchange="syncRegexFlags()"> <code>i</code> <span data-i18n="regex.flag.i">case-insensitive</span></label>
+          <label class="checkbox-label"><input type="checkbox" id="regex-flag-m" onchange="syncRegexFlags()"> <code>m</code> <span data-i18n="regex.flag.m">multiline</span></label>
+          <label class="checkbox-label"><input type="checkbox" id="regex-flag-s" onchange="syncRegexFlags()"> <code>s</code> <span data-i18n="regex.flag.s">dotall</span></label>
+        </div>
+        <label data-i18n="regex.sample">Örnek metin</label>
+        <textarea id="regex-sample" data-i18n-placeholder="regex.sample.ph" placeholder="Test text here..." oninput="runRegex()">Order #1234 placed by Alice on 2025-03-15. Reference ABC-9876.</textarea>
+        <div class="result-box" id="regex-stats" style="display:none;"></div>
+        <label data-i18n="regex.highlight.label">Eşleşmeler (vurgulu)</label>
+        <pre id="regex-highlight" class="regex-highlight"></pre>
+        <label data-i18n="regex.groups.label">Yakalama grupları</label>
+        <div id="regex-groups" class="regex-groups"></div>
+      </div>
+    </div>
+
+    <!-- ===== CRON EXPRESSION ===== -->
+    <div id="panel-cron-decoder" class="tool-panel">
+      <div class="tool-card">
+        <h3><span data-i18n="cron.title">Cron Expression</span> <span class="tool-subtitle" data-i18n="cron.subtitle">— Decode, validate, next runs</span></h3>
+        <div class="error-box" id="cron-error"></div>
+        <label data-i18n="cron.expr.label">İfade (5 alanlı: dak saat gün ay haftaGün)</label>
+        <input type="text" id="cron-input" placeholder="0 9 * * 1-5" oninput="decodeCron()">
+        <div class="cron-presets">
+          <span data-i18n="cron.presets">Hazır şablonlar:</span>
+          <button class="btn btn-sm" onclick="setCron('* * * * *')">every minute</button>
+          <button class="btn btn-sm" onclick="setCron('*/5 * * * *')">every 5 min</button>
+          <button class="btn btn-sm" onclick="setCron('0 * * * *')">hourly</button>
+          <button class="btn btn-sm" onclick="setCron('0 0 * * *')">daily midnight</button>
+          <button class="btn btn-sm" onclick="setCron('0 9 * * 1-5')">weekdays 9am</button>
+          <button class="btn btn-sm" onclick="setCron('0 0 1 * *')">monthly 1st</button>
+          <button class="btn btn-sm" onclick="setCron('0 0 * * 0')">weekly Sunday</button>
+        </div>
+        <div id="cron-result" class="cron-result" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- ===== HTTP STATUS ===== -->
+    <div id="panel-http-status" class="tool-panel">
+      <div class="tool-card">
+        <h3><span data-i18n="http.title">HTTP Status Kodları</span> <span class="tool-subtitle" data-i18n="http.subtitle">— Quick lookup for incident triage</span></h3>
+        <input type="text" id="http-search" data-i18n-placeholder="http.search.ph" placeholder="404, auth, gateway..." oninput="filterHttpStatus()">
+        <div class="http-class-filters">
+          <button class="btn btn-sm http-filter active" data-class="all" onclick="setHttpFilter('all')" data-i18n="http.all">Hepsi</button>
+          <button class="btn btn-sm http-filter" data-class="1" onclick="setHttpFilter('1')">1xx</button>
+          <button class="btn btn-sm http-filter" data-class="2" onclick="setHttpFilter('2')">2xx</button>
+          <button class="btn btn-sm http-filter" data-class="3" onclick="setHttpFilter('3')">3xx</button>
+          <button class="btn btn-sm http-filter" data-class="4" onclick="setHttpFilter('4')">4xx</button>
+          <button class="btn btn-sm http-filter" data-class="5" onclick="setHttpFilter('5')">5xx</button>
+        </div>
+        <div id="http-status-list" class="http-status-list"></div>
+      </div>
+    </div>
+
+    <!-- ===== cURL PARSER ===== -->
+    <div id="panel-curl-parser" class="tool-panel">
+      <div class="tool-card">
+        <h3><span data-i18n="curl.title">cURL Parser</span> <span class="tool-subtitle" data-i18n="curl.subtitle">— Paste a curl command, inspect URL, headers, body</span></h3>
+        <div class="error-box" id="curl-error"></div>
+        <label data-i18n="curl.input.label">cURL komutu</label>
+        <textarea id="curl-input" data-i18n-placeholder="curl.input.ph" placeholder="curl -X POST 'https://api.example.com/v1/users' -H 'Authorization: Bearer xxx' -H 'Content-Type: application/json' -d '{&quot;name&quot;:&quot;Alice&quot;}'"></textarea>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="parseCurl()" data-i18n="curl.parse">Parse</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('curl-input').value=''; document.getElementById('curl-result').style.display='none'" data-i18n="clear">Temizle</button>
+        </div>
+        <div id="curl-result" class="curl-result" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- ===== MARKDOWN PREVIEW ===== -->
+    <div id="panel-markdown-preview" class="tool-panel">
+      <div class="tool-card">
+        <h3><span data-i18n="md.title">Markdown Önizleme</span> <span class="tool-subtitle" data-i18n="md.subtitle">— Runbook, RCA, requirement documentation</span></h3>
+        <div class="grid-2">
+          <div>
+            <label data-i18n="md.input.label">Markdown</label>
+            <textarea id="md-input" data-i18n-placeholder="md.input.ph" oninput="renderMarkdown()"># Heading
+
+**Bold** and *italic*.
+
+- list item
+- another
+
+`inline code` and:
+
+```
+block code
+```
+
+| Column | Value |
+|--------|-------|
+| Foo    | 1     |</textarea>
+          </div>
+          <div>
+            <label data-i18n="md.preview.label">Önizleme</label>
+            <div id="md-output" class="md-output"></div>
+          </div>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('md-output').innerHTML, this)" data-i18n="md.copy-html">HTML kopyala</button>
+        </div>
+      </div>
+    </div>
+
     <!-- ===== BPMN MODELER ===== -->
     <div id="panel-bpmn-modeler" class="tool-panel">
       <div class="tool-card bpmn-card">

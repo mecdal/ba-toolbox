@@ -321,6 +321,81 @@ const translations = {
     'us.dod.tests': 'Unit testler yazıldı',
     'us.dod.ac-verified': 'AC doğrulandı',
     'us.dod.docs': 'Dokümantasyon güncellendi',
+    // YAML <-> JSON
+    'yaml.title': 'YAML ↔ JSON Dönüştürücü',
+    'yaml.subtitle': '— K8s manifest, GitHub Actions, Helm config',
+    'yaml.label': 'YAML',
+    'yaml.json.label': 'JSON',
+    'yaml.input.ph': 'name: my-app\nversion: 1.0.0\nports:\n  - 8080\n  - 8443',
+    'yaml.json.ph': '{"name":"my-app","version":"1.0.0","ports":[8080,8443]}',
+    'yaml.to-json': 'YAML → JSON',
+    'yaml.to-yaml': 'JSON → YAML',
+    'yaml.footnote': 'İlk kullanımda js-yaml CDN üzerinden yüklenir (~30 KB). Ardından çevrimdışı çalışır.',
+    'yaml.error.parse': 'YAML/JSON ayrıştırma hatası',
+    'yaml.error.offline': 'Çevrimdışı görünüyor — YAML kütüphanesi ilk kez yüklenirken internet gerekiyor.',
+    // Regex Builder
+    'regex.title': 'Regex Builder',
+    'regex.subtitle': '— Log parsing & pattern testi',
+    'regex.pattern.ph': '\\b[A-Z]\\w+\\b',
+    'regex.flag.g': 'global',
+    'regex.flag.i': 'büyük/küçük harf duyarsız',
+    'regex.flag.m': 'çok satırlı',
+    'regex.flag.s': 'dotall',
+    'regex.sample': 'Örnek metin',
+    'regex.sample.ph': 'Test metnini buraya yapıştır...',
+    'regex.matches': 'Eşleşme sayısı',
+    'regex.highlight.label': 'Eşleşmeler (vurgulu)',
+    'regex.groups.label': 'Yakalama grupları',
+    'regex.error.invalid': 'Geçersiz regex',
+    // Cron
+    'cron.title': 'Cron Expression',
+    'cron.subtitle': '— Decode, doğrulama, sonraki çalışmalar',
+    'cron.expr.label': 'İfade (5 alanlı: dakika saat gün ay haftaGün)',
+    'cron.presets': 'Hazır şablonlar:',
+    'cron.field.minute': 'Dakika',
+    'cron.field.hour': 'Saat',
+    'cron.field.dom': 'Ayın günü',
+    'cron.field.month': 'Ay',
+    'cron.field.dow': 'Haftanın günü',
+    'cron.human.everyMin': 'Her dakika',
+    'cron.at': 'Saat',
+    'cron.hour': 'saatte:',
+    'cron.onDom': 'ayın günü:',
+    'cron.inMonths': 'aylarda:',
+    'cron.onDow': 'haftanın günü:',
+    'cron.next': 'Sonraki 5 çalışma:',
+    'cron.error.fields': 'Cron ifadesi 5 alandan oluşmalı (dakika saat gün ay haftaGün).',
+    'cron.error.invalid': 'Geçersiz cron ifadesi',
+    // HTTP Status
+    'http.title': 'HTTP Status Kodları',
+    'http.subtitle': '— Incident triage için hızlı referans',
+    'http.search.ph': '404, auth, gateway...',
+    'http.all': 'Hepsi',
+    'http.empty': 'Eşleşen kod yok.',
+    // cURL
+    'curl.title': 'cURL Parser',
+    'curl.subtitle': '— Bir curl komutu yapıştır; URL, header, body görüntüle',
+    'curl.input.label': 'cURL komutu',
+    'curl.input.ph': "curl -X POST 'https://api.example.com/v1/users' -H 'Authorization: Bearer xxx' -H 'Content-Type: application/json' -d '{\"name\":\"Alice\"}'",
+    'curl.parse': 'Parse Et',
+    'curl.method': 'Metot',
+    'curl.host': 'Host',
+    'curl.path': 'Path',
+    'curl.query': 'Query parametreleri',
+    'curl.headers': 'Header\'lar',
+    'curl.auth': 'Kimlik',
+    'curl.body': 'Gövde',
+    'curl.flags': 'Bayraklar',
+    'curl.error.parse': 'Komut ayrıştırılamadı',
+    'curl.error.notcurl': 'Komut "curl" ile başlamalı.',
+    'curl.error.nourl': 'Komutta URL bulunamadı.',
+    // Markdown
+    'md.title': 'Markdown Önizleme',
+    'md.subtitle': '— Runbook, RCA, gereksinim dokümantasyonu',
+    'md.input.label': 'Markdown',
+    'md.input.ph': '# Başlık\n\n**Kalın** ve *italik*.',
+    'md.preview.label': 'Önizleme',
+    'md.copy-html': 'HTML kopyala',
     // Feedback
     'feedback.btn': 'Geri Bildirim',
     'feedback.email': 'E-posta Gönder',
@@ -631,6 +706,82 @@ const translations = {
     'us.dod.ac-verified': 'AC verified',
     'us.dod.docs': 'Documentation updated',
     // Feedback
+    // YAML <-> JSON
+    'yaml.title': 'YAML ↔ JSON Converter',
+    'yaml.subtitle': '— K8s manifests, GitHub Actions, Helm config',
+    'yaml.label': 'YAML',
+    'yaml.json.label': 'JSON',
+    'yaml.input.ph': 'name: my-app\nversion: 1.0.0\nports:\n  - 8080\n  - 8443',
+    'yaml.json.ph': '{"name":"my-app","version":"1.0.0","ports":[8080,8443]}',
+    'yaml.to-json': 'YAML → JSON',
+    'yaml.to-yaml': 'JSON → YAML',
+    'yaml.footnote': 'js-yaml is loaded from CDN on first use (~30 KB). Works offline afterwards.',
+    'yaml.error.parse': 'YAML/JSON parse error',
+    'yaml.error.offline': 'You appear to be offline — first-time YAML library load needs internet.',
+    // Regex Builder
+    'regex.title': 'Regex Builder',
+    'regex.subtitle': '— Log parsing & pattern testing',
+    'regex.pattern.ph': '\\b[A-Z]\\w+\\b',
+    'regex.flag.g': 'global',
+    'regex.flag.i': 'case-insensitive',
+    'regex.flag.m': 'multiline',
+    'regex.flag.s': 'dotall',
+    'regex.sample': 'Sample text',
+    'regex.sample.ph': 'Paste your test text here...',
+    'regex.matches': 'Match count',
+    'regex.highlight.label': 'Matches (highlighted)',
+    'regex.groups.label': 'Capture groups',
+    'regex.error.invalid': 'Invalid regex',
+    // Cron
+    'cron.title': 'Cron Expression',
+    'cron.subtitle': '— Decode, validate, next runs',
+    'cron.expr.label': 'Expression (5 fields: minute hour dom month dow)',
+    'cron.presets': 'Presets:',
+    'cron.field.minute': 'Minute',
+    'cron.field.hour': 'Hour',
+    'cron.field.dom': 'Day of month',
+    'cron.field.month': 'Month',
+    'cron.field.dow': 'Day of week',
+    'cron.human.everyMin': 'Every minute',
+    'cron.at': 'At',
+    'cron.hour': 'hour',
+    'cron.onDom': 'on day(s) of month',
+    'cron.inMonths': 'in month(s):',
+    'cron.onDow': 'on day(s) of week:',
+    'cron.next': 'Next 5 runs:',
+    'cron.error.fields': 'Cron expression must have 5 fields (minute hour dom month dow).',
+    'cron.error.invalid': 'Invalid cron expression',
+    // HTTP Status
+    'http.title': 'HTTP Status Codes',
+    'http.subtitle': '— Quick lookup for incident triage',
+    'http.search.ph': '404, auth, gateway...',
+    'http.all': 'All',
+    'http.empty': 'No matching codes.',
+    // cURL
+    'curl.title': 'cURL Parser',
+    'curl.subtitle': '— Paste a curl command; inspect URL, headers, body',
+    'curl.input.label': 'cURL command',
+    'curl.input.ph': "curl -X POST 'https://api.example.com/v1/users' -H 'Authorization: Bearer xxx' -H 'Content-Type: application/json' -d '{\"name\":\"Alice\"}'",
+    'curl.parse': 'Parse',
+    'curl.method': 'Method',
+    'curl.host': 'Host',
+    'curl.path': 'Path',
+    'curl.query': 'Query parameters',
+    'curl.headers': 'Headers',
+    'curl.auth': 'Auth',
+    'curl.body': 'Body',
+    'curl.flags': 'Flags',
+    'curl.error.parse': 'Could not parse command',
+    'curl.error.notcurl': 'Command must start with "curl".',
+    'curl.error.nourl': 'No URL found in command.',
+    // Markdown
+    'md.title': 'Markdown Preview',
+    'md.subtitle': '— Runbook, RCA, requirement documentation',
+    'md.input.label': 'Markdown',
+    'md.input.ph': '# Heading\n\n**Bold** and *italic*.',
+    'md.preview.label': 'Preview',
+    'md.copy-html': 'Copy HTML',
+    // Feedback
     'feedback.btn': 'Feedback',
     'feedback.email': 'Send Email',
     'feedback.github': 'Open GitHub Issue',
@@ -748,6 +899,7 @@ function applyLang() {
   // Rebuild dynamic content with new language
   buildSqlCheatsheet();
   buildKqlCheatsheet();
+  if (typeof filterHttpStatus === 'function' && document.getElementById('http-status-list')) filterHttpStatus();
 
   // Refresh word counter stats if there is text
   if (document.getElementById('wc-input') && document.getElementById('wc-input').value) {
@@ -775,6 +927,7 @@ const tools = [
   { id: 'json-diff',         label: 'JSON Karşılaştırma',    labelEn: 'JSON Diff',            icon: '⟺',   group: 'Veri & Format' },
   { id: 'json-escape',       label: 'JSON Escape/Unescape',  labelEn: 'JSON Escape/Unescape', icon: '\\{}', group: 'Veri & Format' },
   { id: 'csv-to-json',       label: 'CSV → JSON',            labelEn: 'CSV → JSON',           icon: '📊',  group: 'Veri & Format' },
+  { id: 'yaml-json',         label: 'YAML ↔ JSON',           labelEn: 'YAML ↔ JSON',          icon: '🧾',  group: 'Veri & Format' },
   { id: 'base64',            label: 'Base64 / Dosya',        labelEn: 'Base64 / File',        icon: '🔐',  group: 'Veri & Format' },
   // Veritabanı
   { id: 'sql-formatter',     label: 'SQL Formatlayıcı',      labelEn: 'SQL Formatter',        icon: '🗄️',  group: 'Veritabanı' },
@@ -787,6 +940,10 @@ const tools = [
   { id: 'timestamp',         label: 'Timestamp Dönüştürücü', labelEn: 'Timestamp Converter',  icon: '🕐',  group: 'Geliştirici' },
   { id: 'url-shortener',     label: 'URL Kısaltıcı',         labelEn: 'URL Shortener',        icon: '✂️',  group: 'Geliştirici' },
   { id: 'jwt-decoder',       label: 'JWT Decoder',           labelEn: 'JWT Decoder',          icon: '🎟️',  group: 'Geliştirici' },
+  { id: 'regex-builder',     label: 'Regex Builder',         labelEn: 'Regex Builder',        icon: '*️⃣',  group: 'Geliştirici' },
+  { id: 'cron-decoder',      label: 'Cron Expression',       labelEn: 'Cron Expression',      icon: '⏱️',  group: 'Geliştirici' },
+  { id: 'http-status',       label: 'HTTP Status Kodları',   labelEn: 'HTTP Status Codes',    icon: '🌐',  group: 'Geliştirici' },
+  { id: 'curl-parser',       label: 'cURL Parser',           labelEn: 'cURL Parser',          icon: '↩️',  group: 'Geliştirici' },
   // Hesaplama
   { id: 'interest-calc',     label: 'Faiz Hesaplama',        labelEn: 'Interest Calculator',  icon: '💰',  group: 'Hesaplama' },
   { id: 'loan-calc',         label: 'Kredi Hesaplama',       labelEn: 'Loan Calculator',      icon: '🏦',  group: 'Hesaplama' },
@@ -794,6 +951,7 @@ const tools = [
   { id: 'diff-checker',      label: 'Metin Karşılaştırma',   labelEn: 'Text Diff',            icon: '🔍',  group: 'Metin' },
   { id: 'word-counter',      label: 'Kelime Sayacı',         labelEn: 'Word Counter',         icon: '📝',  group: 'Metin' },
   { id: 'text-editor',       label: 'Metin Editörü',         labelEn: 'Text Editor',          icon: '✏️',  group: 'Metin' },
+  { id: 'markdown-preview',  label: 'Markdown Önizleme',     labelEn: 'Markdown Preview',     icon: 'M↓',  group: 'Metin' },
   // Analiz & Gereksinim
   { id: 'user-story',        label: 'User Story Yazıcı',     labelEn: 'User Story Writer',    icon: '📖',  group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
   { id: 'bpmn-modeler',      label: 'BPMN Modeler',          labelEn: 'BPMN Modeler',         icon: '⬡',   group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
@@ -2751,12 +2909,530 @@ document.addEventListener('DOMContentLoaded', () => {
   const dateEl = document.getElementById('date-input');
   if (dateEl) dateEl.value = local.toISOString().slice(0, 16);
 
+  // Sprint 3 tool initial render (so panels aren't blank when first opened)
+  if (document.getElementById('http-status-list')) filterHttpStatus();
+  if (document.getElementById('regex-pattern')) runRegex();
+  if (document.getElementById('md-input')) renderMarkdown();
+
   // Restore from hash
   const hash = window.location.hash.replace('#', '');
   if (hash && tools.find(t => t.id === hash)) {
     navigate(hash);
   }
 });
+
+// ===== Tool: Regex Builder =====
+
+function syncRegexFlags() {
+  const flags = ['g','i','m','s']
+    .filter(f => document.getElementById(`regex-flag-${f}`).checked)
+    .join('');
+  document.getElementById('regex-flags').value = flags;
+  runRegex();
+}
+
+function runRegex() {
+  hideError('regex-error');
+  const pattern = document.getElementById('regex-pattern').value;
+  const flags = document.getElementById('regex-flags').value;
+  const sample = document.getElementById('regex-sample').value;
+  const highlightEl = document.getElementById('regex-highlight');
+  const groupsEl = document.getElementById('regex-groups');
+  const statsEl = document.getElementById('regex-stats');
+
+  // Sync flag checkboxes (in case user typed flags directly)
+  ['g','i','m','s'].forEach(f => {
+    const cb = document.getElementById(`regex-flag-${f}`);
+    if (cb) cb.checked = flags.includes(f);
+  });
+
+  highlightEl.textContent = sample;
+  groupsEl.innerHTML = '';
+  statsEl.style.display = 'none';
+
+  if (!pattern) return;
+
+  let regex;
+  try {
+    regex = new RegExp(pattern, flags);
+  } catch (e) {
+    showError('regex-error', `${t('regex.error.invalid')}: ${e.message}`);
+    return;
+  }
+
+  // Collect matches (matchAll requires global flag)
+  const matches = [];
+  if (flags.includes('g')) {
+    for (const m of sample.matchAll(regex)) matches.push(m);
+  } else {
+    const m = sample.match(regex);
+    if (m) matches.push(m);
+  }
+
+  // Render highlighted output
+  let html = '';
+  let cursor = 0;
+  for (const m of matches) {
+    if (m.index === undefined) continue;
+    html += escapeHtml(sample.slice(cursor, m.index));
+    html += `<span class="regex-match">${escapeHtml(m[0])}</span>`;
+    cursor = m.index + m[0].length;
+  }
+  html += escapeHtml(sample.slice(cursor));
+  highlightEl.innerHTML = html || escapeHtml(sample);
+
+  // Stats + groups (from first match)
+  statsEl.style.display = 'block';
+  statsEl.textContent = `${t('regex.matches')}: ${matches.length}`;
+
+  if (matches.length > 0) {
+    const first = matches[0];
+    let rows = '';
+    for (let i = 0; i < first.length; i++) {
+      rows += `<div class="regex-group-row"><span class="gname">$${i}</span><span class="gidx">${i === 0 ? 'full' : 'group'}</span><span>${escapeHtml(first[i] === undefined ? '(undefined)' : first[i])}</span></div>`;
+    }
+    if (first.groups) {
+      for (const [name, val] of Object.entries(first.groups)) {
+        rows += `<div class="regex-group-row"><span class="gname">${escapeHtml(name)}</span><span class="gidx">named</span><span>${escapeHtml(val === undefined ? '(undefined)' : val)}</span></div>`;
+      }
+    }
+    groupsEl.innerHTML = rows;
+  }
+}
+
+// ===== Tool: Cron Expression =====
+
+const CRON_FIELD_NAMES = ['minute', 'hour', 'dom', 'month', 'dow'];
+const CRON_FIELD_RANGES = [[0,59], [0,23], [1,31], [1,12], [0,6]];
+const CRON_MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const CRON_DOW_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function setCron(expr) {
+  document.getElementById('cron-input').value = expr;
+  decodeCron();
+}
+
+function parseCronField(field, idx) {
+  const [min, max] = CRON_FIELD_RANGES[idx];
+  // Normalize month/dow aliases
+  let f = field.toUpperCase();
+  if (idx === 3) CRON_MONTH_NAMES.forEach((n, i) => { f = f.replace(new RegExp(`\\b${n.toUpperCase()}\\b`, 'g'), String(i + 1)); });
+  if (idx === 4) CRON_DOW_NAMES.forEach((n, i) => { f = f.replace(new RegExp(`\\b${n.toUpperCase()}\\b`, 'g'), String(i)); });
+
+  const allowed = new Set();
+  for (const part of f.split(',')) {
+    let stepMatch = part.match(/^(.+)\/(\d+)$/);
+    let step = 1, base = part;
+    if (stepMatch) { base = stepMatch[1]; step = parseInt(stepMatch[2], 10); }
+
+    let from, to;
+    if (base === '*') { from = min; to = max; }
+    else if (base.includes('-')) {
+      const [a, b] = base.split('-').map(s => parseInt(s, 10));
+      from = a; to = b;
+    } else {
+      const v = parseInt(base, 10);
+      if (isNaN(v)) throw new Error(`Invalid cron field: ${field}`);
+      from = v; to = v;
+    }
+    if (from < min || to > max || from > to) throw new Error(`Cron field "${field}" out of range [${min}-${max}]`);
+    for (let v = from; v <= to; v += step) allowed.add(v);
+  }
+  return Array.from(allowed).sort((a, b) => a - b);
+}
+
+function describeCronField(field, idx, parsed) {
+  const [min, max] = CRON_FIELD_RANGES[idx];
+  if (parsed.length === max - min + 1) return null; // every
+  if (field === '*') return null;
+  if (idx === 3) return parsed.map(v => CRON_MONTH_NAMES[v - 1]).join(', ');
+  if (idx === 4) return parsed.map(v => CRON_DOW_NAMES[v]).join(', ');
+  return parsed.join(', ');
+}
+
+function nextCronRuns(parsed, count) {
+  const [mins, hours, doms, months, dows] = parsed;
+  const runs = [];
+  const d = new Date();
+  d.setSeconds(0, 0);
+  d.setMinutes(d.getMinutes() + 1);
+  const limitMs = d.getTime() + 366 * 24 * 60 * 60 * 1000; // 1 year safety net
+  while (runs.length < count && d.getTime() < limitMs) {
+    if (
+      mins.includes(d.getMinutes()) &&
+      hours.includes(d.getHours()) &&
+      doms.includes(d.getDate()) &&
+      months.includes(d.getMonth() + 1) &&
+      dows.includes(d.getDay())
+    ) {
+      runs.push(new Date(d));
+    }
+    d.setMinutes(d.getMinutes() + 1);
+  }
+  return runs;
+}
+
+function decodeCron() {
+  hideError('cron-error');
+  const input = document.getElementById('cron-input').value.trim();
+  const result = document.getElementById('cron-result');
+  if (!input) { result.style.display = 'none'; return; }
+  const fields = input.split(/\s+/);
+  if (fields.length !== 5) {
+    showError('cron-error', t('cron.error.fields'));
+    result.style.display = 'none';
+    return;
+  }
+  let parsed;
+  try {
+    parsed = fields.map((f, i) => parseCronField(f, i));
+  } catch (e) {
+    showError('cron-error', `${t('cron.error.invalid')}: ${e.message}`);
+    result.style.display = 'none';
+    return;
+  }
+
+  // Human-readable
+  const labels = [t('cron.field.minute'), t('cron.field.hour'), t('cron.field.dom'), t('cron.field.month'), t('cron.field.dow')];
+  const descs = parsed.map((p, i) => describeCronField(fields[i], i, p));
+  let human;
+  if (descs.every(d => d === null)) {
+    human = t('cron.human.everyMin');
+  } else {
+    const minPart = descs[0] === null ? t('cron.human.everyMin') : `${t('cron.at')} :${parsed[0].map(v => String(v).padStart(2,'0')).join(',:')}`;
+    const hourPart = descs[1] === null ? '' : ` ${t('cron.hour')} ${parsed[1].join(',')}`;
+    const domPart = descs[2] === null ? '' : ` ${t('cron.onDom')} ${parsed[2].join(',')}`;
+    const monthPart = descs[3] === null ? '' : ` ${t('cron.inMonths')} ${descs[3]}`;
+    const dowPart = descs[4] === null ? '' : ` ${t('cron.onDow')} ${descs[4]}`;
+    human = `${minPart}${hourPart}${domPart}${monthPart}${dowPart}`.trim();
+  }
+
+  const runs = nextCronRuns(parsed, 5);
+  const locale = currentLang === 'tr' ? 'tr-TR' : 'en-GB';
+
+  let html = `<div class="cron-human">${escapeHtml(human)}</div>`;
+  html += `<div class="cron-fields">`;
+  CRON_FIELD_NAMES.forEach((n, i) => {
+    html += `<div class="cron-field"><div class="label">${escapeHtml(labels[i])}</div><div class="value">${escapeHtml(fields[i])}</div></div>`;
+  });
+  html += `</div>`;
+  html += `<div class="cron-next">${escapeHtml(t('cron.next'))}<ul>`;
+  runs.forEach(r => { html += `<li>${escapeHtml(r.toLocaleString(locale))}</li>`; });
+  html += `</ul></div>`;
+  result.innerHTML = html;
+  result.style.display = 'block';
+}
+
+// ===== Tool: HTTP Status Codes =====
+
+const HTTP_STATUS_CODES = [
+  { code: 100, name: 'Continue', desc: { tr: 'Sunucu başlığı aldı; istemci gövdeyi göndermeye devam edebilir.', en: 'Server got headers; client should proceed to send body.' } },
+  { code: 101, name: 'Switching Protocols', desc: { tr: 'Protokol değişimi onaylandı (örn. WebSocket upgrade).', en: 'Protocol upgrade accepted (e.g. WebSocket upgrade).' } },
+  { code: 200, name: 'OK', desc: { tr: 'Standart başarılı yanıt.', en: 'Standard success response.' } },
+  { code: 201, name: 'Created', desc: { tr: 'Kaynak oluşturuldu (genelde POST sonrası).', en: 'Resource created (typically after POST).' } },
+  { code: 202, name: 'Accepted', desc: { tr: 'İstek alındı, işlem asenkron olarak devam ediyor.', en: 'Request accepted, processing continues async.' } },
+  { code: 204, name: 'No Content', desc: { tr: 'Başarılı, ama gövde yok (genelde DELETE / PUT).', en: 'Success with no body (typically DELETE / PUT).' } },
+  { code: 301, name: 'Moved Permanently', desc: { tr: 'Kaynak kalıcı olarak taşındı; yeni URL’i kullanın.', en: 'Resource moved permanently; use new URL.' } },
+  { code: 302, name: 'Found', desc: { tr: 'Geçici yönlendirme.', en: 'Temporary redirect.' } },
+  { code: 304, name: 'Not Modified', desc: { tr: 'Cache geçerli; yeniden indirmeye gerek yok.', en: 'Cache still valid; no re-download needed.' } },
+  { code: 307, name: 'Temporary Redirect', desc: { tr: 'Geçici yönlendirme; istek metodu korunur.', en: 'Temporary redirect; method preserved.' } },
+  { code: 308, name: 'Permanent Redirect', desc: { tr: 'Kalıcı yönlendirme; metot korunur.', en: 'Permanent redirect; method preserved.' } },
+  { code: 400, name: 'Bad Request', desc: { tr: 'İstek bozuk (eksik/hatalı parametre, geçersiz JSON).', en: 'Malformed request (missing/invalid params, bad JSON).' } },
+  { code: 401, name: 'Unauthorized', desc: { tr: 'Kimlik doğrulama gerekli ya da token geçersiz.', en: 'Authentication required or token invalid.' } },
+  { code: 403, name: 'Forbidden', desc: { tr: 'Kimlik doğrulandı ama yetki yok.', en: 'Authenticated but not authorized.' } },
+  { code: 404, name: 'Not Found', desc: { tr: 'Kaynak yok.', en: 'Resource does not exist.' } },
+  { code: 405, name: 'Method Not Allowed', desc: { tr: 'HTTP metodu bu kaynak için izinli değil.', en: 'HTTP method not allowed on this resource.' } },
+  { code: 408, name: 'Request Timeout', desc: { tr: 'Sunucu istek için çok uzun bekledi.', en: 'Server timed out waiting for request.' } },
+  { code: 409, name: 'Conflict', desc: { tr: 'Kaynak çakışması (örn. duplicate, version mismatch).', en: 'Resource conflict (e.g. duplicate, version mismatch).' } },
+  { code: 410, name: 'Gone', desc: { tr: 'Kaynak kalıcı olarak silindi.', en: 'Resource permanently removed.' } },
+  { code: 413, name: 'Payload Too Large', desc: { tr: 'İstek gövdesi sunucu limitini aşıyor.', en: 'Request body exceeds server limit.' } },
+  { code: 415, name: 'Unsupported Media Type', desc: { tr: 'Content-Type desteklenmiyor.', en: 'Content-Type not supported.' } },
+  { code: 422, name: 'Unprocessable Entity', desc: { tr: 'İstek anlaşıldı ama validasyon başarısız.', en: 'Request understood but validation failed.' } },
+  { code: 429, name: 'Too Many Requests', desc: { tr: 'Rate limit aşıldı.', en: 'Rate limit exceeded.' } },
+  { code: 500, name: 'Internal Server Error', desc: { tr: 'Sunucu beklenmedik hata; loglarda detay aranmalı.', en: 'Unexpected server error; check logs.' } },
+  { code: 501, name: 'Not Implemented', desc: { tr: 'Sunucu bu özelliği henüz desteklemiyor.', en: 'Feature not yet implemented.' } },
+  { code: 502, name: 'Bad Gateway', desc: { tr: 'Upstream sunucudan geçersiz yanıt (proxy/LB sorunu).', en: 'Invalid response from upstream (proxy/LB issue).' } },
+  { code: 503, name: 'Service Unavailable', desc: { tr: 'Servis geçici olarak kapalı (bakım, aşırı yük).', en: 'Service temporarily unavailable (maintenance, overload).' } },
+  { code: 504, name: 'Gateway Timeout', desc: { tr: 'Upstream sunucu zamanında yanıt vermedi.', en: 'Upstream server did not respond in time.' } },
+  { code: 507, name: 'Insufficient Storage', desc: { tr: 'Sunucuda yeterli depolama alanı yok.', en: 'Server out of storage.' } },
+];
+
+let httpStatusFilter = 'all';
+
+function setHttpFilter(cls) {
+  httpStatusFilter = cls;
+  document.querySelectorAll('.http-filter').forEach(b => b.classList.toggle('active', b.dataset.class === cls));
+  filterHttpStatus();
+}
+
+function filterHttpStatus() {
+  const list = document.getElementById('http-status-list');
+  if (!list) return;
+  const q = (document.getElementById('http-search').value || '').trim().toLowerCase();
+  const lang = currentLang === 'en' ? 'en' : 'tr';
+  const matches = HTTP_STATUS_CODES.filter(s => {
+    const classOk = httpStatusFilter === 'all' || String(s.code).startsWith(httpStatusFilter);
+    if (!classOk) return false;
+    if (!q) return true;
+    return String(s.code).includes(q)
+      || s.name.toLowerCase().includes(q)
+      || s.desc[lang].toLowerCase().includes(q);
+  });
+  list.innerHTML = matches.map(s => `
+    <div class="http-status-item c-${String(s.code)[0]}">
+      <div class="code">${s.code}</div>
+      <div>
+        <div class="name">${escapeHtml(s.name)}</div>
+        <div class="desc">${escapeHtml(s.desc[lang])}</div>
+      </div>
+    </div>
+  `).join('');
+  if (matches.length === 0) list.innerHTML = `<div class="empty-state visible">${escapeHtml(t('http.empty'))}</div>`;
+}
+
+// ===== Tool: cURL Parser =====
+
+/**
+ * Tokenize a curl command, honoring single/double quotes, backticks, and shell line continuations.
+ * Cross-line continuations (a backslash at end-of-line) are stripped before tokenizing.
+ */
+function tokenizeCurl(text) {
+  const cleaned = text.replace(/\\\r?\n\s*/g, ' ').trim();
+  const tokens = [];
+  let current = '';
+  let quote = null;
+  for (let i = 0; i < cleaned.length; i++) {
+    const ch = cleaned[i];
+    if (quote) {
+      if (ch === quote) { quote = null; continue; }
+      if (quote === '"' && ch === '\\' && i + 1 < cleaned.length) { current += cleaned[++i]; continue; }
+      current += ch; continue;
+    }
+    if (ch === '"' || ch === "'") { quote = ch; continue; }
+    if (/\s/.test(ch)) {
+      if (current.length > 0) { tokens.push(current); current = ''; }
+      continue;
+    }
+    current += ch;
+  }
+  if (current.length > 0) tokens.push(current);
+  return tokens;
+}
+
+function parseCurl() {
+  hideError('curl-error');
+  const raw = document.getElementById('curl-input').value.trim();
+  const out = document.getElementById('curl-result');
+  if (!raw) { out.style.display = 'none'; return; }
+
+  let tokens;
+  try { tokens = tokenizeCurl(raw); }
+  catch (e) { showError('curl-error', `${t('curl.error.parse')}: ${e.message}`); return; }
+
+  if (!tokens.length || !/^curl/i.test(tokens[0])) {
+    showError('curl-error', t('curl.error.notcurl'));
+    return;
+  }
+
+  let url = '';
+  let method = 'GET';
+  const headers = [];
+  let body = '';
+  let bodyType = null;
+  let user = null;
+  let followRedirects = false;
+  let insecure = false;
+
+  for (let i = 1; i < tokens.length; i++) {
+    const tok = tokens[i];
+    const next = () => tokens[++i];
+    if (tok === '-X' || tok === '--request') method = (next() || 'GET').toUpperCase();
+    else if (tok === '-H' || tok === '--header') headers.push(next() || '');
+    else if (tok === '-d' || tok === '--data' || tok === '--data-raw') { body = next() || ''; bodyType = 'data'; if (method === 'GET') method = 'POST'; }
+    else if (tok === '--data-binary') { body = next() || ''; bodyType = 'binary'; if (method === 'GET') method = 'POST'; }
+    else if (tok === '--data-urlencode') { body = next() || ''; bodyType = 'urlencoded'; if (method === 'GET') method = 'POST'; }
+    else if (tok === '-u' || tok === '--user') user = next() || '';
+    else if (tok === '-L' || tok === '--location') followRedirects = true;
+    else if (tok === '-k' || tok === '--insecure') insecure = true;
+    else if (tok === '--compressed' || tok === '-i' || tok === '--include' || tok === '-s' || tok === '--silent' || tok === '-v' || tok === '--verbose') { /* ignored */ }
+    else if (tok.startsWith('-')) {
+      // Unknown flag, attempt to skip its value if it doesn't start with -
+      if (i + 1 < tokens.length && !tokens[i + 1].startsWith('-')) i++;
+    }
+    else if (!url) url = tok;
+  }
+
+  if (!url) { showError('curl-error', t('curl.error.nourl')); return; }
+
+  // Parse URL for query string breakdown
+  let parsedUrl = null;
+  let queryPairs = [];
+  try {
+    parsedUrl = new URL(url);
+    parsedUrl.searchParams.forEach((v, k) => queryPairs.push({ k, v }));
+  } catch { /* leave as raw */ }
+
+  let html = `<div class="curl-row"><span class="label">${t('curl.method')}</span><span class="value"><strong>${escapeHtml(method)}</strong></span></div>`;
+  html += `<div class="curl-row"><span class="label">URL</span><span class="value">${escapeHtml(url)}</span></div>`;
+  if (parsedUrl) {
+    html += `<div class="curl-row"><span class="label">${t('curl.host')}</span><span class="value">${escapeHtml(parsedUrl.host)}</span></div>`;
+    html += `<div class="curl-row"><span class="label">${t('curl.path')}</span><span class="value">${escapeHtml(parsedUrl.pathname)}</span></div>`;
+    if (queryPairs.length) {
+      html += `<div class="curl-row"><span class="label">${t('curl.query')}</span><div class="curl-headers">${queryPairs.map(p => `<div><span class="k">${escapeHtml(p.k)}</span>= ${escapeHtml(p.v)}</div>`).join('')}</div></div>`;
+    }
+  }
+  if (headers.length) {
+    html += `<div class="curl-row"><span class="label">${t('curl.headers')}</span><div class="curl-headers">${headers.map(h => {
+      const idx = h.indexOf(':');
+      const k = idx > 0 ? h.slice(0, idx).trim() : h;
+      const v = idx > 0 ? h.slice(idx + 1).trim() : '';
+      return `<div><span class="k">${escapeHtml(k)}:</span> ${escapeHtml(v)}</div>`;
+    }).join('')}</div></div>`;
+  }
+  if (user) html += `<div class="curl-row"><span class="label">${t('curl.auth')}</span><span class="value">Basic — ${escapeHtml(user)}</span></div>`;
+  if (body) {
+    let bodyDisplay = body;
+    try {
+      if ((body.startsWith('{') || body.startsWith('['))) bodyDisplay = JSON.stringify(JSON.parse(body), null, 2);
+    } catch { /* keep raw */ }
+    html += `<div class="curl-row"><span class="label">${t('curl.body')} (${bodyType || 'data'})</span><span class="value"><pre style="white-space:pre-wrap; margin:0;">${escapeHtml(bodyDisplay)}</pre></span></div>`;
+  }
+  const flagsList = [];
+  if (followRedirects) flagsList.push('-L (follow redirects)');
+  if (insecure) flagsList.push('-k (skip TLS verify)');
+  if (flagsList.length) html += `<div class="curl-row"><span class="label">${t('curl.flags')}</span><span class="value">${escapeHtml(flagsList.join(', '))}</span></div>`;
+
+  out.innerHTML = html;
+  out.style.display = 'block';
+}
+
+// ===== Tool: Markdown Preview =====
+
+/**
+ * Lightweight Markdown -> HTML renderer. Covers the dialect a BA needs day-to-day:
+ * headings, bold/italic, inline code, fenced code blocks, links, lists, blockquotes,
+ * horizontal rules, and pipe tables. Not a full GFM implementation.
+ */
+function renderMarkdown() {
+  const out = document.getElementById('md-output');
+  if (!out) return;
+  const src = document.getElementById('md-input').value;
+  out.innerHTML = markdownToHtml(src);
+}
+
+function markdownToHtml(src) {
+  // 1) Extract fenced code blocks first so their internals aren't transformed.
+  const codeBlocks = [];
+  src = src.replace(/```([\s\S]*?)```/g, (_, code) => {
+    const idx = codeBlocks.push(code) - 1;
+    return ` CODE${idx} `;
+  });
+
+  // 2) Escape raw HTML
+  src = src.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  // 3) Block-level: tables (must be before paragraphs)
+  src = src.replace(/((?:^\|.*\|\s*\n)+)/gm, (block) => {
+    const lines = block.trim().split('\n').filter(Boolean);
+    if (lines.length < 2) return block;
+    const splitRow = (line) => line.replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+    const headers = splitRow(lines[0]);
+    const sep = lines[1];
+    if (!/^\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$/.test(sep)) return block;
+    const rows = lines.slice(2).map(splitRow);
+    const th = headers.map(h => `<th>${h}</th>`).join('');
+    const tb = rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('');
+    return `<table><thead><tr>${th}</tr></thead><tbody>${tb}</tbody></table>\n`;
+  });
+
+  // 4) Headings
+  src = src.replace(/^######\s+(.*)$/gm, '<h6>$1</h6>')
+           .replace(/^#####\s+(.*)$/gm, '<h5>$1</h5>')
+           .replace(/^####\s+(.*)$/gm, '<h4>$1</h4>')
+           .replace(/^###\s+(.*)$/gm, '<h3>$1</h3>')
+           .replace(/^##\s+(.*)$/gm, '<h2>$1</h2>')
+           .replace(/^#\s+(.*)$/gm, '<h1>$1</h1>');
+
+  // 5) Horizontal rules
+  src = src.replace(/^\s*---\s*$/gm, '<hr>');
+
+  // 6) Blockquotes (single-line; chained handled by simple grouping)
+  src = src.replace(/^>\s?(.*)$/gm, '<blockquote>$1</blockquote>');
+  src = src.replace(/(<\/blockquote>\n<blockquote>)/g, '\n');
+
+  // 7) Lists
+  src = src.replace(/(?:^[ \t]*[-*+] .*(?:\n|$))+/gm, (block) => {
+    const items = block.trim().split('\n').map(l => l.replace(/^[ \t]*[-*+] /, ''));
+    return `<ul>${items.map(it => `<li>${it}</li>`).join('')}</ul>\n`;
+  });
+  src = src.replace(/(?:^[ \t]*\d+\.\s.*(?:\n|$))+/gm, (block) => {
+    const items = block.trim().split('\n').map(l => l.replace(/^[ \t]*\d+\.\s/, ''));
+    return `<ol>${items.map(it => `<li>${it}</li>`).join('')}</ol>\n`;
+  });
+
+  // 8) Inline: bold/italic/code/links
+  src = src.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  src = src.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+  src = src.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+  src = src.replace(/_([^_\n]+)_/g, '<em>$1</em>');
+  src = src.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+
+  // 9) Paragraphs: wrap raw text blocks; skip lines that start with a tag
+  src = src.split(/\n\n+/).map(block => {
+    if (/^\s*<(h\d|ul|ol|table|blockquote|hr|pre|p)/.test(block)) return block;
+    if (block.includes(' CODE')) return block;
+    if (!block.trim()) return '';
+    return `<p>${block.replace(/\n/g, '<br>')}</p>`;
+  }).join('\n');
+
+  // 10) Restore code blocks
+  src = src.replace(/ CODE(\d+) /g, (_, idx) => `<pre><code>${codeBlocks[Number(idx)].replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`);
+
+  return src;
+}
+
+// ===== Tool: YAML <-> JSON =====
+
+const YAML_CDN = 'https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js';
+let yamlScriptLoaded = false;
+
+async function ensureYamlLoaded() {
+  if (yamlScriptLoaded || (typeof jsyaml !== 'undefined')) { yamlScriptLoaded = true; return; }
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    throw new Error(t('yaml.error.offline'));
+  }
+  await loadBpmnScript(YAML_CDN, 8000); // reuse the timeout-aware loader from BPMN section
+  yamlScriptLoaded = true;
+}
+
+async function yamlToJson() {
+  hideError('yaml-error');
+  const input = document.getElementById('yaml-input').value;
+  const outEl = document.getElementById('yaml-json-output');
+  if (!input.trim()) { outEl.value = ''; return; }
+  try {
+    await ensureYamlLoaded();
+    const data = jsyaml.load(input);
+    outEl.value = JSON.stringify(data, null, 2);
+  } catch (e) {
+    showError('yaml-error', `${t('yaml.error.parse')}: ${e.message}`);
+  }
+}
+
+async function jsonToYaml() {
+  hideError('yaml-error');
+  const inputEl = document.getElementById('yaml-json-output');
+  const yamlEl = document.getElementById('yaml-input');
+  const text = inputEl.value.trim();
+  if (!text) return;
+  try {
+    const data = JSON.parse(text);
+    await ensureYamlLoaded();
+    yamlEl.value = jsyaml.dump(data, { indent: 2, lineWidth: 100 });
+  } catch (e) {
+    showError('yaml-error', `${t('yaml.error.parse')}: ${e.message}`);
+  }
+}
 
 // ===== Tool: BPMN Modeler (bpmn-js) =====
 
