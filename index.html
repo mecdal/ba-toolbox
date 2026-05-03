@@ -218,6 +218,12 @@
           <div>
             <label data-i18n="ts.to-date">Timestamp → Tarih</label>
             <input type="text" id="ts-input" placeholder="1700000000">
+            <fieldset class="ts-unit" id="ts-unit-fieldset" style="border:none; padding:0; margin:6px 0 8px;">
+              <legend class="ts-unit-legend" data-i18n="ts.unit.legend">Birim</legend>
+              <label class="checkbox-label"><input type="radio" name="ts-unit" value="auto" checked> <span data-i18n="ts.unit.auto">Otomatik</span></label>
+              <label class="checkbox-label"><input type="radio" name="ts-unit" value="s"> <span data-i18n="ts.unit.s">Saniye (s)</span></label>
+              <label class="checkbox-label"><input type="radio" name="ts-unit" value="ms"> <span data-i18n="ts.unit.ms">Milisaniye (ms)</span></label>
+            </fieldset>
             <div class="btn-group">
               <button class="btn btn-primary" onclick="tsToDate()" data-i18n="convert">Dönüştür</button>
               <button class="btn btn-secondary" onclick="setNow()" data-i18n="ts.now">Şimdi</button>
@@ -473,7 +479,7 @@
         <div class="error-box" id="url-short-error"></div>
         <label data-i18n="url-short.label">Uzun URL</label>
         <input type="text" id="url-short-input" placeholder="https://ornek.com/cok/uzun/bir/url?param=deger">
-        <button class="btn btn-primary" onclick="shortenUrl()" data-i18n="shorten">Kısalt</button>
+        <button class="btn btn-primary" id="url-short-btn" onclick="shortenUrl()" data-i18n="shorten">Kısalt</button>
         <div id="url-short-result" class="url-short-result-box" style="display:none;">
           <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em;" data-i18n="url-short.result.label">Kısaltılmış URL</div>
           <div style="display:flex; gap:8px; align-items:center;">

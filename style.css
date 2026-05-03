@@ -459,6 +459,34 @@ body::before {
 }
 .empty-state.visible { display: block; }
 
+.ts-unit { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.ts-unit .checkbox-label { display: inline-flex; align-items: center; gap: 4px; margin: 0; font-size: 13px; }
+.ts-unit-legend { font-size: 12px; color: var(--text-muted); margin-right: 8px; padding: 0; }
+
+/* ===== Focus visibility (a11y) =====
+   Buttons, tabs, sidebar links, and other non-input controls strip the default outline
+   for aesthetic reasons. We add a strong focus ring back via :focus-visible (so the ring
+   only appears for keyboard navigation, not mouse clicks). */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+button:focus-visible,
+.btn:focus-visible,
+.tool-nav-item:focus-visible,
+.tab:focus-visible,
+.tab-btn:focus-visible,
+.tab-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  /* The dedicated input focus rule below already provides a visible ring. */
+  outline: none;
+}
+
 /* ===== Form Elements ===== */
 label {
   display: block;
@@ -548,6 +576,8 @@ textarea {
 }
 
 .btn-success { background: var(--success); color: #fff; border-color: var(--success); }
+.btn-loading { opacity: 0.65; cursor: progress; pointer-events: none; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
 .btn-danger { background: var(--error); color: #fff; border-color: var(--error); }
 
 .btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }

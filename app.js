@@ -187,6 +187,10 @@ const translations = {
     'ts.now': 'Şimdi',
     'ts.to-ts': 'Tarih → Timestamp',
     'ts.invalid': 'Geçersiz timestamp',
+    'ts.unit.legend': 'Birim',
+    'ts.unit.auto': 'Otomatik',
+    'ts.unit.s': 'Saniye (s)',
+    'ts.unit.ms': 'Milisaniye (ms)',
     // Base64
     'b64.title': 'Base64 / Dosya',
     'b64.tab.text': 'Metin',
@@ -357,6 +361,7 @@ const translations = {
     // URL Shortener
     'url-short.error.invalid': 'Geçerli bir URL girin (https:// ile başlamalı).',
     'url-short.error.failed': 'Kısaltılamadı: ',
+    'url-short.error.offline': 'İnternet bağlantısı yok. URL kısaltma için bağlantı gerekiyor.',
     // JSON Diff
     'json-diff.title': 'JSON Karşılaştırma',
     'json-diff.subtitle': '— Yapısal JSON diff (path bazlı)',
@@ -378,6 +383,9 @@ const translations = {
     'bpmn.export-svg': 'SVG İndir',
     'bpmn.loading': 'BPMN editörü yükleniyor...',
     'bpmn.error.import': 'Geçersiz BPMN XML',
+    'bpmn.error.offline': 'Çevrimdışı görünüyor — BPMN editörü ilk kez yüklenirken internet bağlantısı gerekiyor.',
+    'bpmn.error.timeout': 'BPMN editörü 12 saniye içinde yüklenemedi (CDN engelli ya da yavaş bağlantı).',
+    'bpmn.error.load': 'BPMN editörü yüklenemedi. İnternet bağlantınızı veya CDN erişiminizi kontrol edin.',
   },
   en: {
     // Nav / global
@@ -476,6 +484,10 @@ const translations = {
     'ts.now': 'Now',
     'ts.to-ts': 'Date → Timestamp',
     'ts.invalid': 'Invalid timestamp',
+    'ts.unit.legend': 'Unit',
+    'ts.unit.auto': 'Auto',
+    'ts.unit.s': 'Seconds (s)',
+    'ts.unit.ms': 'Milliseconds (ms)',
     // Base64
     'b64.title': 'Base64 / File',
     'b64.tab.text': 'Text',
@@ -535,6 +547,7 @@ const translations = {
     // URL Shortener
     'url-short.error.invalid': 'Enter a valid URL (must start with https://).',
     'url-short.error.failed': 'Shortening failed: ',
+    'url-short.error.offline': 'No internet connection. URL shortening requires a connection.',
     // JWT
     'jwt.subtitle': '(Read-only — signature not verified)',
     'jwt.decode': 'Decode',
@@ -667,6 +680,9 @@ const translations = {
     'bpmn.export-svg': 'Download SVG',
     'bpmn.loading': 'Loading BPMN editor...',
     'bpmn.error.import': 'Invalid BPMN XML',
+    'bpmn.error.offline': 'You appear to be offline — first-time BPMN editor load needs internet access.',
+    'bpmn.error.timeout': 'BPMN editor failed to load within 12 seconds (CDN blocked or slow connection).',
+    'bpmn.error.load': 'BPMN editor could not be loaded. Check your internet connection or CDN access.',
   },
 };
 
@@ -1096,12 +1112,23 @@ function wrapTreeLeaf(key, valueHtml) {
   return `<div style="margin-left:16px;">${keyHtml}${valueHtml}</div>`;
 }
 
-// Tree search
+// Tree search (debounced to avoid re-walking the DOM on every keystroke)
+function debounce(fn, delay) {
+  let timer = null;
+  return function debounced(...args) {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   const searchInput = document.getElementById('json-tree-search');
   if (searchInput) {
+    const debouncedSearch = debounce(function(value) {
+      searchJsonTree(value);
+    }, 200);
     searchInput.addEventListener('input', function() {
-      searchJsonTree(this.value.trim().toLowerCase());
+      debouncedSearch(this.value.trim().toLowerCase());
     });
   }
 });
@@ -1344,7 +1371,14 @@ function tsToDate() {
   const out = document.getElementById('ts-result');
   if (!raw || isNaN(raw)) { out.innerHTML = t('ts.invalid'); return; }
 
-  const ms = raw.length >= 13 ? parseInt(raw) : parseInt(raw) * 1000;
+  const unitInput = document.querySelector('input[name="ts-unit"]:checked');
+  const unit = unitInput ? unitInput.value : 'auto';
+  const num = parseInt(raw, 10);
+  let ms;
+  if (unit === 's') ms = num * 1000;
+  else if (unit === 'ms') ms = num;
+  // 'auto': prefer length-based heuristic, but fall back to magnitude so timestamps near year 3000 still classify.
+  else ms = (raw.length >= 13 || num >= 1e12) ? num : num * 1000;
   const d  = new Date(ms);
   if (isNaN(d.getTime())) { out.innerHTML = t('ts.invalid'); return; }
 
@@ -1389,11 +1423,30 @@ function setNow() {
 
 // ===== Tool: Base64 =====
 
+// Use TextEncoder/TextDecoder for full UTF-8 round-trips (emoji, surrogate pairs, rare scripts).
+// The legacy unescape(encodeURIComponent(...)) trick mishandles some code points and is deprecated.
+function utf8ToBase64(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+
+function base64ToUtf8(b64) {
+  // Tolerate base64url and missing padding (common in JWTs and copy/pasted tokens).
+  const normalized = b64.trim().replace(/-/g, '+').replace(/_/g, '/');
+  const padded = normalized + '='.repeat((4 - (normalized.length % 4)) % 4);
+  const bin = atob(padded);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+}
+
 function base64Encode() {
   hideError('base64-error');
   try {
     const input = document.getElementById('b64-raw').value;
-    document.getElementById('b64-encoded').value = btoa(unescape(encodeURIComponent(input)));
+    document.getElementById('b64-encoded').value = utf8ToBase64(input);
   } catch (e) {
     showError('base64-error', t('b64.error.encode') + e.message);
   }
@@ -1402,8 +1455,8 @@ function base64Encode() {
 function base64Decode() {
   hideError('base64-error');
   try {
-    const input = document.getElementById('b64-encoded').value.trim();
-    document.getElementById('b64-raw').value = decodeURIComponent(escape(atob(input)));
+    const input = document.getElementById('b64-encoded').value;
+    document.getElementById('b64-raw').value = base64ToUtf8(input);
   } catch (e) {
     showError('base64-error', t('b64.error.decode'));
   }
@@ -1411,28 +1464,81 @@ function base64Decode() {
 
 // ===== Tool: CSV to JSON =====
 
+/**
+ * RFC 4180-compliant CSV parser. Handles:
+ *  - Quoted fields (commas / delimiters inside quotes)
+ *  - Escaped quotes inside quoted fields ("" -> ")
+ *  - CRLF / LF / CR line endings
+ *  - Multiline fields when wrapped in quotes
+ * @param {string} text - raw CSV input
+ * @param {string} delimiter - field separator (default ',')
+ * @returns {string[][]} array of rows, each row an array of cell strings
+ */
+function parseCSV(text, delimiter) {
+  const sep = (delimiter || ',').charAt(0) || ',';
+  const rows = [];
+  let row = [];
+  let field = '';
+  let i = 0;
+  let inQuotes = false;
+  const n = text.length;
+
+  while (i < n) {
+    const ch = text[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { field += '"'; i += 2; continue; }
+        inQuotes = false; i++; continue;
+      }
+      field += ch; i++; continue;
+    }
+    if (ch === '"') { inQuotes = true; i++; continue; }
+    if (ch === sep) { row.push(field); field = ''; i++; continue; }
+    if (ch === '\r') {
+      // Treat CRLF as one terminator
+      row.push(field); field = ''; rows.push(row); row = [];
+      if (text[i + 1] === '\n') i++;
+      i++; continue;
+    }
+    if (ch === '\n') {
+      row.push(field); field = ''; rows.push(row); row = [];
+      i++; continue;
+    }
+    field += ch; i++;
+  }
+  // Flush trailing field/row (no final newline case)
+  if (field.length > 0 || row.length > 0) {
+    row.push(field);
+    rows.push(row);
+  }
+  // Drop fully-empty trailing rows
+  while (rows.length && rows[rows.length - 1].length === 1 && rows[rows.length - 1][0] === '') {
+    rows.pop();
+  }
+  return rows;
+}
+
 function csvToJson() {
   hideError('csv-error');
   try {
-    const input = document.getElementById('csv-input').value.trim();
-    if (!input) return;
+    const input = document.getElementById('csv-input').value;
+    if (!input.trim()) return;
     const hasHeaders = document.getElementById('csv-headers').checked;
-    const lines = input.split('\n').map(l => l.trim()).filter(Boolean);
     const delimiter = document.getElementById('csv-delimiter').value || ',';
 
-    const parse = line => line.split(delimiter).map(c => c.trim().replace(/^"|"$/g, ''));
+    const rows = parseCSV(input, delimiter);
+    if (rows.length === 0) { document.getElementById('csv-output').value = '[]'; return; }
 
     let result;
     if (hasHeaders) {
-      const headers = parse(lines[0]);
-      result = lines.slice(1).map(line => {
-        const vals = parse(line);
+      const headers = rows[0];
+      result = rows.slice(1).map(vals => {
         const obj = {};
         headers.forEach((h, i) => obj[h] = vals[i] ?? '');
         return obj;
       });
     } else {
-      result = lines.map(line => parse(line));
+      result = rows;
     }
 
     document.getElementById('csv-output').value = JSON.stringify(result, null, 2);
@@ -1497,15 +1603,34 @@ function countWords() {
 
 // ===== Tool: SQL Formatter =====
 
+// Replace string literals, quoted identifiers, and comments with placeholders so the formatter
+// only touches actual SQL keywords. Restored after newline insertion.
+function maskSqlLiterals(sql) {
+  const literals = [];
+  const masked = sql.replace(
+    // single-quoted strings (with doubled-quote escapes), double-quoted identifiers,
+    // backtick identifiers, line comments, block comments
+    /'(?:[^']|'')*'|"(?:[^"]|"")*"|`(?:[^`]|``)*`|--[^\n]*|\/\*[\s\S]*?\*\//g,
+    (match) => {
+      const token = `SQLLIT${literals.length}`;
+      literals.push(match);
+      return token;
+    }
+  );
+  return { masked, literals };
+}
+
+function unmaskSqlLiterals(text, literals) {
+  return text.replace(/SQLLIT(\d+)/g, (_, idx) => literals[Number(idx)]);
+}
+
 function formatSQL() {
   const input = document.getElementById('sql-input').value;
-  const keywords = ['SELECT', 'FROM', 'WHERE', 'JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'INNER JOIN',
-    'OUTER JOIN', 'ON', 'AND', 'OR', 'ORDER BY', 'GROUP BY', 'HAVING', 'LIMIT',
-    'INSERT INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE FROM', 'CREATE TABLE',
-    'DROP TABLE', 'ALTER TABLE', 'UNION', 'UNION ALL', 'AS', 'DISTINCT', 'NOT', 'IN',
-    'IS NULL', 'IS NOT NULL', 'BETWEEN', 'LIKE', 'EXISTS'];
 
-  let sql = input.replace(/\s+/g, ' ').trim();
+  // Mask literals so 'SELECT' inside a string doesn't get reformatted.
+  const { masked, literals } = maskSqlLiterals(input);
+
+  let sql = masked.replace(/\s+/g, ' ').trim();
   sql = sql.toUpperCase();
 
   const newlineKeywords = ['SELECT', 'FROM', 'WHERE', 'JOIN', 'LEFT JOIN', 'RIGHT JOIN',
@@ -1517,6 +1642,7 @@ function formatSQL() {
   });
 
   sql = sql.replace(/,\s*/g, ',\n    ');
+  sql = unmaskSqlLiterals(sql, literals);
   document.getElementById('sql-output').value = sql.trim();
 }
 
@@ -1532,7 +1658,8 @@ function decodeJWT() {
   }
 
   try {
-    const decode = str => JSON.parse(decodeURIComponent(escape(atob(str.replace(/-/g, '+').replace(/_/g, '/')))));
+    // base64url -> utf-8 -> JSON (padding-safe via base64ToUtf8 helper)
+    const decode = str => JSON.parse(base64ToUtf8(str));
     const header = decode(parts[0]);
     const payload = decode(parts[1]);
 
@@ -1781,6 +1908,46 @@ function diffJson() {
   output.innerHTML = `<div style="margin-bottom:8px; font-size:12px; color:var(--text-muted);">${t('json-diff.found').replace('{n}', diffs.length)}</div>` + html;
 }
 
+// Deep equality check used by the LCS array-diff matcher.
+function deepEquals(a, b) {
+  if (a === b) return true;
+  if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object') return false;
+  if (Array.isArray(a) !== Array.isArray(b)) return false;
+  if (Array.isArray(a)) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) if (!deepEquals(a[i], b[i])) return false;
+    return true;
+  }
+  const ka = Object.keys(a), kb = Object.keys(b);
+  if (ka.length !== kb.length) return false;
+  for (const k of ka) if (!deepEquals(a[k], b[k])) return false;
+  return true;
+}
+
+// Longest Common Subsequence over two arrays — same shape used by Git/Diff tools.
+// Returns a script of {type: 'eq'|'add'|'del', li, ri} steps, where li/ri are indices in left/right.
+function lcsArrayDiff(left, right) {
+  const n = left.length, m = right.length;
+  const dp = Array.from({ length: n + 1 }, () => new Uint32Array(m + 1));
+  for (let i = n - 1; i >= 0; i--) {
+    for (let j = m - 1; j >= 0; j--) {
+      dp[i][j] = deepEquals(left[i], right[j])
+        ? dp[i + 1][j + 1] + 1
+        : Math.max(dp[i + 1][j], dp[i][j + 1]);
+    }
+  }
+  const script = [];
+  let i = 0, j = 0;
+  while (i < n && j < m) {
+    if (deepEquals(left[i], right[j])) { script.push({ type: 'eq',  li: i,    ri: j    }); i++; j++; }
+    else if (dp[i + 1][j] >= dp[i][j + 1]) { script.push({ type: 'del', li: i,    ri: null }); i++; }
+    else                                     { script.push({ type: 'add', li: null, ri: j    }); j++; }
+  }
+  while (i < n) script.push({ type: 'del', li: i++, ri: null });
+  while (j < m) script.push({ type: 'add', li: null, ri: j++ });
+  return script;
+}
+
 function jsonDiffRecurse(left, right, path, diffs) {
   if (typeof left !== typeof right || (Array.isArray(left) !== Array.isArray(right))) {
     diffs.push({ type: 'type', path, left, right });
@@ -1791,12 +1958,16 @@ function jsonDiffRecurse(left, right, path, diffs) {
     return;
   }
   if (Array.isArray(left)) {
-    const maxLen = Math.max(left.length, right.length);
-    for (let i = 0; i < maxLen; i++) {
-      const p = `${path}[${i}]`;
-      if (i >= left.length) diffs.push({ type: 'added', path: p, right: right[i] });
-      else if (i >= right.length) diffs.push({ type: 'removed', path: p, left: left[i] });
-      else jsonDiffRecurse(left[i], right[i], p, diffs);
+    // LCS-based diffing: an insertion at index 0 no longer cascades a "changed" verdict
+    // across every subsequent element.
+    const script = lcsArrayDiff(left, right);
+    for (const step of script) {
+      if (step.type === 'eq') continue;
+      if (step.type === 'add') {
+        diffs.push({ type: 'added',   path: `${path}[+${step.ri}]`, right: right[step.ri] });
+      } else if (step.type === 'del') {
+        diffs.push({ type: 'removed', path: `${path}[-${step.li}]`, left:  left[step.li] });
+      }
     }
     return;
   }
@@ -2005,27 +2176,63 @@ function updateEditorStats() {
 
 // ===== Tool: URL Shortener =====
 
+// Provider chain: try TinyURL first, fall back to is.gd. Each call is bounded by an AbortController
+// so a hung provider doesn't lock the UI.
+async function fetchShortUrl(provider, originalUrl, timeoutMs) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(provider.endpoint(originalUrl), { signal: ctrl.signal });
+    if (!res.ok) throw new Error(`${provider.name} HTTP ${res.status}`);
+    const text = (await res.text()).trim();
+    if (!text.startsWith('http')) throw new Error(`${provider.name}: unexpected response`);
+    return text;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function shortenUrl() {
   hideError('url-short-error');
   const url = document.getElementById('url-short-input').value.trim();
+  const btn = document.getElementById('url-short-btn');
   if (!url) return;
   try { new URL(url); } catch {
     showError('url-short-error', t('url-short.error.invalid'));
     return;
   }
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    showError('url-short-error', t('url-short.error.offline'));
+    return;
+  }
   const resultEl = document.getElementById('url-short-result');
   const outputEl = document.getElementById('url-short-output');
   resultEl.style.display = 'none';
+
+  // Disable button to prevent double-submits / race conditions
+  if (btn) { btn.disabled = true; btn.classList.add('btn-loading'); }
+
+  const providers = [
+    { name: 'TinyURL', endpoint: u => `https://tinyurl.com/api-create.php?url=${encodeURIComponent(u)}` },
+    { name: 'is.gd',   endpoint: u => `https://is.gd/create.php?format=simple&url=${encodeURIComponent(u)}` },
+  ];
+
+  const errors = [];
   try {
-    const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
-    if (!res.ok) throw new Error('API hatası: ' + res.status);
-    const shortUrl = (await res.text()).trim();
-    if (!shortUrl.startsWith('http')) throw new Error('Beklenmedik yanıt');
-    outputEl.textContent = shortUrl;
-    outputEl.href = shortUrl;
-    resultEl.style.display = 'block';
-  } catch (e) {
-    showError('url-short-error', t('url-short.error.failed') + e.message);
+    for (const provider of providers) {
+      try {
+        const shortUrl = await fetchShortUrl(provider, url, 8000);
+        outputEl.textContent = shortUrl;
+        outputEl.href = shortUrl;
+        resultEl.style.display = 'block';
+        return;
+      } catch (e) {
+        errors.push(e && e.name === 'AbortError' ? `${provider.name}: timeout` : (e.message || String(e)));
+      }
+    }
+    showError('url-short-error', `${t('url-short.error.failed')}${errors.join(' · ')}`);
+  } finally {
+    if (btn) { btn.disabled = false; btn.classList.remove('btn-loading'); }
   }
 }
 
@@ -2064,13 +2271,25 @@ function calcLoanPayment() {
   cardEl.innerHTML = html;
   cardEl.style.display = 'block';
 
-  let remaining = P;
+  // Build amortization with cent-precision rounding. Final installment absorbs the rounding drift
+  // so the closing balance is exactly 0.00 — matches what banks print on schedules.
+  const round2 = n => Math.round((n + Number.EPSILON) * 100) / 100;
+  let remaining = round2(P);
   let rows = '';
   for (let i = 1; i <= months; i++) {
-    const interestPayment = remaining * r;
-    const principalPayment = monthlyPayment - interestPayment;
-    remaining = Math.max(0, remaining - principalPayment);
-    rows += `<tr><td>${i}</td><td>${fmt(monthlyPayment)}</td><td>${fmt(principalPayment)}</td><td style="color:var(--error);">${fmt(interestPayment)}</td><td><strong>${fmt(remaining)}</strong></td></tr>`;
+    const isLast = i === months;
+    let interestPayment = round2(remaining * r);
+    let principalPayment = round2(monthlyPayment - interestPayment);
+    let installment = round2(interestPayment + principalPayment);
+    if (isLast) {
+      // Settle whatever cents are left on the final row.
+      principalPayment = round2(remaining);
+      installment = round2(principalPayment + interestPayment);
+      remaining = 0;
+    } else {
+      remaining = round2(Math.max(0, remaining - principalPayment));
+    }
+    rows += `<tr><td>${i}</td><td>${fmt(installment)}</td><td>${fmt(principalPayment)}</td><td style="color:var(--error);">${fmt(interestPayment)}</td><td><strong>${fmt(remaining)}</strong></td></tr>`;
   }
   document.getElementById('loan-table').innerHTML = rows;
   document.getElementById('loan-table-wrap').style.display = '';
@@ -2545,13 +2764,17 @@ const BPMN_CDN = 'https://unpkg.com/bpmn-js@17/dist/';
 let bpmnInstance = null;
 let bpmnInitStarted = false;
 
-function loadBpmnScript(src) {
+function loadBpmnScript(src, timeoutMs = 12000) {
   return new Promise((resolve, reject) => {
     if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
     const s = document.createElement('script');
     s.src = src;
-    s.onload = resolve;
-    s.onerror = () => reject(new Error('Script load failed: ' + src));
+    let timer = setTimeout(() => {
+      s.onload = s.onerror = null;
+      reject(new Error('Script load timeout: ' + src));
+    }, timeoutMs);
+    s.onload = () => { clearTimeout(timer); resolve(); };
+    s.onerror = () => { clearTimeout(timer); reject(new Error('Script load failed: ' + src)); };
     document.head.appendChild(s);
   });
 }
@@ -2573,8 +2796,15 @@ async function initBpmn() {
   loadBpmnCSS(BPMN_CDN + 'assets/bpmn-js.css');
   loadBpmnCSS(BPMN_CDN + 'assets/bpmn-font/css/bpmn-embedded.css');
 
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    bpmnInitStarted = false;
+    document.getElementById('bpmn-loading').style.display = 'none';
+    showError('bpmn-error', t('bpmn.error.offline'));
+    return;
+  }
+
   try {
-    await loadBpmnScript(BPMN_CDN + 'bpmn-modeler.production.min.js');
+    await loadBpmnScript(BPMN_CDN + 'bpmn-modeler.production.min.js', 12000);
 
     bpmnInstance = new BpmnJS({
       container: '#bpmn-canvas',
@@ -2585,8 +2815,9 @@ async function initBpmn() {
     document.getElementById('bpmn-loading').style.display = 'none';
   } catch (e) {
     bpmnInitStarted = false;
-    showError('bpmn-error', 'BPMN editor could not be loaded. Check your internet connection.');
     document.getElementById('bpmn-loading').style.display = 'none';
+    const msg = /timeout/i.test(e && e.message || '') ? t('bpmn.error.timeout') : t('bpmn.error.load');
+    showError('bpmn-error', msg);
   }
 }
 
