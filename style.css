@@ -18,6 +18,9 @@
   --accent: #0096c7;
   --accent-soft: rgba(0, 150, 199, 0.12);
   --hover: rgba(0, 130, 180, 0.06);
+  --table-header-bg: rgba(0, 130, 180, 0.08);
+  --table-row-hover: rgba(0, 130, 180, 0.04);
+  --table-wrapper-bg: rgba(255, 255, 255, 0.5);
   --shadow: 0 20px 50px rgba(10, 40, 70, 0.1);
   --shadow-soft: 0 10px 24px rgba(10, 40, 70, 0.07);
   --radius-xl: 6px;
@@ -45,6 +48,9 @@
   --accent: #00d4ff;
   --accent-soft: rgba(0, 212, 255, 0.14);
   --hover: rgba(0, 212, 255, 0.05);
+  --table-header-bg: rgba(0, 212, 255, 0.12);
+  --table-row-hover: rgba(0, 212, 255, 0.06);
+  --table-wrapper-bg: rgba(0, 18, 36, 0.5);
   --shadow: 0 0 40px rgba(0, 212, 255, 0.07), 0 24px 60px rgba(0, 5, 20, 0.55);
   --shadow-soft: 0 0 20px rgba(0, 212, 255, 0.05), 0 12px 30px rgba(0, 5, 20, 0.4);
 }
@@ -433,6 +439,26 @@ body::before {
   color: var(--text);
 }
 
+.tool-subtitle {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+  letter-spacing: 0;
+}
+
+.empty-state {
+  display: none;
+  padding: 32px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--card-bg);
+}
+.empty-state.visible { display: block; }
+
 /* ===== Form Elements ===== */
 label {
   display: block;
@@ -648,7 +674,7 @@ table {
 }
 
 th {
-  background: rgba(255,255,255,0.38);
+  background: var(--table-header-bg);
   color: var(--text-muted);
   font-size: 11px;
   font-weight: 600;
@@ -657,16 +683,20 @@ th {
   border-bottom: 1px solid var(--border);
   text-align: left;
   letter-spacing: 0.08em;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 td {
   padding: 10px 12px;
   border-bottom: 1px solid var(--border);
   color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
 
 tr:last-child td { border-bottom: none; }
-tr:hover td { background: rgba(255,255,255,0.28); }
+tr:hover td { background: var(--table-row-hover); }
 
 .table-wrapper {
   border: 1px solid var(--border);
@@ -674,7 +704,7 @@ tr:hover td { background: rgba(255,255,255,0.28); }
   overflow: hidden;
   max-height: 300px;
   overflow-y: auto;
-  background: rgba(255,255,255,0.28);
+  background: var(--table-wrapper-bg);
 }
 
 /* ===== Tabs ===== */
@@ -855,7 +885,7 @@ mark { background: #fef08a; color: #713f12; border-radius: 2px; }
 .irc-tax { background: #fef2f2; }
 [data-theme="dark"] .irc-tax { background: #2d1414; }
 
-.irc-val { font-family: 'Consolas', monospace; font-weight: 600; }
+.irc-val { font-family: 'Consolas', monospace; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
 .irc-val.negative { color: var(--error); }
 .irc-val.positive { color: var(--success); }
 .irc-val.total { color: var(--accent); font-size: 16px; }

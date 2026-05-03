@@ -23,12 +23,12 @@
   <div id="topbar">
     <h2 id="topbar-title" data-i18n="topbar.welcome">Welcome</h2>
     <div class="topbar-actions">
-      <button id="lang-toggle" onclick="toggleLang()">🌐 EN</button>
-      <button id="theme-toggle">🌙 Dark Mode</button>
+      <button id="lang-toggle" onclick="toggleLang()" aria-label="Toggle language" data-i18n-aria="aria.lang-toggle">🌐 EN</button>
+      <button id="theme-toggle" aria-label="Toggle dark mode" data-i18n-aria="aria.theme-toggle">🌙 Dark Mode</button>
     </div>
   </div>
 
-  <div id="tab-bar" style="display:none"></div>
+  <div id="tab-bar" role="tablist" aria-label="Open tools" data-i18n-aria-label="aria.tab-bar" style="display:none"></div>
 
   <div id="content">
 
@@ -70,6 +70,7 @@
         <!-- Tree view -->
         <div id="json-tree-view" style="display:none;">
           <input type="text" id="json-tree-search" data-i18n-placeholder="json-fmt.search.ph" placeholder="Anahtar veya değer ara..." style="margin-bottom:8px;">
+          <div id="json-tree-empty" class="empty-state visible" data-i18n="empty.json-tree">Ağaç görünümü için yukarıya geçerli JSON girin ve "Güzelleştir" tuşuna basın.</div>
           <div id="json-tree-output" class="json-tree-container"></div>
         </div>
       </div>
@@ -192,6 +193,7 @@
           </div>
         </div>
         <button class="btn btn-primary" onclick="calcLoanPayment()" style="margin-bottom:16px;" data-i18n="calculate">Hesapla</button>
+        <div id="loan-empty" class="empty-state visible" data-i18n="empty.loan-table">Değerleri girin ve "Hesapla" tuşuna basın; amortisman tablosu burada görünecek.</div>
         <div id="loan-result-card" class="interest-result-card" style="display:none;"></div>
         <div class="table-wrapper" id="loan-table-wrap" style="margin-top:12px; display:none;">
           <table>
@@ -401,7 +403,7 @@
     <!-- ===== URL ENCODER ===== -->
     <div id="panel-url-encoder" class="tool-panel">
       <div class="tool-card">
-        <h3>URL Encode / Decode</h3>
+        <h3 data-i18n="url-enc.title">URL Encode / Decode</h3>
         <label data-i18n="url-enc.raw">Ham URL / Metin</label>
         <textarea id="url-raw" placeholder="https://example.com/search?q=hello world"></textarea>
         <label data-i18n="url-enc.encoded">Encoded</label>
@@ -413,7 +415,7 @@
     <!-- ===== KQL FORMATTER ===== -->
     <div id="panel-kql-formatter" class="tool-panel">
       <div class="tool-card">
-        <h3><span data-i18n="kql-fmt.title">KQL Formatlayıcı</span> <span style="font-size:11px; font-weight:400; color:var(--text-muted);">— Azure Monitor / Log Analytics / Sentinel</span></h3>
+        <h3><span data-i18n="kql-fmt.title">KQL Formatlayıcı</span> <span class="tool-subtitle" data-i18n="kql-fmt.subtitle">— Azure Monitor / Log Analytics / Sentinel</span></h3>
         <label data-i18n="kql-fmt.input">KQL Giriş</label>
         <textarea id="kql-input" placeholder="TableName | where TimeGenerated > ago(1h) | where Level == 'Error' | summarize count() by bin(TimeGenerated, 5m)"></textarea>
         <div class="btn-group">
@@ -504,7 +506,7 @@
         <textarea id="json-escape-input" placeholder='Hello "World"&#10;New line&#10;Tab&#9;here'></textarea>
         <div class="btn-group" style="justify-content:center; margin: 4px 0;">
           <button class="btn btn-primary" onclick="jsonEscapeStr()" data-i18n="json-esc.escape-btn">↓ Escape</button>
-          <button class="btn btn-secondary" onclick="jsonSwap()" title="Swap">⇅</button>
+          <button class="btn btn-secondary" onclick="jsonSwap()" aria-label="Swap input and output" data-i18n-aria="aria.json-esc-swap" title="Swap">⇅</button>
           <button class="btn btn-secondary" onclick="jsonUnescapeStr()" data-i18n="json-esc.unescape-btn">↑ Unescape</button>
         </div>
         <label data-i18n="json-esc.escaped.label">Escaped (JSON String)</label>
@@ -710,7 +712,7 @@
 
 <!-- Feedback Widget -->
 <div id="feedback-widget">
-  <button id="feedback-toggle" onclick="toggleFeedbackMenu()">
+  <button id="feedback-toggle" onclick="toggleFeedbackMenu()" aria-label="Open feedback menu" aria-haspopup="menu" data-i18n-aria="aria.feedback-toggle">
     💬 <span data-i18n="feedback.btn">Feedback</span>
   </button>
   <div id="feedback-menu">

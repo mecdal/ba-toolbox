@@ -1,3 +1,35 @@
+// ===== Storage helpers (namespaced) =====
+
+const STORAGE_NS = 'ba-toolbox:';
+const LEGACY_KEY_MAP = {
+  'ba-theme': 'theme',
+  'ba-lang': 'lang',
+  'ba-recents': 'recents',
+};
+
+function storageKey(name) {
+  return `${STORAGE_NS}${name}`;
+}
+
+function storageGet(name) {
+  return localStorage.getItem(storageKey(name));
+}
+
+function storageSet(name, value) {
+  localStorage.setItem(storageKey(name), value);
+}
+
+function migrateLegacyStorage() {
+  Object.entries(LEGACY_KEY_MAP).forEach(([oldKey, newName]) => {
+    const legacy = localStorage.getItem(oldKey);
+    if (legacy === null) return;
+    if (storageGet(newName) === null) storageSet(newName, legacy);
+    localStorage.removeItem(oldKey);
+  });
+}
+
+migrateLegacyStorage();
+
 // ===== Utility Functions =====
 
 async function copyToClipboard(text, btn) {
@@ -27,10 +59,15 @@ function hideError(boxId) {
   if (el) el.style.display = 'none';
 }
 
+function setEmptyState(elId, isEmpty) {
+  const el = document.getElementById(elId);
+  if (el) el.classList.toggle('visible', !!isEmpty);
+}
+
 // ===== Theme =====
 
 function initTheme() {
-  const saved = localStorage.getItem('ba-theme') || 'light';
+  const saved = storageGet('theme') || 'light';
   document.documentElement.setAttribute('data-theme', saved);
   updateThemeBtn(saved);
 }
@@ -39,7 +76,7 @@ function toggleTheme() {
   const current = document.documentElement.getAttribute('data-theme');
   const next = current === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('ba-theme', next);
+  storageSet('theme', next);
   updateThemeBtn(next);
 }
 
@@ -50,7 +87,7 @@ function updateThemeBtn(theme) {
 
 // ===== Language / i18n =====
 
-let currentLang = localStorage.getItem('ba-lang') || 'en';
+let currentLang = storageGet('lang') || 'en';
 
 const translations = {
   tr: {
@@ -201,12 +238,18 @@ const translations = {
     // JWT
     'jwt.subtitle': '(Sadece okuma — imza doğrulaması yapılmaz)',
     'jwt.decode': 'Decode Et',
+    'jwt.exp.label': 'Son kullanma',
+    'jwt.exp.expired': 'Süresi dolmuş',
+    'jwt.exp.valid': 'Geçerli',
+    'jwt.exp.none': 'Son kullanma tarihi yok',
     // URL Encoder
+    'url-enc.title': 'URL Encode / Decode',
     'url-enc.raw': 'Ham URL / Metin',
     'url-enc.encoded': 'Encoded',
     'url-enc.copy': 'Encoded\'ı Kopyala',
     // KQL Formatter
     'kql-fmt.title': 'KQL Formatlayıcı',
+    'kql-fmt.subtitle': '— Azure Monitor / Log Analytics / Sentinel',
     'kql-fmt.input': 'KQL Giriş',
     // KQL Cheatsheet
     'kql-cs.subtitle': '— Hazır sorgular, tek tıkla KQL Formatlayıcı\'ya aktar',
@@ -278,6 +321,18 @@ const translations = {
     'feedback.btn': 'Geri Bildirim',
     'feedback.email': 'E-posta Gönder',
     'feedback.github': 'GitHub Issue Aç',
+    // ARIA labels (a11y)
+    'aria.lang-toggle': 'Dili değiştir',
+    'aria.theme-toggle': 'Karanlık modu aç/kapat',
+    'aria.feedback-toggle': 'Geri bildirim menüsünü aç',
+    'aria.tab-bar': 'Açık araç sekmeleri',
+    'aria.tab-close': 'Sekmeyi kapat',
+    'aria.empty.json-tree': 'Ağaç görünümü için yukarıya geçerli JSON girin ve "Güzelleştir" tuşuna basın.',
+    'aria.empty.loan-table': 'Değerleri girin ve "Hesapla" tuşuna basın; amortisman tablosu burada görünecek.',
+    'aria.json-esc-swap': 'Giriş ve çıkışı yer değiştir',
+    // Empty states
+    'empty.json-tree': 'Ağaç görünümü için yukarıya geçerli JSON girin ve "Güzelleştir" tuşuna basın.',
+    'empty.loan-table': 'Değerleri girin ve "Hesapla" tuşuna basın; amortisman tablosu burada görünecek.',
     // URL Shortener
     'url-short.title': 'URL Kısaltıcı',
     'url-short.label': 'Uzun URL',
@@ -483,12 +538,18 @@ const translations = {
     // JWT
     'jwt.subtitle': '(Read-only — signature not verified)',
     'jwt.decode': 'Decode',
+    'jwt.exp.label': 'Expires',
+    'jwt.exp.expired': 'Expired',
+    'jwt.exp.valid': 'Valid',
+    'jwt.exp.none': 'No expiration date',
     // URL Encoder
+    'url-enc.title': 'URL Encode / Decode',
     'url-enc.raw': 'Raw URL / Text',
     'url-enc.encoded': 'Encoded',
     'url-enc.copy': 'Copy Encoded',
     // KQL Formatter
     'kql-fmt.title': 'KQL Formatter',
+    'kql-fmt.subtitle': '— Azure Monitor / Log Analytics / Sentinel',
     'kql-fmt.input': 'KQL Input',
     // KQL Cheatsheet
     'kql-cs.subtitle': '— Ready queries, export to KQL Formatter in one click',
@@ -560,6 +621,18 @@ const translations = {
     'feedback.btn': 'Feedback',
     'feedback.email': 'Send Email',
     'feedback.github': 'Open GitHub Issue',
+    // ARIA labels (a11y)
+    'aria.lang-toggle': 'Toggle language',
+    'aria.theme-toggle': 'Toggle dark mode',
+    'aria.feedback-toggle': 'Open feedback menu',
+    'aria.tab-bar': 'Open tool tabs',
+    'aria.tab-close': 'Close tab',
+    'aria.empty.json-tree': 'Enter valid JSON above and press "Beautify" to see the tree view.',
+    'aria.empty.loan-table': 'Enter values and press "Calculate" — the amortization table will appear here.',
+    'aria.json-esc-swap': 'Swap input and output',
+    // Empty states
+    'empty.json-tree': 'Enter valid JSON above and press "Beautify" to see the tree view.',
+    'empty.loan-table': 'Enter values and press "Calculate" — the amortization table will appear here.',
     // URL Shortener
     'url-short.title': 'URL Shortener',
     'url-short.label': 'Long URL',
@@ -618,6 +691,12 @@ function applyLang() {
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
     el.placeholder = t(el.dataset.i18nPlaceholder);
   });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    el.setAttribute('aria-label', t(el.dataset.i18nAria));
+  });
+  document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+    el.setAttribute('aria-label', t(el.dataset.i18nAriaLabel));
+  });
   const btn = document.getElementById('lang-toggle');
   if (btn) btn.textContent = currentLang === 'tr' ? '🌐 EN' : '🌐 TR';
 
@@ -667,7 +746,7 @@ function applyLang() {
 
 function toggleLang() {
   currentLang = currentLang === 'tr' ? 'en' : 'tr';
-  localStorage.setItem('ba-lang', currentLang);
+  storageSet('lang', currentLang);
   applyLang();
 }
 
@@ -747,10 +826,11 @@ function renderTabs() {
     if (!tool) return '';
     const label = (currentLang === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
     const isActive = id === activeTab;
-    return `<div class="tab${isActive ? ' active' : ''}" data-tool="${id}" onclick="switchTab('${id}')">
-      <span class="tab-icon">${tool.icon}</span>
+    const closeAria = `${t('aria.tab-close')}: ${label}`;
+    return `<div class="tab${isActive ? ' active' : ''}" data-tool="${id}" role="tab" aria-selected="${isActive}" tabindex="0" onclick="switchTab('${id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();switchTab('${id}')}">
+      <span class="tab-icon" aria-hidden="true">${tool.icon}</span>
       <span class="tab-label">${label}</span>
-      <button class="tab-close" title="Close" onclick="event.stopPropagation();closeTab('${id}')">×</button>
+      <button class="tab-close" type="button" aria-label="${closeAria}" title="${closeAria}" onclick="event.stopPropagation();closeTab('${id}')">×</button>
     </div>`;
   }).join('') + (tabs.length >= MAX_TABS
     ? `<div class="tab-limit-hint" id="tab-limit-hint" style="display:none">MAX ${MAX_TABS}</div>`
@@ -837,9 +917,9 @@ function navigate(toolId) {
 }
 
 function saveRecent(toolId) {
-  let recents = JSON.parse(localStorage.getItem('ba-recents') || '[]');
+  let recents = JSON.parse(storageGet('recents') || '[]');
   recents = [toolId, ...recents.filter(r => r !== toolId)].slice(0, 5);
-  localStorage.setItem('ba-recents', JSON.stringify(recents));
+  storageSet('recents', JSON.stringify(recents));
 }
 
 // ===== Search =====
@@ -933,6 +1013,7 @@ function jsonRemoveNulls() {
     document.getElementById('json-status').style.color = 'var(--success)';
     if (jsonViewMode === 'tree') {
       document.getElementById('json-tree-output').innerHTML = renderJsonTree(cleaned, '', true);
+      setEmptyState('json-tree-empty', false);
     }
   } catch (e) {
     showError('json-error', t('json.error') + e.message);
@@ -973,11 +1054,13 @@ function refreshJsonTree() {
   const container = document.getElementById('json-tree-output');
   try {
     const input = document.getElementById('json-input').value.trim();
-    if (!input) { container.innerHTML = ''; return; }
+    if (!input) { container.innerHTML = ''; setEmptyState('json-tree-empty', true); return; }
     const parsed = JSON.parse(input);
     container.innerHTML = renderJsonTree(parsed, '', true);
+    setEmptyState('json-tree-empty', false);
   } catch (e) {
     container.innerHTML = '<span style="color:var(--error)">Invalid JSON</span>';
+    setEmptyState('json-tree-empty', false);
   }
 }
 
@@ -1069,10 +1152,33 @@ jsonBeautify = function() {
 
 // ===== Tool: UUID Generator =====
 
+function uuidv4Fallback() {
+  // RFC 4122 v4 — used when crypto.randomUUID() is unavailable (non-secure context, older browsers).
+  const bytes = new Uint8Array(16);
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    crypto.getRandomValues(bytes);
+  } else {
+    for (let i = 0; i < 16; i++) bytes[i] = Math.floor(Math.random() * 256);
+  }
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+  return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+}
+
+function generateOneUUID() {
+  try {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID();
+    }
+  } catch { /* secure-context guard threw; fall through */ }
+  return uuidv4Fallback();
+}
+
 function generateUUIDs() {
   const count = parseInt(document.getElementById('uuid-count').value) || 1;
   const clamped = Math.max(1, Math.min(100, count));
-  const uuids = Array.from({ length: clamped }, () => crypto.randomUUID());
+  const uuids = Array.from({ length: clamped }, generateOneUUID);
   document.getElementById('uuid-output').value = uuids.join('\n');
 }
 
@@ -1436,10 +1542,12 @@ function decodeJWT() {
     if (payload.exp) {
       const exp = new Date(payload.exp * 1000);
       const expired = exp < new Date();
+      const locale = currentLang === 'tr' ? 'tr-TR' : 'en-GB';
+      const status = expired ? `❌ ${t('jwt.exp.expired')}` : `✅ ${t('jwt.exp.valid')}`;
       document.getElementById('jwt-exp').textContent =
-        `Son kullanma: ${exp.toLocaleString('tr-TR')} — ${expired ? '❌ Süresi dolmuş' : '✅ Geçerli'}`;
+        `${t('jwt.exp.label')}: ${exp.toLocaleString(locale)} — ${status}`;
     } else {
-      document.getElementById('jwt-exp').textContent = 'Son kullanma tarihi yok';
+      document.getElementById('jwt-exp').textContent = t('jwt.exp.none');
     }
   } catch (e) {
     showError('jwt-error', t('jwt.error.decode') + e.message);
@@ -1966,6 +2074,7 @@ function calcLoanPayment() {
   }
   document.getElementById('loan-table').innerHTML = rows;
   document.getElementById('loan-table-wrap').style.display = '';
+  setEmptyState('loan-empty', false);
 }
 
 // ===== User Story Writer =====
