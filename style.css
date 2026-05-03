@@ -857,6 +857,98 @@ textarea {
   border-top: 1px solid var(--border);
   margin: 14px 0;
 }
+
+/* ===== RACI Matrix ===== */
+.raci-wrap {
+  margin-top: 14px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.raci-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 480px;
+}
+.raci-wrap th, .raci-wrap td {
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+.raci-wrap thead th {
+  background: var(--table-header-bg);
+  color: var(--text-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.raci-wrap th.activity, .raci-wrap td.activity {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--card-bg);
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.raci-cell {
+  cursor: pointer;
+  font-family: 'Consolas', monospace;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 8px 10px;
+  user-select: none;
+  min-width: 56px;
+  transition: background 0.12s;
+}
+.raci-cell:hover { background: var(--accent-soft); }
+.raci-cell.r { color: #2563eb; background: rgba(37, 99, 235, 0.08); }
+.raci-cell.a { color: var(--error); background: rgba(217, 64, 64, 0.10); }
+.raci-cell.c { color: #f59e0b; background: rgba(245, 158, 11, 0.10); }
+.raci-cell.i { color: var(--text-muted); background: var(--accent-soft); }
+[data-theme="dark"] .raci-cell.r { color: #60a5fa; background: rgba(96, 165, 250, 0.14); }
+[data-theme="dark"] .raci-cell.a { color: #ff6b6b; background: rgba(255, 107, 107, 0.16); }
+[data-theme="dark"] .raci-cell.c { color: #fbbf24; background: rgba(251, 191, 36, 0.14); }
+.raci-validation { margin-left: 8px; align-self: center; font-size: 12px; }
+.raci-validation.ok { color: var(--success); }
+.raci-validation.warn { color: var(--error); }
+
+/* AC Generator scenario card */
+.ac-scenario {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin: 10px 0;
+  background: var(--card-bg);
+}
+.ac-scenario .ac-scenario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.ac-scenario .ac-scenario-title {
+  font-weight: 600;
+  color: var(--text);
+}
+.ac-scenario textarea { font-family: 'Consolas', monospace; font-size: 12px; }
+.ac-remove-btn {
+  background: none;
+  border: 1px solid var(--border-strong);
+  color: var(--error);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.ac-remove-btn:hover { background: rgba(217, 64, 64, 0.1); }
 .btn-danger { background: var(--error); color: #fff; border-color: var(--error); }
 
 .btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }

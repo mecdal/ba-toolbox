@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Business analyst toolkit — JSON, SQL, KQL, JWT, Cron, Regex, Markdown, RACI, Use Case, AC, BPMN. Fully client-side, works offline.">
+  <meta name="theme-color" content="#00d4ff">
   <title>BA Toolbox</title>
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -828,6 +831,97 @@ block code
         <div class="btn-group">
           <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('md-output').innerHTML, this)" data-i18n="md.copy-html">HTML kopyala</button>
         </div>
+      </div>
+    </div>
+
+    <!-- ===== USE CASE WRITER (Cockburn) ===== -->
+    <div id="panel-use-case" class="tool-panel">
+      <div class="tool-card">
+        <h3><span data-i18n="uc.title">Use Case Yazıcı</span> <span class="tool-subtitle" data-i18n="uc.subtitle">— Cockburn formatı: actor, ön/son koşul, ana ve alternatif akışlar</span></h3>
+        <div class="grid-2">
+          <div>
+            <label data-i18n="uc.id">UC-ID</label>
+            <input type="text" id="uc-id" placeholder="UC-001">
+            <label data-i18n="uc.name">İsim</label>
+            <input type="text" id="uc-name" data-i18n-placeholder="uc.name.ph" placeholder="Müşteri sipariş oluşturur">
+            <label data-i18n="uc.actor">Birincil Aktör</label>
+            <input type="text" id="uc-actor" data-i18n-placeholder="uc.actor.ph" placeholder="Kayıtlı Müşteri">
+            <label data-i18n="uc.goal">Hedef</label>
+            <input type="text" id="uc-goal" data-i18n-placeholder="uc.goal.ph" placeholder="Sepetteki ürünleri satın almak">
+            <label data-i18n="uc.scope">Kapsam</label>
+            <input type="text" id="uc-scope" data-i18n-placeholder="uc.scope.ph" placeholder="E-ticaret platformu">
+            <label data-i18n="uc.level">Düzey</label>
+            <select id="uc-level">
+              <option value="user-goal" data-i18n="uc.level.user">Kullanıcı Hedefi (Sea level)</option>
+              <option value="summary" data-i18n="uc.level.summary">Özet (Kite level)</option>
+              <option value="subfunction" data-i18n="uc.level.subfn">Alt Fonksiyon (Fish level)</option>
+            </select>
+          </div>
+          <div>
+            <label data-i18n="uc.preconditions">Ön Koşullar (her satır 1 koşul)</label>
+            <textarea id="uc-pre" rows="4" data-i18n-placeholder="uc.pre.ph" placeholder="Müşteri sisteme giriş yapmış olmalı.&#10;Sepette en az 1 ürün bulunmalı."></textarea>
+            <label data-i18n="uc.trigger">Tetikleyici</label>
+            <input type="text" id="uc-trigger" data-i18n-placeholder="uc.trigger.ph" placeholder="Müşteri 'Ödeme Yap' düğmesine tıklar.">
+            <label data-i18n="uc.postconditions">Son Koşullar (her satır 1 koşul)</label>
+            <textarea id="uc-post" rows="4" data-i18n-placeholder="uc.post.ph" placeholder="Sipariş kaydedildi ve sipariş numarası üretildi.&#10;Müşteriye onay e-postası gönderildi."></textarea>
+          </div>
+        </div>
+        <label data-i18n="uc.main">Ana Başarı Senaryosu (her satır 1 adım — numaralar otomatik)</label>
+        <textarea id="uc-main" rows="6" data-i18n-placeholder="uc.main.ph" placeholder="Müşteri ödeme yöntemini seçer.&#10;Sistem teslimat adresini doğrular.&#10;Müşteri 'Onayla' düğmesine tıklar.&#10;Sistem ödemeyi işler.&#10;Sistem sipariş onayı gösterir."></textarea>
+        <label data-i18n="uc.ext">Alternatif Akışlar (formatı: 3a: ödeme reddedildi → ...)</label>
+        <textarea id="uc-ext" rows="4" data-i18n-placeholder="uc.ext.ph" placeholder="3a: Ödeme reddedildi → Sistem hata mesajı gösterir, müşteri farklı yöntem seçebilir.&#10;4b: Stok tükendi → Sistem alternatif ürün önerir."></textarea>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="renderUseCase()" data-i18n="uc.render">Oluştur</button>
+          <button class="btn btn-secondary" onclick="copyUseCaseMd()" data-i18n="uc.copy-md">Markdown Kopyala</button>
+          <button class="btn btn-secondary" onclick="clearUseCase()" data-i18n="clear">Temizle</button>
+        </div>
+        <label data-i18n="uc.output">Çıktı (Markdown)</label>
+        <textarea id="uc-output" readonly rows="14"></textarea>
+      </div>
+    </div>
+
+    <!-- ===== AC GENERATOR (Gherkin) ===== -->
+    <div id="panel-ac-generator" class="tool-panel">
+      <div class="tool-card">
+        <h3><span data-i18n="ac.title">AC Üretici (Gherkin)</span> <span class="tool-subtitle" data-i18n="ac.subtitle">— BDD: Given/When/Then, Scenario Outline + Examples</span></h3>
+        <label data-i18n="ac.feature">Feature</label>
+        <input type="text" id="ac-feature" data-i18n-placeholder="ac.feature.ph" placeholder="Sepete ürün ekleme">
+        <label data-i18n="ac.feature.desc">Açıklama (As a / I want / So that)</label>
+        <textarea id="ac-desc" rows="3" data-i18n-placeholder="ac.feature.desc.ph" placeholder="As a kayıtlı müşteri&#10;I want sepete ürün ekleyebilmek&#10;So that ileride satın alabilirim"></textarea>
+        <div id="ac-scenarios"></div>
+        <div class="btn-group">
+          <button class="btn btn-secondary" onclick="addScenario()" data-i18n="ac.add-scenario">+ Senaryo Ekle</button>
+          <button class="btn btn-primary" onclick="renderAC()" data-i18n="ac.render">Oluştur</button>
+          <button class="btn btn-secondary" onclick="copyToClipboard(document.getElementById('ac-output').value, this)" data-i18n="copy">Kopyala</button>
+        </div>
+        <label data-i18n="ac.output">Gherkin Çıktısı</label>
+        <textarea id="ac-output" readonly rows="14"></textarea>
+      </div>
+    </div>
+
+    <!-- ===== RACI MATRIX ===== -->
+    <div id="panel-raci-matrix" class="tool-panel">
+      <div class="tool-card">
+        <h3><span data-i18n="raci.title">RACI Matrisi</span> <span class="tool-subtitle" data-i18n="raci.subtitle">— Responsible · Accountable · Consulted · Informed</span></h3>
+        <div class="error-box" id="raci-error"></div>
+        <div class="grid-2">
+          <div>
+            <label data-i18n="raci.activities">Aktiviteler / Görevler (her satır 1 aktivite)</label>
+            <textarea id="raci-activities" rows="6" data-i18n-placeholder="raci.activities.ph" placeholder="Gereksinim toplama&#10;Mockup hazırlama&#10;Kod geliştirme&#10;Test&#10;Deploy"></textarea>
+          </div>
+          <div>
+            <label data-i18n="raci.stakeholders">Paydaşlar / Roller (her satır 1 rol)</label>
+            <textarea id="raci-stakeholders" rows="6" data-i18n-placeholder="raci.stakeholders.ph" placeholder="BA&#10;PO&#10;Tech Lead&#10;Developer&#10;QA&#10;Stakeholder"></textarea>
+          </div>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="buildRaciMatrix()" data-i18n="raci.build">Matris Oluştur</button>
+          <button class="btn btn-secondary" onclick="copyRaciMd()" data-i18n="raci.copy-md">Markdown Kopyala</button>
+          <button class="btn btn-secondary" onclick="copyRaciCsv()" data-i18n="raci.copy-csv">CSV Kopyala</button>
+          <span id="raci-validation" class="raci-validation"></span>
+        </div>
+        <p class="tool-footnote" data-i18n="raci.footnote">Hücreye tıklayarak: R (Responsible), A (Accountable), C (Consulted), I (Informed) atayın. Her satırda tam olarak 1 A olmalı.</p>
+        <div id="raci-matrix-wrap" class="raci-wrap"></div>
       </div>
     </div>
 

@@ -396,6 +396,70 @@ const translations = {
     'md.input.ph': '# Başlık\n\n**Kalın** ve *italik*.',
     'md.preview.label': 'Önizleme',
     'md.copy-html': 'HTML kopyala',
+    // Use Case Writer
+    'uc.title': 'Use Case Yazıcı',
+    'uc.subtitle': '— Cockburn formatı: actor, ön/son koşul, ana ve alternatif akışlar',
+    'uc.id': 'UC-ID',
+    'uc.name': 'İsim',
+    'uc.name.ph': 'Müşteri sipariş oluşturur',
+    'uc.actor': 'Birincil Aktör',
+    'uc.actor.ph': 'Kayıtlı Müşteri',
+    'uc.goal': 'Hedef',
+    'uc.goal.ph': 'Sepetteki ürünleri satın almak',
+    'uc.scope': 'Kapsam',
+    'uc.scope.ph': 'E-ticaret platformu',
+    'uc.level': 'Düzey',
+    'uc.level.user': 'Kullanıcı Hedefi (Sea level)',
+    'uc.level.summary': 'Özet (Kite level)',
+    'uc.level.subfn': 'Alt Fonksiyon (Fish level)',
+    'uc.preconditions': 'Ön Koşullar',
+    'uc.pre.ph': 'Müşteri sisteme giriş yapmış olmalı.\nSepette en az 1 ürün bulunmalı.',
+    'uc.trigger': 'Tetikleyici',
+    'uc.trigger.ph': 'Müşteri "Ödeme Yap" düğmesine tıklar.',
+    'uc.postconditions': 'Son Koşullar',
+    'uc.post.ph': 'Sipariş kaydedildi ve sipariş numarası üretildi.',
+    'uc.main': 'Ana Başarı Senaryosu',
+    'uc.main.ph': 'Müşteri ödeme yöntemini seçer.\nSistem teslimat adresini doğrular.\nMüşteri "Onayla" düğmesine tıklar.',
+    'uc.ext': 'Alternatif Akışlar',
+    'uc.ext.ph': '3a: Ödeme reddedildi → Sistem hata mesajı gösterir.',
+    'uc.render': 'Oluştur',
+    'uc.copy-md': 'Markdown Kopyala',
+    'uc.output': 'Çıktı (Markdown)',
+    // AC Generator (Gherkin)
+    'ac.title': 'AC Üretici (Gherkin)',
+    'ac.subtitle': '— BDD: Given/When/Then',
+    'ac.feature': 'Feature',
+    'ac.feature.ph': 'Sepete ürün ekleme',
+    'ac.feature.desc': 'Açıklama (As a / I want / So that)',
+    'ac.feature.desc.ph': 'As a kayıtlı müşteri\nI want sepete ürün ekleyebilmek\nSo that ileride satın alabilirim',
+    'ac.scenario': 'Senaryo',
+    'ac.scenario.name.ph': 'Geçerli stoktaki ürünü sepete ekleme',
+    'ac.given': 'Given (önkoşul — her satır 1 koşul)',
+    'ac.given.ph': 'kullanıcı sisteme giriş yapmış olsun\nstokta 5 adet "X" ürünü olsun',
+    'ac.when': 'When (eylem)',
+    'ac.when.ph': '"X" ürününün "Sepete Ekle" düğmesine tıklarsa',
+    'ac.then': 'Then (beklenen sonuç — her satır 1 sonuç)',
+    'ac.then.ph': 'sepetinde 1 adet "X" ürünü görsün\nstok 4 adete düşsün',
+    'ac.add-scenario': '+ Senaryo Ekle',
+    'ac.remove': 'Kaldır',
+    'ac.render': 'Oluştur',
+    'ac.output': 'Gherkin Çıktısı',
+    // RACI Matrix
+    'raci.title': 'RACI Matrisi',
+    'raci.subtitle': '— Responsible · Accountable · Consulted · Informed',
+    'raci.activities': 'Aktiviteler / Görevler (her satır 1 aktivite)',
+    'raci.activities.ph': 'Gereksinim toplama\nMockup hazırlama\nKod geliştirme\nTest\nDeploy',
+    'raci.stakeholders': 'Paydaşlar / Roller (her satır 1 rol)',
+    'raci.stakeholders.ph': 'BA\nPO\nTech Lead\nDeveloper\nQA',
+    'raci.build': 'Matris Oluştur',
+    'raci.copy-md': 'Markdown Kopyala',
+    'raci.copy-csv': 'CSV Kopyala',
+    'raci.col.activity': 'Aktivite',
+    'raci.footnote': 'Hücreye tıklayarak: R (Responsible), A (Accountable), C (Consulted), I (Informed) atayın. Her satırda tam olarak 1 A olmalı.',
+    'raci.error.empty': 'Aktivite ve paydaş listelerini doldurun.',
+    'raci.valid': 'Tüm satırlarda 1 Accountable var.',
+    'raci.issue.noA': 'A yok — satır',
+    'raci.issue.multiA': 'Birden fazla A — satır',
     // Feedback
     'feedback.btn': 'Geri Bildirim',
     'feedback.email': 'E-posta Gönder',
@@ -782,6 +846,71 @@ const translations = {
     'md.preview.label': 'Preview',
     'md.copy-html': 'Copy HTML',
     // Feedback
+    // Use Case Writer
+    'uc.title': 'Use Case Writer',
+    'uc.subtitle': '— Cockburn format: actor, pre/postconditions, main and alternative flows',
+    'uc.id': 'UC-ID',
+    'uc.name': 'Name',
+    'uc.name.ph': 'Customer places order',
+    'uc.actor': 'Primary Actor',
+    'uc.actor.ph': 'Registered Customer',
+    'uc.goal': 'Goal',
+    'uc.goal.ph': 'Purchase items in cart',
+    'uc.scope': 'Scope',
+    'uc.scope.ph': 'E-commerce platform',
+    'uc.level': 'Level',
+    'uc.level.user': 'User Goal (Sea level)',
+    'uc.level.summary': 'Summary (Kite level)',
+    'uc.level.subfn': 'Subfunction (Fish level)',
+    'uc.preconditions': 'Preconditions',
+    'uc.pre.ph': 'Customer is logged in.\nCart contains at least 1 item.',
+    'uc.trigger': 'Trigger',
+    'uc.trigger.ph': 'Customer clicks "Checkout" button.',
+    'uc.postconditions': 'Postconditions',
+    'uc.post.ph': 'Order is saved and order number is generated.',
+    'uc.main': 'Main Success Scenario',
+    'uc.main.ph': 'Customer selects payment method.\nSystem validates shipping address.\nCustomer clicks "Confirm".',
+    'uc.ext': 'Alternative Flows',
+    'uc.ext.ph': '3a: Payment declined → System shows error message.',
+    'uc.render': 'Render',
+    'uc.copy-md': 'Copy as Markdown',
+    'uc.output': 'Output (Markdown)',
+    // AC Generator (Gherkin)
+    'ac.title': 'AC Generator (Gherkin)',
+    'ac.subtitle': '— BDD: Given/When/Then',
+    'ac.feature': 'Feature',
+    'ac.feature.ph': 'Add item to cart',
+    'ac.feature.desc': 'Description (As a / I want / So that)',
+    'ac.feature.desc.ph': 'As a registered customer\nI want to add items to my cart\nSo that I can purchase later',
+    'ac.scenario': 'Scenario',
+    'ac.scenario.name.ph': 'Add an in-stock item to cart',
+    'ac.given': 'Given (precondition — one per line)',
+    'ac.given.ph': 'the user is logged in\nthere are 5 units of "X" in stock',
+    'ac.when': 'When (action)',
+    'ac.when.ph': 'they click the "Add to Cart" button on item "X"',
+    'ac.then': 'Then (expected — one per line)',
+    'ac.then.ph': 'they should see 1 unit of "X" in their cart\nstock should drop to 4',
+    'ac.add-scenario': '+ Add Scenario',
+    'ac.remove': 'Remove',
+    'ac.render': 'Render',
+    'ac.output': 'Gherkin Output',
+    // RACI Matrix
+    'raci.title': 'RACI Matrix',
+    'raci.subtitle': '— Responsible · Accountable · Consulted · Informed',
+    'raci.activities': 'Activities / Tasks (one per line)',
+    'raci.activities.ph': 'Requirements gathering\nMockup design\nDevelopment\nTesting\nDeployment',
+    'raci.stakeholders': 'Stakeholders / Roles (one per line)',
+    'raci.stakeholders.ph': 'BA\nPO\nTech Lead\nDeveloper\nQA',
+    'raci.build': 'Build Matrix',
+    'raci.copy-md': 'Copy as Markdown',
+    'raci.copy-csv': 'Copy as CSV',
+    'raci.col.activity': 'Activity',
+    'raci.footnote': 'Click a cell to cycle: R (Responsible), A (Accountable), C (Consulted), I (Informed). Each row should have exactly one A.',
+    'raci.error.empty': 'Fill in both activities and stakeholders.',
+    'raci.valid': 'Each row has exactly one Accountable.',
+    'raci.issue.noA': 'No A — row',
+    'raci.issue.multiA': 'Multiple A — row',
+    // Feedback
     'feedback.btn': 'Feedback',
     'feedback.email': 'Send Email',
     'feedback.github': 'Open GitHub Issue',
@@ -954,6 +1083,9 @@ const tools = [
   { id: 'markdown-preview',  label: 'Markdown Önizleme',     labelEn: 'Markdown Preview',     icon: 'M↓',  group: 'Metin' },
   // Analiz & Gereksinim
   { id: 'user-story',        label: 'User Story Yazıcı',     labelEn: 'User Story Writer',    icon: '📖',  group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
+  { id: 'use-case',          label: 'Use Case Yazıcı',       labelEn: 'Use Case Writer',      icon: '🧷',  group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
+  { id: 'ac-generator',      label: 'AC Üretici (Gherkin)',  labelEn: 'AC Generator (Gherkin)', icon: '✅', group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
+  { id: 'raci-matrix',       label: 'RACI Matrisi',          labelEn: 'RACI Matrix',          icon: '🎯',  group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
   { id: 'bpmn-modeler',      label: 'BPMN Modeler',          labelEn: 'BPMN Modeler',         icon: '⬡',   group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
 ];
 
@@ -2913,6 +3045,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('http-status-list')) filterHttpStatus();
   if (document.getElementById('regex-pattern')) runRegex();
   if (document.getElementById('md-input')) renderMarkdown();
+  // Sprint 4: AC Generator starts with one empty scenario
+  if (document.getElementById('ac-scenarios')) addScenario();
+
+  // Register PWA service worker (offline-first cache)
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => { /* registration failed; app still works */ });
+  }
 
   // Restore from hash
   const hash = window.location.hash.replace('#', '');
@@ -3432,6 +3571,222 @@ async function jsonToYaml() {
   } catch (e) {
     showError('yaml-error', `${t('yaml.error.parse')}: ${e.message}`);
   }
+}
+
+// ===== Tool: Use Case Writer (Cockburn) =====
+
+function getUseCaseModel() {
+  const splitLines = (s) => (s || '').split('\n').map(l => l.trim()).filter(Boolean);
+  return {
+    id: document.getElementById('uc-id').value.trim() || 'UC-XXX',
+    name: document.getElementById('uc-name').value.trim(),
+    actor: document.getElementById('uc-actor').value.trim(),
+    goal: document.getElementById('uc-goal').value.trim(),
+    scope: document.getElementById('uc-scope').value.trim(),
+    level: document.getElementById('uc-level').value,
+    pre:  splitLines(document.getElementById('uc-pre').value),
+    post: splitLines(document.getElementById('uc-post').value),
+    main: splitLines(document.getElementById('uc-main').value),
+    ext:  splitLines(document.getElementById('uc-ext').value),
+    trigger: document.getElementById('uc-trigger').value.trim(),
+  };
+}
+
+function useCaseToMarkdown() {
+  const m = getUseCaseModel();
+  const levelLabel = ({
+    'user-goal':   t('uc.level.user'),
+    'summary':     t('uc.level.summary'),
+    'subfunction': t('uc.level.subfn'),
+  })[m.level] || m.level;
+
+  let md = `# ${m.id}: ${m.name || '(name)'}\n\n`;
+  if (m.scope) md += `**${t('uc.scope')}:** ${m.scope}\n\n`;
+  md += `**${t('uc.level')}:** ${levelLabel}\n\n`;
+  md += `**${t('uc.actor')}:** ${m.actor || '(actor)'}\n\n`;
+  md += `**${t('uc.goal')}:** ${m.goal || '(goal)'}\n\n`;
+  if (m.pre.length)  md += `### ${t('uc.preconditions')}\n${m.pre.map((p, i) => `${i + 1}. ${p}`).join('\n')}\n\n`;
+  if (m.trigger)     md += `**${t('uc.trigger')}:** ${m.trigger}\n\n`;
+  md += `### ${t('uc.main')}\n${m.main.map((s, i) => `${i + 1}. ${s}`).join('\n') || '_(empty)_'}\n\n`;
+  if (m.ext.length)  md += `### ${t('uc.ext')}\n${m.ext.map(e => `- ${e}`).join('\n')}\n\n`;
+  if (m.post.length) md += `### ${t('uc.postconditions')}\n${m.post.map((p, i) => `${i + 1}. ${p}`).join('\n')}\n`;
+  return md;
+}
+
+function renderUseCase() {
+  document.getElementById('uc-output').value = useCaseToMarkdown();
+}
+
+function copyUseCaseMd() {
+  const md = useCaseToMarkdown();
+  document.getElementById('uc-output').value = md;
+  copyToClipboard(md, document.querySelector('#panel-use-case .btn-secondary'));
+}
+
+function clearUseCase() {
+  ['uc-id','uc-name','uc-actor','uc-goal','uc-scope','uc-trigger','uc-pre','uc-post','uc-main','uc-ext','uc-output']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+}
+
+// ===== Tool: AC Generator (Gherkin) =====
+
+let acScenarioCounter = 0;
+
+function addScenario() {
+  acScenarioCounter += 1;
+  const n = acScenarioCounter;
+  const wrap = document.getElementById('ac-scenarios');
+  if (!wrap) return;
+  const div = document.createElement('div');
+  div.className = 'ac-scenario';
+  div.dataset.scenarioId = String(n);
+  div.innerHTML = `
+    <div class="ac-scenario-header">
+      <span class="ac-scenario-title">${escapeHtml(t('ac.scenario'))} #${n}</span>
+      <button class="ac-remove-btn" type="button" onclick="removeScenario(${n})">${escapeHtml(t('ac.remove'))}</button>
+    </div>
+    <input type="text" class="ac-name" placeholder="${escapeHtml(t('ac.scenario.name.ph'))}">
+    <label>${escapeHtml(t('ac.given'))}</label>
+    <textarea class="ac-given" rows="2" placeholder="${escapeHtml(t('ac.given.ph'))}"></textarea>
+    <label>${escapeHtml(t('ac.when'))}</label>
+    <textarea class="ac-when" rows="2" placeholder="${escapeHtml(t('ac.when.ph'))}"></textarea>
+    <label>${escapeHtml(t('ac.then'))}</label>
+    <textarea class="ac-then" rows="2" placeholder="${escapeHtml(t('ac.then.ph'))}"></textarea>
+  `;
+  wrap.appendChild(div);
+}
+
+function removeScenario(id) {
+  const node = document.querySelector(`.ac-scenario[data-scenario-id="${id}"]`);
+  if (node) node.remove();
+}
+
+function renderAC() {
+  const feature = document.getElementById('ac-feature').value.trim() || '(feature)';
+  const desc = document.getElementById('ac-desc').value.trim();
+  let out = `Feature: ${feature}\n`;
+  if (desc) out += `  ${desc.split('\n').join('\n  ')}\n`;
+  out += '\n';
+
+  const scenarios = document.querySelectorAll('.ac-scenario');
+  if (scenarios.length === 0) addScenario();
+
+  document.querySelectorAll('.ac-scenario').forEach(sc => {
+    const name = sc.querySelector('.ac-name').value.trim() || '(scenario)';
+    const givenLines = sc.querySelector('.ac-given').value.split('\n').map(s => s.trim()).filter(Boolean);
+    const whenLines  = sc.querySelector('.ac-when').value.split('\n').map(s => s.trim()).filter(Boolean);
+    const thenLines  = sc.querySelector('.ac-then').value.split('\n').map(s => s.trim()).filter(Boolean);
+    out += `  Scenario: ${name}\n`;
+    givenLines.forEach((line, i) => out += `    ${i === 0 ? 'Given' : 'And'} ${line}\n`);
+    whenLines.forEach((line, i)  => out += `    ${i === 0 ? 'When'  : 'And'} ${line}\n`);
+    thenLines.forEach((line, i)  => out += `    ${i === 0 ? 'Then'  : 'And'} ${line}\n`);
+    out += '\n';
+  });
+
+  document.getElementById('ac-output').value = out.trimEnd();
+}
+
+// ===== Tool: RACI Matrix Builder =====
+
+const RACI_VALUES = ['', 'R', 'A', 'C', 'I'];
+let raciState = []; // 2D array; raciState[rowIdx][colIdx] = '' | 'R' | 'A' | 'C' | 'I'
+
+function buildRaciMatrix() {
+  hideError('raci-error');
+  const splitLines = (s) => s.split('\n').map(l => l.trim()).filter(Boolean);
+  const activities = splitLines(document.getElementById('raci-activities').value);
+  const stakeholders = splitLines(document.getElementById('raci-stakeholders').value);
+  if (activities.length === 0 || stakeholders.length === 0) {
+    showError('raci-error', t('raci.error.empty'));
+    document.getElementById('raci-matrix-wrap').innerHTML = '';
+    return;
+  }
+  // Re-init state if shape changed; otherwise preserve user's selections.
+  if (raciState.length !== activities.length || (raciState[0] && raciState[0].length !== stakeholders.length)) {
+    raciState = activities.map(() => Array(stakeholders.length).fill(''));
+  }
+  renderRaciMatrix(activities, stakeholders);
+  validateRaci();
+}
+
+function renderRaciMatrix(activities, stakeholders) {
+  const wrap = document.getElementById('raci-matrix-wrap');
+  let html = `<table><thead><tr><th class="activity">${escapeHtml(t('raci.col.activity'))}</th>`;
+  stakeholders.forEach(s => { html += `<th>${escapeHtml(s)}</th>`; });
+  html += `</tr></thead><tbody>`;
+  activities.forEach((a, ri) => {
+    html += `<tr><td class="activity">${escapeHtml(a)}</td>`;
+    stakeholders.forEach((_, ci) => {
+      const val = raciState[ri][ci] || '';
+      const cls = val ? val.toLowerCase() : '';
+      html += `<td class="raci-cell ${cls}" data-r="${ri}" data-c="${ci}" onclick="cycleRaci(${ri}, ${ci})" tabindex="0" role="button" aria-label="${escapeHtml(a)} / ${escapeHtml(stakeholders[ci])}">${val || '–'}</td>`;
+    });
+    html += `</tr>`;
+  });
+  html += `</tbody></table>`;
+  wrap.innerHTML = html;
+}
+
+function cycleRaci(ri, ci) {
+  const current = raciState[ri][ci] || '';
+  const idx = RACI_VALUES.indexOf(current);
+  const next = RACI_VALUES[(idx + 1) % RACI_VALUES.length];
+  raciState[ri][ci] = next;
+  // Update just this cell (avoid full re-render)
+  const cell = document.querySelector(`.raci-cell[data-r="${ri}"][data-c="${ci}"]`);
+  if (cell) {
+    cell.classList.remove('r','a','c','i');
+    if (next) cell.classList.add(next.toLowerCase());
+    cell.textContent = next || '–';
+  }
+  validateRaci();
+}
+
+function validateRaci() {
+  const el = document.getElementById('raci-validation');
+  if (!el) return;
+  const issues = [];
+  raciState.forEach((row, ri) => {
+    const aCount = row.filter(v => v === 'A').length;
+    if (aCount === 0) issues.push(`${t('raci.issue.noA')} #${ri + 1}`);
+    else if (aCount > 1) issues.push(`${t('raci.issue.multiA')} #${ri + 1}`);
+  });
+  if (issues.length === 0) {
+    el.className = 'raci-validation ok';
+    el.textContent = '✓ ' + t('raci.valid');
+  } else {
+    el.className = 'raci-validation warn';
+    el.textContent = '⚠ ' + issues.join(' · ');
+  }
+}
+
+function getRaciTable() {
+  const splitLines = (s) => s.split('\n').map(l => l.trim()).filter(Boolean);
+  const activities = splitLines(document.getElementById('raci-activities').value);
+  const stakeholders = splitLines(document.getElementById('raci-stakeholders').value);
+  return { activities, stakeholders };
+}
+
+function copyRaciMd() {
+  const { activities, stakeholders } = getRaciTable();
+  if (!activities.length || !stakeholders.length) return;
+  let md = `| ${t('raci.col.activity')} | ${stakeholders.join(' | ')} |\n`;
+  md += `| --- | ${stakeholders.map(() => '---').join(' | ')} |\n`;
+  activities.forEach((a, ri) => {
+    md += `| ${a} | ${(raciState[ri] || []).map(v => v || '–').join(' | ')} |\n`;
+  });
+  copyToClipboard(md, document.querySelector('#panel-raci-matrix [onclick="copyRaciMd()"]'));
+}
+
+function copyRaciCsv() {
+  const { activities, stakeholders } = getRaciTable();
+  if (!activities.length || !stakeholders.length) return;
+  const escapeCsv = v => /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+  let csv = `${escapeCsv(t('raci.col.activity'))},${stakeholders.map(escapeCsv).join(',')}\n`;
+  activities.forEach((a, ri) => {
+    csv += `${escapeCsv(a)},${(raciState[ri] || []).map(v => v || '').join(',')}\n`;
+  });
+  copyToClipboard(csv, document.querySelector('#panel-raci-matrix [onclick="copyRaciCsv()"]'));
 }
 
 // ===== Tool: BPMN Modeler (bpmn-js) =====
