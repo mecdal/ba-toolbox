@@ -1,34 +1,19 @@
-// ===== Storage helpers (namespaced) =====
+// app.js — Sprint 5a Faz 1: now an ES module loaded from src/main.js.
+// During the modularization sprint this monolithic file is being whittled down,
+// one feature group at a time, into src/core/* and src/tools/*. Inline HTML
+// handlers (onclick="…") still drive most interactions, so the public functions
+// listed at the bottom of this file are bridged onto `window` for compatibility.
+//
+// Faz 1 extracts: storage helpers + i18n core + translations (TR/EN).
 
-const STORAGE_NS = 'ba-toolbox:';
-const LEGACY_KEY_MAP = {
-  'ba-theme': 'theme',
-  'ba-lang': 'lang',
-  'ba-recents': 'recents',
-};
-
-function storageKey(name) {
-  return `${STORAGE_NS}${name}`;
-}
-
-function storageGet(name) {
-  return localStorage.getItem(storageKey(name));
-}
-
-function storageSet(name, value) {
-  localStorage.setItem(storageKey(name), value);
-}
-
-function migrateLegacyStorage() {
-  Object.entries(LEGACY_KEY_MAP).forEach(([oldKey, newName]) => {
-    const legacy = localStorage.getItem(oldKey);
-    if (legacy === null) return;
-    if (storageGet(newName) === null) storageSet(newName, legacy);
-    localStorage.removeItem(oldKey);
-  });
-}
-
-migrateLegacyStorage();
+import { storageGet, storageSet } from './src/core/storage.js';
+import {
+  t,
+  applyDomI18n,
+  setLang,
+  getLang,
+  groupKeyMap,
+} from './src/i18n/index.js';
 
 // ===== Utility Functions =====
 
@@ -86,964 +71,53 @@ function updateThemeBtn(theme) {
 }
 
 // ===== Language / i18n =====
-
-let currentLang = storageGet('lang') || 'en';
-
-const translations = {
-  tr: {
-    // Nav / global
-    'welcome.title': 'BA Toolbox\'a Hoş Geldiniz',
-    'welcome.subtitle': 'Sol menüden bir araç seçerek başlayın. Tüm araçlar tarayıcınızda çalışır, internet bağlantısı gerekmez.',
-    'search.placeholder': 'Araç ara...',
-    'sidebar.subtitle': 'İş Analisti Araç Seti by Mecdal',
-    'topbar.welcome': 'Hoş Geldiniz',
-    'csv.input.ph': 'isim,yas,sehir\nAhmet,30,Istanbul\nAyse,25,Ankara',
-    'json-grid.input.ph': '[{"id": 1, "ad": "Ahmet", "sehir": "Istanbul"}, {"id": 2, "ad": "Ayse", "sehir": "Ankara"}]',
-    'theme.dark': '🌙 Karanlık Mod',
-    'theme.light': '☀️ Açık Mod',
-    'group.veri': 'Veri & Format',
-    'group.veritabani': 'Veritabanı',
-    'group.gelistirici': 'Geliştirici',
-    'group.hesaplama': 'Hesaplama',
-    'group.metin': 'Metin',
-    'group.analiz': 'Analiz & Gereksinim',
-    // Shared actions
-    'copy': 'Kopyala',
-    'copied': 'Kopyalandı!',
-    'copy.failed': 'Kopyalama başarısız. Manuel olarak seçip kopyalayın.',
-    'clear': 'Temizle',
-    'calculate': 'Hesapla',
-    'format': 'Formatla',
-    'convert': 'Dönüştür',
-    'compare': 'Karşılaştır',
-    'download': '↓ İndir',
-    'generate': 'Üret',
-    'shorten': 'Kısalt',
-    'output': 'Çıktı',
-    'keyword.guide': 'Anahtar Kelime Rehberi',
-    'error.fill-fields': 'Lütfen tüm alanları doğru doldurun.',
-    // JSON status / errors
-    'json.valid': '✓ Geçerli JSON',
-    'json.invalid': '✗ Geçersiz JSON',
-    'json.error': 'JSON Hatası: ',
-    'csv.error': 'CSV Hatası: ',
-    // JSON Formatter
-    'json-fmt.title': 'JSON Formatlayıcı',
-    'json-fmt.input': 'JSON Giriş',
-    'json-fmt.beautify': 'Güzelleştir',
-    'json-fmt.minify': 'Sıkıştır',
-    'json-fmt.validate': 'Doğrula',
-    'json-fmt.remove-nulls': 'Null Temizle',
-    'json-fmt.raw': 'Ham',
-    'json-fmt.tree': 'Ağaç',
-    'json-fmt.search.ph': 'Anahtar veya değer ara...',
-    // UUID
-    'uuid.title': 'UUID Üretici (v4)',
-    'uuid.count': 'Adet (1-100)',
-    'uuid.placeholder': 'Üretilen UUID\'ler burada görünecek...',
-    // Interest
-    'interest.title': 'Basit Faiz Hesaplama',
-    'interest.principal': 'Ana Para',
-    'interest.rate': 'Yıllık Faiz (%)',
-    'interest.term': 'Vade',
-    'interest.day': 'Gün',
-    'interest.month': 'Ay',
-    'interest.year': 'Yıl',
-    'interest.tax': 'Vergi',
-    'interest.tax.none': 'Vergisiz',
-    'interest.tax.tr': '🇹🇷 Türkiye — Stopaj',
-    'interest.tax.de': '🇩🇪 Almanya — Abgeltungssteuer (KPMG)',
-    'interest.tax.custom': 'Özel Vergi',
-    'interest.stopaj': 'Stopaj Oranı (%)',
-    'interest.custom-rate': 'Vergi Oranı (%)',
-    'interest.de.soli': 'Solidaritätszuschlag (5,5%)',
-    'interest.de.kist': 'Kirchensteuer',
-    'interest.result.title': 'FAİZ HESAPLAMA SONUCU',
-    'interest.gross': 'Brüt Faiz Geliri',
-    'interest.net': 'Net Faiz Geliri',
-    'interest.total': 'VADE SONU TOPLAM',
-    'interest.principal.label': 'Ana Para',
-    'currency.label': 'Para Birimi',
-    // Loan
-    'loan.title': 'Kredi Hesaplama',
-    'loan.subtitle': '— Aylık taksit ve amortisman tablosu',
-    'loan.amount': 'Kredi Tutarı',
-    'loan.rate': 'Yıllık Faiz (%)',
-    'loan.months': 'Vade (Ay)',
-    'loan.result.title': 'KREDİ HESAPLAMA SONUCU',
-    'loan.amount.label': 'Kredi Tutarı',
-    'loan.monthly': 'Aylık Taksit',
-    'loan.total.payment': 'Toplam Geri Ödeme',
-    'loan.total.interest': 'Toplam Faiz Maliyeti',
-    'loan.interest.ratio': 'FAİZ YÜK ORANI',
-    'loan.th.month': 'Ay',
-    'loan.th.installment': 'Taksit',
-    'loan.th.principal': 'Anapara Payı',
-    'loan.th.interest': 'Faiz Payı',
-    'loan.th.remaining': 'Kalan Borç',
-    // Timestamp
-    'ts.title': 'Unix Timestamp ↔ Tarih',
-    'ts.to-date': 'Timestamp → Tarih',
-    'ts.now': 'Şimdi',
-    'ts.to-ts': 'Tarih → Timestamp',
-    'ts.invalid': 'Geçersiz timestamp',
-    'ts.unit.legend': 'Birim',
-    'ts.unit.auto': 'Otomatik',
-    'ts.unit.s': 'Saniye (s)',
-    'ts.unit.ms': 'Milisaniye (ms)',
-    // Base64
-    'b64.title': 'Base64 / Dosya',
-    'b64.tab.text': 'Metin',
-    'b64.tab.file-to': 'Dosya → Base64',
-    'b64.tab.to-file': 'Base64 → Dosya',
-    'b64.raw': 'Ham Metin',
-    'b64.raw.placeholder': 'Metni buraya yazın...',
-    'b64.output.placeholder': 'Base64 çıktısı...',
-    'b64.file-select': 'Dosya Seç',
-    'b64.convert': 'Base64\'e Çevir',
-    'b64.file-output.label': 'Base64 Çıktı',
-    'b64.file-output.placeholder': 'Base64 çıktısı burada görünecek...',
-    'b64.filename': 'Kaydedilecek Dosya Adı',
-    'b64.data': 'Base64 Veri',
-    'b64.paste.placeholder': 'Base64 kodunu buraya yapıştırın...',
-    'b64.download': '↓ Dosyayı İndir',
-    'b64.error.encode': 'Encode hatası: ',
-    'b64.error.decode': 'Geçersiz Base64 verisi.',
-    // CSV
-    'csv.title': 'CSV → JSON Dönüştürücü',
-    'csv.delimiter': 'Ayraç',
-    'csv.comma': 'Virgül (,)',
-    'csv.semicolon': 'Noktalı Virgül (;)',
-    'csv.header': 'İlk satır başlık',
-    'csv.input': 'CSV Giriş',
-    'csv.output': 'JSON Çıktı',
-    // Diff Checker
-    'diff.title': 'Metin Karşılaştırma',
-    'diff.original': 'Orijinal',
-    'diff.original.placeholder': 'Orijinal metin...',
-    'diff.new': 'Yeni',
-    'diff.new.placeholder': 'Yeni metin...',
-    'diff.added': 'eklendi',
-    'diff.removed': 'silindi',
-    // Word Counter
-    'wc.title': 'Kelime Sayacı',
-    'wc.placeholder': 'Metni buraya yazın...',
-    'wc.chars': 'KARAKTER',
-    'wc.no-space': 'BOŞLUKSUZ',
-    'wc.words': 'KELİME',
-    'wc.sentences': 'CÜMLE',
-    'wc.paragraphs': 'PARAGRAF',
-    'wc.readtime': 'OKUMA SÜRESİ',
-    'wc.readtime.unit': 'dk',
-    'wc.stats': '{chars} karakter · {words} kelime · {lines} satır',
-    // SQL Formatter
-    'sql-fmt.title': 'SQL Formatlayıcı',
-    'sql-fmt.input': 'SQL Giriş',
-    // JWT
-    'jwt.subtitle': '(Sadece okuma — imza doğrulaması yapılmaz)',
-    'jwt.decode': 'Decode Et',
-    'jwt.exp.label': 'Son kullanma',
-    'jwt.exp.expired': 'Süresi dolmuş',
-    'jwt.exp.valid': 'Geçerli',
-    'jwt.exp.none': 'Son kullanma tarihi yok',
-    // URL Encoder
-    'url-enc.title': 'URL Encode / Decode',
-    'url-enc.raw': 'Ham URL / Metin',
-    'url-enc.encoded': 'Encoded',
-    'url-enc.copy': 'Encoded\'ı Kopyala',
-    // KQL Formatter
-    'kql-fmt.title': 'KQL Formatlayıcı',
-    'kql-fmt.subtitle': '— Azure Monitor / Log Analytics / Sentinel',
-    'kql-fmt.input': 'KQL Giriş',
-    // KQL Cheatsheet
-    'kql-cs.subtitle': '— Hazır sorgular, tek tıkla KQL Formatlayıcı\'ya aktar',
-    'kql.export': 'KQL\'e Aktar',
-    // Text Editor
-    'editor.title': 'Metin Editörü',
-    'editor.filename': 'Dosya Adı',
-    'editor.format': 'Format',
-    'editor.placeholder': 'Metni buraya yazın...',
-    // User Story
-    'us.title': 'User Story Yazıcı (BABOK)',
-    'us.story-id': 'Story ID',
-    'us.story-title': 'Başlık',
-    'us.story-title.ph': 'Kısa açıklayıcı başlık',
-    'us.epic': 'Epic / Tema',
-    'us.epic.ph': 'Örn: Kullanıcı Yönetimi',
-    'us.priority': 'Öncelik (MoSCoW)',
-    'us.priority.none': 'Seçiniz',
-    'us.priority.must': 'Olmalı (Must)',
-    'us.priority.should': 'Olması Gerekir (Should)',
-    'us.priority.could': 'Olabilir (Could)',
-    'us.priority.wont': 'Olmayacak (Won\'t)',
-    'us.points': 'Story Points',
-    'us.role': 'Rol',
-    'us.role.ph': 'Örn: iş analisti, müşteri, sistem yöneticisi',
-    'us.action': 'Aksiyon',
-    'us.action.ph': 'Örn: aylık satış raporlarını otomatik oluşturmak',
-    'us.benefit': 'Fayda',
-    'us.benefit.ph': 'Örn: verileri hızlıca analiz edebilmek için',
-    'us.ac-section': 'Kabul Kriterleri',
-    'us.ac-gherkin': 'Gherkin',
-    'us.ac-checklist': 'Checklist',
-    'us.add-ac': 'Acceptance Criteria Ekle',
-    'us.add-checklist': 'Kriter Ekle',
-    'us.checklist-item.ph': 'Kabul kriteri...',
-    'us.generate': 'Oluştur',
-    'us.clear': 'Temizle',
-    'us.output': 'Çıktı',
-    'us.copy': 'Kopyala',
-    'us.copy-md': 'Markdown',
-    'us.copy-jira': 'Jira',
-    'us.ac-label': 'KABUL KRİTERİ',
-    'us.given': 'Given',
-    'us.when': 'When',
-    'us.then': 'Then',
-    'us.given.ph': 'Bağlam / ön koşul...',
-    'us.when.ph': 'Gerçekleşen olay / aksiyon...',
-    'us.then.ph': 'Beklenen sonuç...',
-    'us.additional': 'Ek Alanlar (İş Kuralları, NFR, Bağımlılıklar)',
-    'us.business-rules': 'İş Kuralları',
-    'us.business-rules.ph': 'Doğrulama kuralları, kısıtlamalar, politikalar...',
-    'us.nfr': 'Fonksiyonel Olmayan Gereksinimler',
-    'us.nfr.ph': 'Performans, güvenlik, erişilebilirlik...',
-    'us.dependencies': 'Bağımlılıklar & Varsayımlar',
-    'us.dependencies.ph': 'Diğer story\'ler, API\'ler, varsayımlar...',
-    'us.invest': 'INVEST Kontrol',
-    'us.invest.i': 'Independent',
-    'us.invest.n': 'Negotiable',
-    'us.invest.v': 'Valuable',
-    'us.invest.e': 'Estimable',
-    'us.invest.s': 'Small',
-    'us.invest.t': 'Testable',
-    'us.dod': 'Definition of Done',
-    'us.dod.code-review': 'Kod incelemesi yapıldı',
-    'us.dod.tests': 'Unit testler yazıldı',
-    'us.dod.ac-verified': 'AC doğrulandı',
-    'us.dod.docs': 'Dokümantasyon güncellendi',
-    // YAML <-> JSON
-    'yaml.title': 'YAML ↔ JSON Dönüştürücü',
-    'yaml.subtitle': '— K8s manifest, GitHub Actions, Helm config',
-    'yaml.label': 'YAML',
-    'yaml.json.label': 'JSON',
-    'yaml.input.ph': 'name: my-app\nversion: 1.0.0\nports:\n  - 8080\n  - 8443',
-    'yaml.json.ph': '{"name":"my-app","version":"1.0.0","ports":[8080,8443]}',
-    'yaml.to-json': 'YAML → JSON',
-    'yaml.to-yaml': 'JSON → YAML',
-    'yaml.footnote': 'İlk kullanımda js-yaml CDN üzerinden yüklenir (~30 KB). Ardından çevrimdışı çalışır.',
-    'yaml.error.parse': 'YAML/JSON ayrıştırma hatası',
-    'yaml.error.offline': 'Çevrimdışı görünüyor — YAML kütüphanesi ilk kez yüklenirken internet gerekiyor.',
-    // Regex Builder
-    'regex.title': 'Regex Builder',
-    'regex.subtitle': '— Log parsing & pattern testi',
-    'regex.pattern.ph': '\\b[A-Z]\\w+\\b',
-    'regex.flag.g': 'global',
-    'regex.flag.i': 'büyük/küçük harf duyarsız',
-    'regex.flag.m': 'çok satırlı',
-    'regex.flag.s': 'dotall',
-    'regex.sample': 'Örnek metin',
-    'regex.sample.ph': 'Test metnini buraya yapıştır...',
-    'regex.matches': 'Eşleşme sayısı',
-    'regex.highlight.label': 'Eşleşmeler (vurgulu)',
-    'regex.groups.label': 'Yakalama grupları',
-    'regex.error.invalid': 'Geçersiz regex',
-    // Cron
-    'cron.title': 'Cron Expression',
-    'cron.subtitle': '— Decode, doğrulama, sonraki çalışmalar',
-    'cron.expr.label': 'İfade (5 alanlı: dakika saat gün ay haftaGün)',
-    'cron.presets': 'Hazır şablonlar:',
-    'cron.field.minute': 'Dakika',
-    'cron.field.hour': 'Saat',
-    'cron.field.dom': 'Ayın günü',
-    'cron.field.month': 'Ay',
-    'cron.field.dow': 'Haftanın günü',
-    'cron.human.everyMin': 'Her dakika',
-    'cron.at': 'Saat',
-    'cron.hour': 'saatte:',
-    'cron.onDom': 'ayın günü:',
-    'cron.inMonths': 'aylarda:',
-    'cron.onDow': 'haftanın günü:',
-    'cron.next': 'Sonraki 5 çalışma:',
-    'cron.error.fields': 'Cron ifadesi 5 alandan oluşmalı (dakika saat gün ay haftaGün).',
-    'cron.error.invalid': 'Geçersiz cron ifadesi',
-    // HTTP Status
-    'http.title': 'HTTP Status Kodları',
-    'http.subtitle': '— Incident triage için hızlı referans',
-    'http.search.ph': '404, auth, gateway...',
-    'http.all': 'Hepsi',
-    'http.empty': 'Eşleşen kod yok.',
-    // cURL
-    'curl.title': 'cURL Parser',
-    'curl.subtitle': '— Bir curl komutu yapıştır; URL, header, body görüntüle',
-    'curl.input.label': 'cURL komutu',
-    'curl.input.ph': "curl -X POST 'https://api.example.com/v1/users' -H 'Authorization: Bearer xxx' -H 'Content-Type: application/json' -d '{\"name\":\"Alice\"}'",
-    'curl.parse': 'Parse Et',
-    'curl.method': 'Metot',
-    'curl.host': 'Host',
-    'curl.path': 'Path',
-    'curl.query': 'Query parametreleri',
-    'curl.headers': 'Header\'lar',
-    'curl.auth': 'Kimlik',
-    'curl.body': 'Gövde',
-    'curl.flags': 'Bayraklar',
-    'curl.error.parse': 'Komut ayrıştırılamadı',
-    'curl.error.notcurl': 'Komut "curl" ile başlamalı.',
-    'curl.error.nourl': 'Komutta URL bulunamadı.',
-    // Markdown
-    'md.title': 'Markdown Önizleme',
-    'md.subtitle': '— Runbook, RCA, gereksinim dokümantasyonu',
-    'md.input.label': 'Markdown',
-    'md.input.ph': '# Başlık\n\n**Kalın** ve *italik*.',
-    'md.preview.label': 'Önizleme',
-    'md.copy-html': 'HTML kopyala',
-    // Use Case Writer
-    'uc.title': 'Use Case Yazıcı',
-    'uc.subtitle': '— Cockburn formatı: actor, ön/son koşul, ana ve alternatif akışlar',
-    'uc.id': 'UC-ID',
-    'uc.name': 'İsim',
-    'uc.name.ph': 'Müşteri sipariş oluşturur',
-    'uc.actor': 'Birincil Aktör',
-    'uc.actor.ph': 'Kayıtlı Müşteri',
-    'uc.goal': 'Hedef',
-    'uc.goal.ph': 'Sepetteki ürünleri satın almak',
-    'uc.scope': 'Kapsam',
-    'uc.scope.ph': 'E-ticaret platformu',
-    'uc.level': 'Düzey',
-    'uc.level.user': 'Kullanıcı Hedefi (Sea level)',
-    'uc.level.summary': 'Özet (Kite level)',
-    'uc.level.subfn': 'Alt Fonksiyon (Fish level)',
-    'uc.preconditions': 'Ön Koşullar',
-    'uc.pre.ph': 'Müşteri sisteme giriş yapmış olmalı.\nSepette en az 1 ürün bulunmalı.',
-    'uc.trigger': 'Tetikleyici',
-    'uc.trigger.ph': 'Müşteri "Ödeme Yap" düğmesine tıklar.',
-    'uc.postconditions': 'Son Koşullar',
-    'uc.post.ph': 'Sipariş kaydedildi ve sipariş numarası üretildi.',
-    'uc.main': 'Ana Başarı Senaryosu',
-    'uc.main.ph': 'Müşteri ödeme yöntemini seçer.\nSistem teslimat adresini doğrular.\nMüşteri "Onayla" düğmesine tıklar.',
-    'uc.ext': 'Alternatif Akışlar',
-    'uc.ext.ph': '3a: Ödeme reddedildi → Sistem hata mesajı gösterir.',
-    'uc.render': 'Oluştur',
-    'uc.copy-md': 'Markdown Kopyala',
-    'uc.output': 'Çıktı (Markdown)',
-    // AC Generator (Gherkin)
-    'ac.title': 'AC Üretici (Gherkin)',
-    'ac.subtitle': '— BDD: Given/When/Then',
-    'ac.feature': 'Feature',
-    'ac.feature.ph': 'Sepete ürün ekleme',
-    'ac.feature.desc': 'Açıklama (As a / I want / So that)',
-    'ac.feature.desc.ph': 'As a kayıtlı müşteri\nI want sepete ürün ekleyebilmek\nSo that ileride satın alabilirim',
-    'ac.scenario': 'Senaryo',
-    'ac.scenario.name.ph': 'Geçerli stoktaki ürünü sepete ekleme',
-    'ac.given': 'Given (önkoşul — her satır 1 koşul)',
-    'ac.given.ph': 'kullanıcı sisteme giriş yapmış olsun\nstokta 5 adet "X" ürünü olsun',
-    'ac.when': 'When (eylem)',
-    'ac.when.ph': '"X" ürününün "Sepete Ekle" düğmesine tıklarsa',
-    'ac.then': 'Then (beklenen sonuç — her satır 1 sonuç)',
-    'ac.then.ph': 'sepetinde 1 adet "X" ürünü görsün\nstok 4 adete düşsün',
-    'ac.add-scenario': '+ Senaryo Ekle',
-    'ac.remove': 'Kaldır',
-    'ac.render': 'Oluştur',
-    'ac.output': 'Gherkin Çıktısı',
-    // RACI Matrix
-    'raci.title': 'RACI Matrisi',
-    'raci.subtitle': '— Responsible · Accountable · Consulted · Informed',
-    'raci.activities': 'Aktiviteler / Görevler (her satır 1 aktivite)',
-    'raci.activities.ph': 'Gereksinim toplama\nMockup hazırlama\nKod geliştirme\nTest\nDeploy',
-    'raci.stakeholders': 'Paydaşlar / Roller (her satır 1 rol)',
-    'raci.stakeholders.ph': 'BA\nPO\nTech Lead\nDeveloper\nQA',
-    'raci.build': 'Matris Oluştur',
-    'raci.copy-md': 'Markdown Kopyala',
-    'raci.copy-csv': 'CSV Kopyala',
-    'raci.col.activity': 'Aktivite',
-    'raci.footnote': 'Hücreye tıklayarak: R (Responsible), A (Accountable), C (Consulted), I (Informed) atayın. Her satırda tam olarak 1 A olmalı.',
-    'raci.error.empty': 'Aktivite ve paydaş listelerini doldurun.',
-    'raci.valid': 'Tüm satırlarda 1 Accountable var.',
-    'raci.issue.noA': 'A yok — satır',
-    'raci.issue.multiA': 'Birden fazla A — satır',
-    // Feedback
-    'feedback.btn': 'Geri Bildirim',
-    'feedback.email': 'E-posta Gönder',
-    'feedback.github': 'GitHub Issue Aç',
-    // ARIA labels (a11y)
-    'aria.lang-toggle': 'Dili değiştir',
-    'aria.theme-toggle': 'Karanlık modu aç/kapat',
-    'aria.feedback-toggle': 'Geri bildirim menüsünü aç',
-    'aria.tab-bar': 'Açık araç sekmeleri',
-    'aria.tab-close': 'Sekmeyi kapat',
-    'aria.empty.json-tree': 'Ağaç görünümü için yukarıya geçerli JSON girin ve "Güzelleştir" tuşuna basın.',
-    'aria.empty.loan-table': 'Değerleri girin ve "Hesapla" tuşuna basın; amortisman tablosu burada görünecek.',
-    'aria.json-esc-swap': 'Giriş ve çıkışı yer değiştir',
-    // Empty states
-    'empty.json-tree': 'Ağaç görünümü için yukarıya geçerli JSON girin ve "Güzelleştir" tuşuna basın.',
-    'empty.loan-table': 'Değerleri girin ve "Hesapla" tuşuna basın; amortisman tablosu burada görünecek.',
-    // URL Shortener
-    'url-short.title': 'URL Kısaltıcı',
-    'url-short.label': 'Uzun URL',
-    'url-short.result.label': 'Kısaltılmış URL',
-    'url-short.footer': 'İnternet bağlantısı gerektirir · Powered by TinyURL',
-    // JSON Grid
-    'json-grid.title': 'JSON Grid Görünümü',
-    'json-grid.subtitle': '— Altova XMLSpy tarzı tablo görünümü',
-    'json-grid.input': 'JSON Giriş',
-    'json-grid.show': 'Grid Göster',
-    // JSON Escape
-    'json-esc.raw': 'Ham Metin',
-    'json-esc.escaped.label': 'Escape Edilmiş (JSON String)',
-    // JWT
-    'jwt.error.format': 'Geçersiz JWT formatı. 3 parça (header.payload.signature) olmalı.',
-    'jwt.error.decode': 'Decode hatası: ',
-    // JSON Escape
-    'json-esc.error': 'Parse hatası: ',
-    'json-esc.escape-btn': '↓ Escape',
-    'json-esc.unescape-btn': '↑ Unescape',
-    'json-esc.copy-raw': 'Ham Metni Kopyala',
-    // URL Shortener
-    'url-short.error.invalid': 'Geçerli bir URL girin (https:// ile başlamalı).',
-    'url-short.error.failed': 'Kısaltılamadı: ',
-    'url-short.error.offline': 'İnternet bağlantısı yok. URL kısaltma için bağlantı gerekiyor.',
-    // JSON Diff
-    'json-diff.title': 'JSON Karşılaştırma',
-    'json-diff.subtitle': '— Yapısal JSON diff (path bazlı)',
-    'json-diff.left': 'Sol JSON (Eski / A)',
-    'json-diff.right': 'Sağ JSON (Yeni / B)',
-    'json-diff.identical': '✓ İki JSON aynı — fark yok.',
-    'json-diff.found': '{n} fark bulundu',
-    'json-diff.error.empty': 'Her iki alana da JSON girin.',
-    'json-diff.error.left': 'Sol JSON hatalı: ',
-    'json-diff.error.right': 'Sağ JSON hatalı: ',
-    // SQL Cheatsheet
-    'sql-cs.subtitle': '— Hazır sorgular, tek tıkla SQL Formatlayıcı\'ya aktar',
-    'sql.export': 'SQL\'e Aktar',
-    // BPMN
-    'bpmn.title': 'BPMN Modeler',
-    'bpmn.new': 'Yeni Diyagram',
-    'bpmn.import': 'XML İçe Aktar',
-    'bpmn.export-xml': 'XML Dışa Aktar',
-    'bpmn.export-svg': 'SVG İndir',
-    'bpmn.loading': 'BPMN editörü yükleniyor...',
-    'bpmn.error.import': 'Geçersiz BPMN XML',
-    'bpmn.error.offline': 'Çevrimdışı görünüyor — BPMN editörü ilk kez yüklenirken internet bağlantısı gerekiyor.',
-    'bpmn.error.timeout': 'BPMN editörü 12 saniye içinde yüklenemedi (CDN engelli ya da yavaş bağlantı).',
-    'bpmn.error.load': 'BPMN editörü yüklenemedi. İnternet bağlantınızı veya CDN erişiminizi kontrol edin.',
-  },
-  en: {
-    // Nav / global
-    'welcome.title': 'Welcome to BA Toolbox',
-    'welcome.subtitle': 'Select a tool from the left menu to get started. All tools run in your browser — no internet required.',
-    'search.placeholder': 'Search tools...',
-    'sidebar.subtitle': 'Business Analyst Toolkit by Mecdal',
-    'topbar.welcome': 'Welcome',
-    'csv.input.ph': 'name,age,city\nJohn,30,London\nJane,25,Paris',
-    'json-grid.input.ph': '[{"id": 1, "name": "John", "city": "London"}, {"id": 2, "name": "Jane", "city": "Paris"}]',
-    'theme.dark': '🌙 Dark Mode',
-    'theme.light': '☀️ Light Mode',
-    'group.veri': 'Data & Format',
-    'group.veritabani': 'Database',
-    'group.gelistirici': 'Developer',
-    'group.hesaplama': 'Calculation',
-    'group.metin': 'Text',
-    'group.analiz': 'Analysis & Requirements',
-    // Shared actions
-    'copy': 'Copy',
-    'copied': 'Copied!',
-    'copy.failed': 'Copy failed. Please select and copy manually.',
-    'clear': 'Clear',
-    'calculate': 'Calculate',
-    'format': 'Format',
-    'convert': 'Convert',
-    'compare': 'Compare',
-    'download': '↓ Download',
-    'generate': 'Generate',
-    'shorten': 'Shorten',
-    'output': 'Output',
-    'keyword.guide': 'Keyword Reference',
-    'error.fill-fields': 'Please fill in all fields correctly.',
-    // JSON status / errors
-    'json.valid': '✓ Valid JSON',
-    'json.invalid': '✗ Invalid JSON',
-    'json.error': 'JSON Error: ',
-    'csv.error': 'CSV Error: ',
-    // JSON Formatter
-    'json-fmt.title': 'JSON Formatter',
-    'json-fmt.input': 'JSON Input',
-    'json-fmt.beautify': 'Beautify',
-    'json-fmt.minify': 'Minify',
-    'json-fmt.validate': 'Validate',
-    'json-fmt.remove-nulls': 'Remove Nulls',
-    'json-fmt.raw': 'Raw',
-    'json-fmt.tree': 'Tree',
-    'json-fmt.search.ph': 'Search keys or values...',
-    // UUID
-    'uuid.title': 'UUID Generator (v4)',
-    'uuid.count': 'Count (1-100)',
-    'uuid.placeholder': 'Generated UUIDs will appear here...',
-    // Interest
-    'interest.title': 'Simple Interest Calculator',
-    'interest.principal': 'Principal',
-    'interest.rate': 'Annual Rate (%)',
-    'interest.term': 'Term',
-    'interest.day': 'Day',
-    'interest.month': 'Month',
-    'interest.year': 'Year',
-    'interest.tax': 'Tax',
-    'interest.tax.none': 'No Tax',
-    'interest.tax.tr': '🇹🇷 Turkey — Withholding Tax',
-    'interest.tax.de': '🇩🇪 Germany — Abgeltungssteuer (KPMG)',
-    'interest.tax.custom': 'Custom Tax',
-    'interest.stopaj': 'Withholding Rate (%)',
-    'interest.custom-rate': 'Tax Rate (%)',
-    'interest.de.soli': 'Solidarity Surcharge (5.5%)',
-    'interest.de.kist': 'Church Tax',
-    'interest.result.title': 'INTEREST CALCULATION RESULT',
-    'interest.gross': 'Gross Interest Income',
-    'interest.net': 'Net Interest Income',
-    'interest.total': 'MATURITY TOTAL',
-    'interest.principal.label': 'Principal',
-    'currency.label': 'Currency',
-    // Loan
-    'loan.title': 'Loan Calculator',
-    'loan.subtitle': '— Monthly installment & amortization table',
-    'loan.amount': 'Loan Amount',
-    'loan.rate': 'Annual Rate (%)',
-    'loan.months': 'Term (Months)',
-    'loan.result.title': 'LOAN CALCULATION RESULT',
-    'loan.amount.label': 'Loan Amount',
-    'loan.monthly': 'Monthly Installment',
-    'loan.total.payment': 'Total Payment',
-    'loan.total.interest': 'Total Interest Cost',
-    'loan.interest.ratio': 'INTEREST BURDEN RATIO',
-    'loan.th.month': 'Month',
-    'loan.th.installment': 'Installment',
-    'loan.th.principal': 'Principal',
-    'loan.th.interest': 'Interest',
-    'loan.th.remaining': 'Remaining',
-    // Timestamp
-    'ts.title': 'Unix Timestamp ↔ Date',
-    'ts.to-date': 'Timestamp → Date',
-    'ts.now': 'Now',
-    'ts.to-ts': 'Date → Timestamp',
-    'ts.invalid': 'Invalid timestamp',
-    'ts.unit.legend': 'Unit',
-    'ts.unit.auto': 'Auto',
-    'ts.unit.s': 'Seconds (s)',
-    'ts.unit.ms': 'Milliseconds (ms)',
-    // Base64
-    'b64.title': 'Base64 / File',
-    'b64.tab.text': 'Text',
-    'b64.tab.file-to': 'File → Base64',
-    'b64.tab.to-file': 'Base64 → File',
-    'b64.raw': 'Raw Text',
-    'b64.raw.placeholder': 'Type text here...',
-    'b64.output.placeholder': 'Base64 output...',
-    'b64.file-select': 'Select File',
-    'b64.convert': 'Convert to Base64',
-    'b64.file-output.label': 'Base64 Output',
-    'b64.file-output.placeholder': 'Base64 output will appear here...',
-    'b64.filename': 'File Name to Save',
-    'b64.data': 'Base64 Data',
-    'b64.paste.placeholder': 'Paste Base64 code here...',
-    'b64.download': '↓ Download File',
-    'b64.error.encode': 'Encode error: ',
-    'b64.error.decode': 'Invalid Base64 data.',
-    // CSV
-    'csv.title': 'CSV → JSON Converter',
-    'csv.delimiter': 'Delimiter',
-    'csv.comma': 'Comma (,)',
-    'csv.semicolon': 'Semicolon (;)',
-    'csv.header': 'First row is header',
-    'csv.input': 'CSV Input',
-    'csv.output': 'JSON Output',
-    // Diff Checker
-    'diff.title': 'Text Comparison',
-    'diff.original': 'Original',
-    'diff.original.placeholder': 'Original text...',
-    'diff.new': 'New',
-    'diff.new.placeholder': 'New text...',
-    'diff.added': 'added',
-    'diff.removed': 'removed',
-    // Word Counter
-    'wc.title': 'Word Counter',
-    'wc.placeholder': 'Type text here...',
-    'wc.chars': 'CHARACTERS',
-    'wc.no-space': 'NO SPACES',
-    'wc.words': 'WORDS',
-    'wc.sentences': 'SENTENCES',
-    'wc.paragraphs': 'PARAGRAPHS',
-    'wc.readtime': 'READ TIME',
-    'wc.readtime.unit': 'min',
-    'wc.stats': '{chars} chars · {words} words · {lines} lines',
-    // SQL Formatter
-    'sql-fmt.title': 'SQL Formatter',
-    'sql-fmt.input': 'SQL Input',
-    // JWT
-    'jwt.error.format': 'Invalid JWT format. Must have 3 parts (header.payload.signature).',
-    'jwt.error.decode': 'Decode error: ',
-    // JSON Escape
-    'json-esc.error': 'Parse error: ',
-    'json-esc.escape-btn': '↓ Escape',
-    'json-esc.unescape-btn': '↑ Unescape',
-    'json-esc.copy-raw': 'Copy Raw',
-    // URL Shortener
-    'url-short.error.invalid': 'Enter a valid URL (must start with https://).',
-    'url-short.error.failed': 'Shortening failed: ',
-    'url-short.error.offline': 'No internet connection. URL shortening requires a connection.',
-    // JWT
-    'jwt.subtitle': '(Read-only — signature not verified)',
-    'jwt.decode': 'Decode',
-    'jwt.exp.label': 'Expires',
-    'jwt.exp.expired': 'Expired',
-    'jwt.exp.valid': 'Valid',
-    'jwt.exp.none': 'No expiration date',
-    // URL Encoder
-    'url-enc.title': 'URL Encode / Decode',
-    'url-enc.raw': 'Raw URL / Text',
-    'url-enc.encoded': 'Encoded',
-    'url-enc.copy': 'Copy Encoded',
-    // KQL Formatter
-    'kql-fmt.title': 'KQL Formatter',
-    'kql-fmt.subtitle': '— Azure Monitor / Log Analytics / Sentinel',
-    'kql-fmt.input': 'KQL Input',
-    // KQL Cheatsheet
-    'kql-cs.subtitle': '— Ready queries, export to KQL Formatter in one click',
-    'kql.export': 'Export to KQL',
-    // Text Editor
-    'editor.title': 'Text Editor',
-    'editor.filename': 'File Name',
-    'editor.format': 'Format',
-    'editor.placeholder': 'Type text here...',
-    // User Story
-    'us.title': 'User Story Writer (BABOK)',
-    'us.story-id': 'Story ID',
-    'us.story-title': 'Title',
-    'us.story-title.ph': 'Short descriptive title',
-    'us.epic': 'Epic / Theme',
-    'us.epic.ph': 'e.g. User Management',
-    'us.priority': 'Priority (MoSCoW)',
-    'us.priority.none': 'Select',
-    'us.priority.must': 'Must Have',
-    'us.priority.should': 'Should Have',
-    'us.priority.could': 'Could Have',
-    'us.priority.wont': "Won't Have",
-    'us.points': 'Story Points',
-    'us.role': 'Role',
-    'us.role.ph': 'e.g. business analyst, customer, system admin',
-    'us.action': 'Action',
-    'us.action.ph': 'e.g. generate monthly sales reports automatically',
-    'us.benefit': 'Benefit',
-    'us.benefit.ph': 'e.g. to analyse data quickly',
-    'us.ac-section': 'Acceptance Criteria',
-    'us.ac-gherkin': 'Gherkin',
-    'us.ac-checklist': 'Checklist',
-    'us.add-ac': 'Add Acceptance Criteria',
-    'us.add-checklist': 'Add Criterion',
-    'us.checklist-item.ph': 'Acceptance criterion...',
-    'us.generate': 'Generate',
-    'us.clear': 'Clear',
-    'us.output': 'Output',
-    'us.copy': 'Copy',
-    'us.copy-md': 'Markdown',
-    'us.copy-jira': 'Jira',
-    'us.ac-label': 'ACCEPTANCE CRITERIA',
-    'us.given': 'Given',
-    'us.when': 'When',
-    'us.then': 'Then',
-    'us.given.ph': 'Context / precondition...',
-    'us.when.ph': 'The event / action that occurs...',
-    'us.then.ph': 'Expected outcome...',
-    'us.additional': 'Additional Fields (Business Rules, NFR, Dependencies)',
-    'us.business-rules': 'Business Rules',
-    'us.business-rules.ph': 'Validation rules, constraints, policies...',
-    'us.nfr': 'Non-Functional Requirements',
-    'us.nfr.ph': 'Performance, security, accessibility...',
-    'us.dependencies': 'Dependencies & Assumptions',
-    'us.dependencies.ph': 'Other stories, APIs, assumptions...',
-    'us.invest': 'INVEST Check',
-    'us.invest.i': 'Independent',
-    'us.invest.n': 'Negotiable',
-    'us.invest.v': 'Valuable',
-    'us.invest.e': 'Estimable',
-    'us.invest.s': 'Small',
-    'us.invest.t': 'Testable',
-    'us.dod': 'Definition of Done',
-    'us.dod.code-review': 'Code reviewed',
-    'us.dod.tests': 'Unit tests written',
-    'us.dod.ac-verified': 'AC verified',
-    'us.dod.docs': 'Documentation updated',
-    // Feedback
-    // YAML <-> JSON
-    'yaml.title': 'YAML ↔ JSON Converter',
-    'yaml.subtitle': '— K8s manifests, GitHub Actions, Helm config',
-    'yaml.label': 'YAML',
-    'yaml.json.label': 'JSON',
-    'yaml.input.ph': 'name: my-app\nversion: 1.0.0\nports:\n  - 8080\n  - 8443',
-    'yaml.json.ph': '{"name":"my-app","version":"1.0.0","ports":[8080,8443]}',
-    'yaml.to-json': 'YAML → JSON',
-    'yaml.to-yaml': 'JSON → YAML',
-    'yaml.footnote': 'js-yaml is loaded from CDN on first use (~30 KB). Works offline afterwards.',
-    'yaml.error.parse': 'YAML/JSON parse error',
-    'yaml.error.offline': 'You appear to be offline — first-time YAML library load needs internet.',
-    // Regex Builder
-    'regex.title': 'Regex Builder',
-    'regex.subtitle': '— Log parsing & pattern testing',
-    'regex.pattern.ph': '\\b[A-Z]\\w+\\b',
-    'regex.flag.g': 'global',
-    'regex.flag.i': 'case-insensitive',
-    'regex.flag.m': 'multiline',
-    'regex.flag.s': 'dotall',
-    'regex.sample': 'Sample text',
-    'regex.sample.ph': 'Paste your test text here...',
-    'regex.matches': 'Match count',
-    'regex.highlight.label': 'Matches (highlighted)',
-    'regex.groups.label': 'Capture groups',
-    'regex.error.invalid': 'Invalid regex',
-    // Cron
-    'cron.title': 'Cron Expression',
-    'cron.subtitle': '— Decode, validate, next runs',
-    'cron.expr.label': 'Expression (5 fields: minute hour dom month dow)',
-    'cron.presets': 'Presets:',
-    'cron.field.minute': 'Minute',
-    'cron.field.hour': 'Hour',
-    'cron.field.dom': 'Day of month',
-    'cron.field.month': 'Month',
-    'cron.field.dow': 'Day of week',
-    'cron.human.everyMin': 'Every minute',
-    'cron.at': 'At',
-    'cron.hour': 'hour',
-    'cron.onDom': 'on day(s) of month',
-    'cron.inMonths': 'in month(s):',
-    'cron.onDow': 'on day(s) of week:',
-    'cron.next': 'Next 5 runs:',
-    'cron.error.fields': 'Cron expression must have 5 fields (minute hour dom month dow).',
-    'cron.error.invalid': 'Invalid cron expression',
-    // HTTP Status
-    'http.title': 'HTTP Status Codes',
-    'http.subtitle': '— Quick lookup for incident triage',
-    'http.search.ph': '404, auth, gateway...',
-    'http.all': 'All',
-    'http.empty': 'No matching codes.',
-    // cURL
-    'curl.title': 'cURL Parser',
-    'curl.subtitle': '— Paste a curl command; inspect URL, headers, body',
-    'curl.input.label': 'cURL command',
-    'curl.input.ph': "curl -X POST 'https://api.example.com/v1/users' -H 'Authorization: Bearer xxx' -H 'Content-Type: application/json' -d '{\"name\":\"Alice\"}'",
-    'curl.parse': 'Parse',
-    'curl.method': 'Method',
-    'curl.host': 'Host',
-    'curl.path': 'Path',
-    'curl.query': 'Query parameters',
-    'curl.headers': 'Headers',
-    'curl.auth': 'Auth',
-    'curl.body': 'Body',
-    'curl.flags': 'Flags',
-    'curl.error.parse': 'Could not parse command',
-    'curl.error.notcurl': 'Command must start with "curl".',
-    'curl.error.nourl': 'No URL found in command.',
-    // Markdown
-    'md.title': 'Markdown Preview',
-    'md.subtitle': '— Runbook, RCA, requirement documentation',
-    'md.input.label': 'Markdown',
-    'md.input.ph': '# Heading\n\n**Bold** and *italic*.',
-    'md.preview.label': 'Preview',
-    'md.copy-html': 'Copy HTML',
-    // Feedback
-    // Use Case Writer
-    'uc.title': 'Use Case Writer',
-    'uc.subtitle': '— Cockburn format: actor, pre/postconditions, main and alternative flows',
-    'uc.id': 'UC-ID',
-    'uc.name': 'Name',
-    'uc.name.ph': 'Customer places order',
-    'uc.actor': 'Primary Actor',
-    'uc.actor.ph': 'Registered Customer',
-    'uc.goal': 'Goal',
-    'uc.goal.ph': 'Purchase items in cart',
-    'uc.scope': 'Scope',
-    'uc.scope.ph': 'E-commerce platform',
-    'uc.level': 'Level',
-    'uc.level.user': 'User Goal (Sea level)',
-    'uc.level.summary': 'Summary (Kite level)',
-    'uc.level.subfn': 'Subfunction (Fish level)',
-    'uc.preconditions': 'Preconditions',
-    'uc.pre.ph': 'Customer is logged in.\nCart contains at least 1 item.',
-    'uc.trigger': 'Trigger',
-    'uc.trigger.ph': 'Customer clicks "Checkout" button.',
-    'uc.postconditions': 'Postconditions',
-    'uc.post.ph': 'Order is saved and order number is generated.',
-    'uc.main': 'Main Success Scenario',
-    'uc.main.ph': 'Customer selects payment method.\nSystem validates shipping address.\nCustomer clicks "Confirm".',
-    'uc.ext': 'Alternative Flows',
-    'uc.ext.ph': '3a: Payment declined → System shows error message.',
-    'uc.render': 'Render',
-    'uc.copy-md': 'Copy as Markdown',
-    'uc.output': 'Output (Markdown)',
-    // AC Generator (Gherkin)
-    'ac.title': 'AC Generator (Gherkin)',
-    'ac.subtitle': '— BDD: Given/When/Then',
-    'ac.feature': 'Feature',
-    'ac.feature.ph': 'Add item to cart',
-    'ac.feature.desc': 'Description (As a / I want / So that)',
-    'ac.feature.desc.ph': 'As a registered customer\nI want to add items to my cart\nSo that I can purchase later',
-    'ac.scenario': 'Scenario',
-    'ac.scenario.name.ph': 'Add an in-stock item to cart',
-    'ac.given': 'Given (precondition — one per line)',
-    'ac.given.ph': 'the user is logged in\nthere are 5 units of "X" in stock',
-    'ac.when': 'When (action)',
-    'ac.when.ph': 'they click the "Add to Cart" button on item "X"',
-    'ac.then': 'Then (expected — one per line)',
-    'ac.then.ph': 'they should see 1 unit of "X" in their cart\nstock should drop to 4',
-    'ac.add-scenario': '+ Add Scenario',
-    'ac.remove': 'Remove',
-    'ac.render': 'Render',
-    'ac.output': 'Gherkin Output',
-    // RACI Matrix
-    'raci.title': 'RACI Matrix',
-    'raci.subtitle': '— Responsible · Accountable · Consulted · Informed',
-    'raci.activities': 'Activities / Tasks (one per line)',
-    'raci.activities.ph': 'Requirements gathering\nMockup design\nDevelopment\nTesting\nDeployment',
-    'raci.stakeholders': 'Stakeholders / Roles (one per line)',
-    'raci.stakeholders.ph': 'BA\nPO\nTech Lead\nDeveloper\nQA',
-    'raci.build': 'Build Matrix',
-    'raci.copy-md': 'Copy as Markdown',
-    'raci.copy-csv': 'Copy as CSV',
-    'raci.col.activity': 'Activity',
-    'raci.footnote': 'Click a cell to cycle: R (Responsible), A (Accountable), C (Consulted), I (Informed). Each row should have exactly one A.',
-    'raci.error.empty': 'Fill in both activities and stakeholders.',
-    'raci.valid': 'Each row has exactly one Accountable.',
-    'raci.issue.noA': 'No A — row',
-    'raci.issue.multiA': 'Multiple A — row',
-    // Feedback
-    'feedback.btn': 'Feedback',
-    'feedback.email': 'Send Email',
-    'feedback.github': 'Open GitHub Issue',
-    // ARIA labels (a11y)
-    'aria.lang-toggle': 'Toggle language',
-    'aria.theme-toggle': 'Toggle dark mode',
-    'aria.feedback-toggle': 'Open feedback menu',
-    'aria.tab-bar': 'Open tool tabs',
-    'aria.tab-close': 'Close tab',
-    'aria.empty.json-tree': 'Enter valid JSON above and press "Beautify" to see the tree view.',
-    'aria.empty.loan-table': 'Enter values and press "Calculate" — the amortization table will appear here.',
-    'aria.json-esc-swap': 'Swap input and output',
-    // Empty states
-    'empty.json-tree': 'Enter valid JSON above and press "Beautify" to see the tree view.',
-    'empty.loan-table': 'Enter values and press "Calculate" — the amortization table will appear here.',
-    // URL Shortener
-    'url-short.title': 'URL Shortener',
-    'url-short.label': 'Long URL',
-    'url-short.result.label': 'Shortened URL',
-    'url-short.footer': 'Requires internet connection · Powered by TinyURL',
-    // JSON Grid
-    'json-grid.title': 'JSON Grid View',
-    'json-grid.subtitle': '— Altova XMLSpy-style table view',
-    'json-grid.input': 'JSON Input',
-    'json-grid.show': 'Show Grid',
-    // JSON Escape
-    'json-esc.raw': 'Raw Text',
-    'json-esc.escaped.label': 'Escaped (JSON String)',
-    // JSON Diff
-    'json-diff.title': 'JSON Diff',
-    'json-diff.subtitle': '— Structural JSON diff (path-based)',
-    'json-diff.left': 'Left JSON (Old / A)',
-    'json-diff.right': 'Right JSON (New / B)',
-    'json-diff.identical': '✓ Both JSONs are identical — no differences.',
-    'json-diff.found': '{n} difference(s) found',
-    'json-diff.error.empty': 'Enter JSON in both fields.',
-    'json-diff.error.left': 'Left JSON error: ',
-    'json-diff.error.right': 'Right JSON error: ',
-    // SQL Cheatsheet
-    'sql-cs.subtitle': '— Ready queries, export to SQL Formatter in one click',
-    'sql.export': 'Export to SQL',
-    // BPMN
-    'bpmn.title': 'BPMN Modeler',
-    'bpmn.new': 'New Diagram',
-    'bpmn.import': 'Import XML',
-    'bpmn.export-xml': 'Export XML',
-    'bpmn.export-svg': 'Download SVG',
-    'bpmn.loading': 'Loading BPMN editor...',
-    'bpmn.error.import': 'Invalid BPMN XML',
-    'bpmn.error.offline': 'You appear to be offline — first-time BPMN editor load needs internet access.',
-    'bpmn.error.timeout': 'BPMN editor failed to load within 12 seconds (CDN blocked or slow connection).',
-    'bpmn.error.load': 'BPMN editor could not be loaded. Check your internet connection or CDN access.',
-  },
-};
-
-const groupKeyMap = {
-  'Veri & Format': 'group.veri',
-  'Veritabanı': 'group.veritabani',
-  'Geliştirici': 'group.gelistirici',
-  'Hesaplama': 'group.hesaplama',
-  'Metin': 'group.metin',
-  'Analiz & Gereksinim': 'group.analiz',
-};
-
-function t(key) {
-  return (translations[currentLang] || translations.tr)[key] || key;
-}
+//
+// Translations + the t/setLang/getLang/applyDomI18n primitives now live in
+// src/i18n/. The wrappers below add tool-specific refreshes (cheatsheets, word
+// counter, loan headers) on top of applyDomI18n. They will move to per-tool
+// post-apply hooks during Phase 3 of the modularization sprint.
 
 function applyLang() {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.dataset.i18n;
-    el.textContent = t(key);
-  });
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-    el.placeholder = t(el.dataset.i18nPlaceholder);
-  });
-  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
-    el.setAttribute('aria-label', t(el.dataset.i18nAria));
-  });
-  document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
-    el.setAttribute('aria-label', t(el.dataset.i18nAriaLabel));
-  });
-  const btn = document.getElementById('lang-toggle');
-  if (btn) btn.textContent = currentLang === 'tr' ? '🌐 EN' : '🌐 TR';
-
-  // Refresh nav group labels
-  document.querySelectorAll('.tool-group-label').forEach(el => {
+  applyDomI18n();
+  // Refresh nav group labels (built dynamically; their data-i18n key is
+  // tracked on data-group-key, which i18n core doesn't know about).
+  document.querySelectorAll('.tool-group-label').forEach((el) => {
     const key = el.dataset.groupKey;
     if (key) el.textContent = t(key);
   });
-
-  // Refresh nav item labels
-  document.querySelectorAll('.tool-nav-item').forEach(el => {
-    const toolId = el.dataset.tool;
-    const tool = tools.find(t2 => t2.id === toolId);
+  // Refresh sidebar tool labels (TR/EN are stored on the tool object).
+  document.querySelectorAll('.tool-nav-item').forEach((el) => {
+    const tool = tools.find((t2) => t2.id === el.dataset.tool);
     if (!tool) return;
-    const label = (currentLang === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
+    const label = (getLang() === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
     el.querySelector('span:last-child').textContent = label;
   });
-
-  // Update topbar title if currently showing a tool
+  // Update topbar title if a tool is currently active.
   const activeItem = document.querySelector('.tool-nav-item.active');
   if (activeItem) {
-    const toolId = activeItem.dataset.tool;
-    const tool = tools.find(t2 => t2.id === toolId);
+    const tool = tools.find((t2) => t2.id === activeItem.dataset.tool);
     if (tool) {
-      const label = (currentLang === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
+      const label = (getLang() === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
       document.getElementById('topbar-title').textContent = label;
     }
   }
-
-  // Update theme button text
+  // Theme button text depends on current theme + language; updateThemeBtn picks the right key.
   updateThemeBtn(document.documentElement.getAttribute('data-theme'));
-
-  // Rebuild dynamic content with new language
+  // Tool-specific re-renders that consult t() at draw time.
   buildSqlCheatsheet();
   buildKqlCheatsheet();
   if (typeof filterHttpStatus === 'function' && document.getElementById('http-status-list')) filterHttpStatus();
-
-  // Refresh word counter stats if there is text
   if (document.getElementById('wc-input') && document.getElementById('wc-input').value) {
     countWords();
   }
-
-  // Update loan table headers if visible
+  // Loan amortization table headers (rendered statically in HTML once but with i18n keys).
   const loanTh = document.querySelectorAll('#panel-loan-calc thead th');
   const loanHeaders = ['loan.th.month', 'loan.th.installment', 'loan.th.principal', 'loan.th.interest', 'loan.th.remaining'];
   loanTh.forEach((th, i) => { if (loanHeaders[i]) th.textContent = t(loanHeaders[i]); });
 }
 
 function toggleLang() {
-  currentLang = currentLang === 'tr' ? 'en' : 'tr';
-  storageSet('lang', currentLang);
+  setLang(getLang() === 'tr' ? 'en' : 'tr');
   applyLang();
 }
 
@@ -1109,7 +183,7 @@ function buildNav() {
       const item = document.createElement('div');
       item.className = 'tool-nav-item';
       item.dataset.tool = tool.id;
-      const displayLabel = (currentLang === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
+      const displayLabel = (getLang() === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
       item.innerHTML = `<span class="icon">${tool.icon}</span><span>${displayLabel}</span>`;
       item.addEventListener('click', () => navigate(tool.id));
       list.appendChild(item);
@@ -1130,7 +204,7 @@ function renderTabs() {
   bar.innerHTML = tabs.map(id => {
     const tool = tools.find(t2 => t2.id === id);
     if (!tool) return '';
-    const label = (currentLang === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
+    const label = (getLang() === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
     const isActive = id === activeTab;
     const closeAria = `${t('aria.tab-close')}: ${label}`;
     return `<div class="tab${isActive ? ' active' : ''}" data-tool="${id}" role="tab" aria-selected="${isActive}" tabindex="0" onclick="switchTab('${id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();switchTab('${id}')}">
@@ -1179,7 +253,7 @@ function switchTab(toolId) {
   // Update topbar title
   const tool = tools.find(t2 => t2.id === toolId);
   if (tool) {
-    const label = (currentLang === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
+    const label = (getLang() === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
     document.getElementById('topbar-title').textContent = label;
   }
 
@@ -1677,7 +751,7 @@ function tsToDate() {
   const h = pad(d.getUTCHours()), m = pad(d.getUTCMinutes()), s = pad(d.getUTCSeconds());
 
   const formats = [
-    { label: 'Local',        value: d.toLocaleString(currentLang === 'tr' ? 'tr-TR' : 'en-GB') },
+    { label: 'Local',        value: d.toLocaleString(getLang() === 'tr' ? 'tr-TR' : 'en-GB') },
     { label: 'UTC',          value: d.toUTCString() },
     { label: 'ISO 8601',     value: d.toISOString() },
     { label: 'SQL Date',     value: `${Y}-${M}-${D}` },
@@ -1959,7 +1033,7 @@ function decodeJWT() {
     if (payload.exp) {
       const exp = new Date(payload.exp * 1000);
       const expired = exp < new Date();
-      const locale = currentLang === 'tr' ? 'tr-TR' : 'en-GB';
+      const locale = getLang() === 'tr' ? 'tr-TR' : 'en-GB';
       const status = expired ? `❌ ${t('jwt.exp.expired')}` : `✅ ${t('jwt.exp.valid')}`;
       document.getElementById('jwt-exp').textContent =
         `${t('jwt.exp.label')}: ${exp.toLocaleString(locale)} — ${status}`;
@@ -2095,8 +1169,8 @@ function setGridCell(td, val, depth) {
     summary.className = 'json-grid-nested';
     summary.style.cursor = 'pointer';
     summary.textContent = isArr
-      ? `[${count} ${currentLang === 'en' ? 'item' : 'öğe'}]`
-      : `{${count} ${currentLang === 'en' ? 'field' : 'alan'}}`;
+      ? `[${count} ${getLang() === 'en' ? 'item' : 'öğe'}]`
+      : `{${count} ${getLang() === 'en' ? 'field' : 'alan'}}`;
     details.appendChild(summary);
     details.appendChild(buildGridNode(val, depth + 1));
     if (depth < 1) details.open = true;
@@ -2395,7 +1469,7 @@ function buildKqlCheatsheet() {
     const section = document.createElement('div');
     section.style.marginBottom = '28px';
     const h4 = document.createElement('h4');
-    h4.textContent = (currentLang === 'en' && cat.categoryEn) ? cat.categoryEn : cat.category;
+    h4.textContent = (getLang() === 'en' && cat.categoryEn) ? cat.categoryEn : cat.category;
     h4.style.cssText = 'font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border);';
     section.appendChild(h4);
     const grid = document.createElement('div');
@@ -2406,7 +1480,7 @@ function buildKqlCheatsheet() {
       card.className = 'sql-template-card';
       const name = document.createElement('div');
       name.className = 'sql-template-name';
-      name.textContent = (currentLang === 'en' && tmpl.nameEn) ? tmpl.nameEn : tmpl.name;
+      name.textContent = (getLang() === 'en' && tmpl.nameEn) ? tmpl.nameEn : tmpl.name;
       const pre = document.createElement('pre');
       pre.className = 'sql-template-preview';
       pre.textContent = tmpl.sql;
@@ -2937,7 +2011,7 @@ function buildKeywordCards(keywords, container) {
     kw.textContent = item.kw;
     const desc = document.createElement('div');
     desc.className = 'kw-desc';
-    desc.textContent = (currentLang === 'en' && item.descEn) ? item.descEn : item.desc;
+    desc.textContent = (getLang() === 'en' && item.descEn) ? item.descEn : item.desc;
     card.appendChild(kw);
     card.appendChild(desc);
     grid.appendChild(card);
@@ -2958,7 +2032,7 @@ function buildSqlCheatsheet() {
     section.style.marginBottom = '28px';
 
     const h4 = document.createElement('h4');
-    h4.textContent = (currentLang === 'en' && cat.categoryEn) ? cat.categoryEn : cat.category;
+    h4.textContent = (getLang() === 'en' && cat.categoryEn) ? cat.categoryEn : cat.category;
     h4.style.cssText = 'font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border);';
     section.appendChild(h4);
 
@@ -2971,7 +2045,7 @@ function buildSqlCheatsheet() {
 
       const name = document.createElement('div');
       name.className = 'sql-template-name';
-      name.textContent = (currentLang === 'en' && tmpl.nameEn) ? tmpl.nameEn : tmpl.name;
+      name.textContent = (getLang() === 'en' && tmpl.nameEn) ? tmpl.nameEn : tmpl.name;
 
       const pre = document.createElement('pre');
       pre.className = 'sql-template-preview';
@@ -3247,7 +2321,7 @@ function decodeCron() {
   }
 
   const runs = nextCronRuns(parsed, 5);
-  const locale = currentLang === 'tr' ? 'tr-TR' : 'en-GB';
+  const locale = getLang() === 'tr' ? 'tr-TR' : 'en-GB';
 
   let html = `<div class="cron-human">${escapeHtml(human)}</div>`;
   html += `<div class="cron-fields">`;
@@ -3308,7 +2382,7 @@ function filterHttpStatus() {
   const list = document.getElementById('http-status-list');
   if (!list) return;
   const q = (document.getElementById('http-search').value || '').trim().toLowerCase();
-  const lang = currentLang === 'en' ? 'en' : 'tr';
+  const lang = getLang() === 'en' ? 'en' : 'tr';
   const matches = HTTP_STATUS_CODES.filter(s => {
     const classOk = httpStatusFilter === 'all' || String(s.code).startsWith(httpStatusFilter);
     if (!classOk) return false;
@@ -3905,3 +2979,65 @@ function bpmnImport() {
   };
   input.click();
 }
+
+// ===== Public API — window bridge =====
+//
+// app.js is now an ES module, so its top-level functions are scoped to the module.
+// Inline HTML handlers (onclick="…") need them on `window`, so we explicitly expose
+// the public surface here. This list is the authoritative inventory of "what HTML
+// is allowed to call". When you delete a function (or move it to a tool module),
+// also delete its entry here. Conversely, when you add an inline handler in
+// index.html, add the function to this object.
+//
+// Functions called from runtime-injected HTML (renderTabs's tab-close, RACI cells,
+// AC scenario remove buttons, etc.) are also listed even though static grep
+// misses them.
+
+Object.assign(window, {
+  // i18n / theme / global UI
+  applyLang, toggleLang, t,
+  toggleFeedbackMenu,
+
+  // JSON Formatter
+  jsonBeautify, jsonMinify, jsonValidate, jsonRemoveNulls, setJsonView,
+
+  // JSON Grid / Diff / Escape
+  renderJsonGrid, diffJson, jsonEscapeStr, jsonUnescapeStr, jsonSwap,
+
+  // CSV / Base64
+  csvToJson, base64Encode, base64Decode, base64ToFile, fileToBase64,
+
+  // YAML <-> JSON
+  yamlToJson, jsonToYaml,
+
+  // Developer tools
+  generateUUIDs, copyToClipboard,
+  tsToDate, dateToTs, setNow,
+  decodeJWT,
+  shortenUrl, copyShortUrl,
+  runRegex, syncRegexFlags,
+  setCron, decodeCron,
+  filterHttpStatus, setHttpFilter,
+  parseCurl,
+
+  // Database
+  formatSQL, formatKQL,
+
+  // Calculation
+  calcSimpleInterest, calcLoanPayment, onTaxChange, onKistChange,
+
+  // Text
+  runDiff, countWords, downloadTextFile, updateEditorStats, renderMarkdown,
+
+  // BA / Analysis
+  buildUserStory, copyUserStory, copyUserStoryMd, copyUserStoryJira, clearUserStory,
+  setAcMode, addAcBlock, removeAcBlock, addChecklistItem, removeChecklistItem, toggleInvest,
+  renderUseCase, copyUseCaseMd, clearUseCase,
+  addScenario, removeScenario, renderAC,
+  buildRaciMatrix, cycleRaci, copyRaciMd, copyRaciCsv,
+  bpmnNew, bpmnImport, bpmnExportXml, bpmnExportSvg,
+
+  // Tab management (renderTabs injects HTML that calls these by name)
+  switchTab, closeTab,
+});
+
