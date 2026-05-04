@@ -1,10 +1,15 @@
-// app.js — Sprint 5a Faz 1: now an ES module loaded from src/main.js.
-// During the modularization sprint this monolithic file is being whittled down,
-// one feature group at a time, into src/core/* and src/tools/*. Inline HTML
-// handlers (onclick="…") still drive most interactions, so the public functions
-// listed at the bottom of this file are bridged onto `window` for compatibility.
+// app.js — being progressively decomposed into ES modules.
 //
-// Faz 1 extracts: storage helpers + i18n core + translations (TR/EN).
+// Status (Sprint 5a):
+//   Faz 1 ✅ extracted i18n + storage helpers
+//   Faz 2 ✅ extracted core utilities (util, theme, nav, tabs, search, tab-helper, clear, feedback)
+//   Faz 3 ⏳ tools (still inlined here)
+//   Faz 4 ⏳ delete this file once Faz 3 finishes
+//
+// Inline HTML handlers (onclick="…") still drive most interactions, so the
+// public functions listed at the bottom of this file are bridged onto `window`
+// for compatibility. As tools move into src/tools/*, their bridge entry follows
+// them and the corresponding code disappears from this file.
 
 import { storageGet, storageSet } from './src/core/storage.js';
 import {
@@ -14,61 +19,32 @@ import {
   getLang,
   groupKeyMap,
 } from './src/i18n/index.js';
+import {
+  copyToClipboard,
+  showError,
+  hideError,
+  setEmptyState,
+  escapeHtml,
+  debounce,
+} from './src/core/util.js';
+import { initTheme, toggleTheme, updateThemeBtn } from './src/core/theme.js';
+import { tools, findTool } from './src/core/tool-registry.js';
+import { buildNav, navigate } from './src/core/nav.js';
+import {
+  MAX_TABS,
+  renderTabs,
+  openTab,
+  switchTab,
+  closeTab,
+  saveRecent,
+  getActiveTab,
+  getTabs,
+} from './src/core/tabs.js';
+import { initSearch } from './src/core/search.js';
+import { initTabs } from './src/core/tab-helper.js';
+import { toggleFeedbackMenu } from './src/core/feedback.js';
+import { addClearButtons, clearPanel, noClearPanels } from './src/core/clear.js';
 
-// ===== Utility Functions =====
-
-async function copyToClipboard(text, btn) {
-  try {
-    await navigator.clipboard.writeText(text);
-    const original = btn.textContent;
-    btn.textContent = t('copied');
-    btn.classList.add('btn-success');
-    setTimeout(() => {
-      btn.textContent = original;
-      btn.classList.remove('btn-success');
-    }, 2000);
-  } catch {
-    alert(t('copy.failed'));
-  }
-}
-
-function showError(boxId, msg) {
-  const el = document.getElementById(boxId);
-  if (!el) return;
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
-function hideError(boxId) {
-  const el = document.getElementById(boxId);
-  if (el) el.style.display = 'none';
-}
-
-function setEmptyState(elId, isEmpty) {
-  const el = document.getElementById(elId);
-  if (el) el.classList.toggle('visible', !!isEmpty);
-}
-
-// ===== Theme =====
-
-function initTheme() {
-  const saved = storageGet('theme') || 'light';
-  document.documentElement.setAttribute('data-theme', saved);
-  updateThemeBtn(saved);
-}
-
-function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  storageSet('theme', next);
-  updateThemeBtn(next);
-}
-
-function updateThemeBtn(theme) {
-  const btn = document.getElementById('theme-toggle');
-  if (btn) btn.textContent = theme === 'dark' ? t('theme.light') : t('theme.dark');
-}
 
 // ===== Language / i18n =====
 //
@@ -121,219 +97,6 @@ function toggleLang() {
   applyLang();
 }
 
-// ===== Navigation =====
-
-const tools = [
-  // Veri & Format
-  { id: 'json-formatter',    label: 'JSON Formatlayıcı',     labelEn: 'JSON Formatter',      icon: '{}',  group: 'Veri & Format' },
-  { id: 'json-grid',         label: 'JSON Grid Görünüm',     labelEn: 'JSON Grid View',       icon: '⊞',   group: 'Veri & Format' },
-  { id: 'json-diff',         label: 'JSON Karşılaştırma',    labelEn: 'JSON Diff',            icon: '⟺',   group: 'Veri & Format' },
-  { id: 'json-escape',       label: 'JSON Escape/Unescape',  labelEn: 'JSON Escape/Unescape', icon: '\\{}', group: 'Veri & Format' },
-  { id: 'csv-to-json',       label: 'CSV → JSON',            labelEn: 'CSV → JSON',           icon: '📊',  group: 'Veri & Format' },
-  { id: 'yaml-json',         label: 'YAML ↔ JSON',           labelEn: 'YAML ↔ JSON',          icon: '🧾',  group: 'Veri & Format' },
-  { id: 'base64',            label: 'Base64 / Dosya',        labelEn: 'Base64 / File',        icon: '🔐',  group: 'Veri & Format' },
-  // Veritabanı
-  { id: 'sql-formatter',     label: 'SQL Formatlayıcı',      labelEn: 'SQL Formatter',        icon: '🗄️',  group: 'Veritabanı' },
-  { id: 'sql-cheatsheet',    label: 'SQL Şablonları',        labelEn: 'SQL Templates',        icon: '📋',  group: 'Veritabanı' },
-  { id: 'kql-formatter',     label: 'KQL Formatlayıcı',      labelEn: 'KQL Formatter',        icon: '☁️',  group: 'Veritabanı' },
-  { id: 'kql-cheatsheet',    label: 'KQL Şablonları',        labelEn: 'KQL Templates',        icon: '📋',  group: 'Veritabanı' },
-  // Geliştirici
-  { id: 'uuid-generator',    label: 'UUID Üretici',          labelEn: 'UUID Generator',       icon: '🔑',  group: 'Geliştirici' },
-  { id: 'url-encoder',       label: 'URL Encode/Decode',     labelEn: 'URL Encode/Decode',    icon: '🔗',  group: 'Geliştirici' },
-  { id: 'timestamp',         label: 'Timestamp Dönüştürücü', labelEn: 'Timestamp Converter',  icon: '🕐',  group: 'Geliştirici' },
-  { id: 'url-shortener',     label: 'URL Kısaltıcı',         labelEn: 'URL Shortener',        icon: '✂️',  group: 'Geliştirici' },
-  { id: 'jwt-decoder',       label: 'JWT Decoder',           labelEn: 'JWT Decoder',          icon: '🎟️',  group: 'Geliştirici' },
-  { id: 'regex-builder',     label: 'Regex Builder',         labelEn: 'Regex Builder',        icon: '*️⃣',  group: 'Geliştirici' },
-  { id: 'cron-decoder',      label: 'Cron Expression',       labelEn: 'Cron Expression',      icon: '⏱️',  group: 'Geliştirici' },
-  { id: 'http-status',       label: 'HTTP Status Kodları',   labelEn: 'HTTP Status Codes',    icon: '🌐',  group: 'Geliştirici' },
-  { id: 'curl-parser',       label: 'cURL Parser',           labelEn: 'cURL Parser',          icon: '↩️',  group: 'Geliştirici' },
-  // Hesaplama
-  { id: 'interest-calc',     label: 'Faiz Hesaplama',        labelEn: 'Interest Calculator',  icon: '💰',  group: 'Hesaplama' },
-  { id: 'loan-calc',         label: 'Kredi Hesaplama',       labelEn: 'Loan Calculator',      icon: '🏦',  group: 'Hesaplama' },
-  // Metin
-  { id: 'diff-checker',      label: 'Metin Karşılaştırma',   labelEn: 'Text Diff',            icon: '🔍',  group: 'Metin' },
-  { id: 'word-counter',      label: 'Kelime Sayacı',         labelEn: 'Word Counter',         icon: '📝',  group: 'Metin' },
-  { id: 'text-editor',       label: 'Metin Editörü',         labelEn: 'Text Editor',          icon: '✏️',  group: 'Metin' },
-  { id: 'markdown-preview',  label: 'Markdown Önizleme',     labelEn: 'Markdown Preview',     icon: 'M↓',  group: 'Metin' },
-  // Analiz & Gereksinim
-  { id: 'user-story',        label: 'User Story Yazıcı',     labelEn: 'User Story Writer',    icon: '📖',  group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
-  { id: 'use-case',          label: 'Use Case Yazıcı',       labelEn: 'Use Case Writer',      icon: '🧷',  group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
-  { id: 'ac-generator',      label: 'AC Üretici (Gherkin)',  labelEn: 'AC Generator (Gherkin)', icon: '✅', group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
-  { id: 'raci-matrix',       label: 'RACI Matrisi',          labelEn: 'RACI Matrix',          icon: '🎯',  group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
-  { id: 'bpmn-modeler',      label: 'BPMN Modeler',          labelEn: 'BPMN Modeler',         icon: '⬡',   group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
-];
-
-function buildNav() {
-  const list = document.getElementById('tool-list');
-  const groups = {};
-  tools.forEach(t => {
-    if (!groups[t.group]) groups[t.group] = [];
-    groups[t.group].push(t);
-  });
-
-  Object.entries(groups).forEach(([group, items]) => {
-    const label = document.createElement('div');
-    const groupKey = groupKeyMap[group] || group;
-    label.className = 'tool-group-label';
-    label.dataset.groupKey = groupKey;
-    label.textContent = t(groupKey);
-    list.appendChild(label);
-
-    items.forEach(tool => {
-      const item = document.createElement('div');
-      item.className = 'tool-nav-item';
-      item.dataset.tool = tool.id;
-      const displayLabel = (getLang() === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
-      item.innerHTML = `<span class="icon">${tool.icon}</span><span>${displayLabel}</span>`;
-      item.addEventListener('click', () => navigate(tool.id));
-      list.appendChild(item);
-    });
-  });
-}
-
-// ===== Tab System =====
-
-const MAX_TABS = 5;
-let tabs = [];       // ordered list of open tool IDs
-let activeTab = null;
-
-function renderTabs() {
-  const bar = document.getElementById('tab-bar');
-  if (!bar) return;
-  bar.style.display = tabs.length > 0 ? 'flex' : 'none';
-  bar.innerHTML = tabs.map(id => {
-    const tool = tools.find(t2 => t2.id === id);
-    if (!tool) return '';
-    const label = (getLang() === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
-    const isActive = id === activeTab;
-    const closeAria = `${t('aria.tab-close')}: ${label}`;
-    return `<div class="tab${isActive ? ' active' : ''}" data-tool="${id}" role="tab" aria-selected="${isActive}" tabindex="0" onclick="switchTab('${id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();switchTab('${id}')}">
-      <span class="tab-icon" aria-hidden="true">${tool.icon}</span>
-      <span class="tab-label">${label}</span>
-      <button class="tab-close" type="button" aria-label="${closeAria}" title="${closeAria}" onclick="event.stopPropagation();closeTab('${id}')">×</button>
-    </div>`;
-  }).join('') + (tabs.length >= MAX_TABS
-    ? `<div class="tab-limit-hint" id="tab-limit-hint" style="display:none">MAX ${MAX_TABS}</div>`
-    : '');
-}
-
-function openTab(toolId) {
-  if (tabs.includes(toolId)) {
-    switchTab(toolId);
-    return;
-  }
-  if (tabs.length >= MAX_TABS) {
-    // Flash the limit hint briefly
-    const hint = document.getElementById('tab-limit-hint');
-    if (hint) {
-      hint.style.display = 'flex';
-      clearTimeout(hint._timer);
-      hint._timer = setTimeout(() => { hint.style.display = 'none'; }, 1800);
-    }
-    return;
-  }
-  tabs = [...tabs, toolId];
-  switchTab(toolId);
-}
-
-function switchTab(toolId) {
-  activeTab = toolId;
-  renderTabs();
-
-  // Activate correct panel
-  document.querySelectorAll('.tool-panel').forEach(el => el.classList.remove('active'));
-  const panel = document.getElementById('panel-' + toolId);
-  if (panel) panel.classList.add('active');
-
-  // Sync sidebar highlight
-  document.querySelectorAll('.tool-nav-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.tool === toolId);
-  });
-
-  // Update topbar title
-  const tool = tools.find(t2 => t2.id === toolId);
-  if (tool) {
-    const label = (getLang() === 'en' && tool.labelEn) ? tool.labelEn : tool.label;
-    document.getElementById('topbar-title').textContent = label;
-  }
-
-  // Hide welcome
-  const welcome = document.getElementById('welcome');
-  if (welcome) welcome.style.display = 'none';
-
-  window.location.hash = toolId;
-  saveRecent(toolId);
-
-  if (toolId === 'bpmn-modeler') initBpmn();
-}
-
-function closeTab(toolId) {
-  const idx = tabs.indexOf(toolId);
-  const newTabs = tabs.filter(id => id !== toolId);
-  tabs = newTabs;
-
-  if (activeTab === toolId) {
-    if (tabs.length > 0) {
-      // Switch to the nearest tab
-      switchTab(tabs[Math.min(idx, tabs.length - 1)]);
-    } else {
-      activeTab = null;
-      renderTabs();
-      document.querySelectorAll('.tool-panel').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tool-nav-item').forEach(el => el.classList.remove('active'));
-      const welcome = document.getElementById('welcome');
-      if (welcome) welcome.style.display = '';
-      const titleEl = document.getElementById('topbar-title');
-      titleEl.textContent = t('topbar.welcome');
-      window.location.hash = '';
-    }
-  } else {
-    renderTabs();
-  }
-}
-
-function navigate(toolId) {
-  openTab(toolId);
-}
-
-function saveRecent(toolId) {
-  let recents = JSON.parse(storageGet('recents') || '[]');
-  recents = [toolId, ...recents.filter(r => r !== toolId)].slice(0, 5);
-  storageSet('recents', JSON.stringify(recents));
-}
-
-// ===== Search =====
-
-function initSearch() {
-  const input = document.getElementById('search-box');
-  input.addEventListener('input', () => {
-    const q = input.value.toLowerCase();
-    document.querySelectorAll('.tool-nav-item').forEach(el => {
-      const match = el.textContent.toLowerCase().includes(q);
-      el.style.display = match ? '' : 'none';
-    });
-    document.querySelectorAll('.tool-group-label').forEach(label => {
-      label.style.display = '';
-    });
-  });
-}
-
-// ===== Tab helper =====
-
-function initTabs(containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  const scope = container.parentElement;
-  container.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      scope.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      btn.classList.add('active');
-      const target = document.getElementById(btn.dataset.tab);
-      if (target) target.classList.add('active');
-    });
-  });
-}
 
 // ===== Tool: JSON Formatter =====
 
@@ -475,16 +238,6 @@ function wrapTreeLeaf(key, valueHtml) {
   const keyHtml = key !== '' ? `<span class="json-tree-key">"${escapeHtml(String(key))}"</span>: ` : '';
   return `<div style="margin-left:16px;">${keyHtml}${valueHtml}</div>`;
 }
-
-// Tree search (debounced to avoid re-walking the DOM on every keystroke)
-function debounce(fn, delay) {
-  let timer = null;
-  return function debounced(...args) {
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), delay);
-  };
-}
-
 document.addEventListener('DOMContentLoaded', function() {
   const searchInput = document.getElementById('json-tree-search');
   if (searchInput) {
@@ -940,10 +693,6 @@ function runDiff() {
   }
 
   document.getElementById('diff-stats').textContent = `+${added} ${t('diff.added')}, -${removed} ${t('diff.removed')}`;
-}
-
-function escapeHtml(str) {
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 // ===== Tool: Word Counter =====
@@ -1875,61 +1624,6 @@ function copyUserStoryJira() {
   navigator.clipboard.writeText(jira);
 }
 
-// ===== Feedback Widget =====
-
-function toggleFeedbackMenu() {
-  document.getElementById('feedback-widget').classList.toggle('open');
-}
-
-document.addEventListener('click', function(e) {
-  const widget = document.getElementById('feedback-widget');
-  if (widget && !widget.contains(e.target)) {
-    widget.classList.remove('open');
-  }
-});
-
-// ===== Clear Panel =====
-
-const noClearPanels = new Set(['panel-sql-cheatsheet', 'panel-kql-cheatsheet', 'panel-user-story']);
-
-function addClearButtons() {
-  document.querySelectorAll('.tool-panel').forEach(panel => {
-    if (noClearPanels.has(panel.id)) return;
-    const card = panel.querySelector('.tool-card');
-    if (!card) return;
-    const footer = document.createElement('div');
-    footer.className = 'panel-clear-footer';
-    const btn = document.createElement('button');
-    btn.className = 'btn btn-secondary';
-    btn.style.cssText = 'font-size:11px; opacity:0.65;';
-    btn.dataset.i18n = 'clear';
-    btn.textContent = t('clear');
-    btn.addEventListener('click', () => clearPanel(panel.id));
-    footer.appendChild(btn);
-    card.appendChild(footer);
-  });
-}
-
-function clearPanel(panelId) {
-  const panel = document.getElementById(panelId);
-  if (!panel) return;
-  panel.querySelectorAll('input[type="text"], input[type="number"]').forEach(el => { el.value = ''; });
-  panel.querySelectorAll('textarea').forEach(el => { el.value = ''; });
-  panel.querySelectorAll('.error-box').forEach(el => { el.textContent = ''; el.style.display = 'none'; });
-  panel.querySelectorAll('.result-box').forEach(el => { el.innerHTML = ''; });
-  panel.querySelectorAll('tbody').forEach(el => { el.innerHTML = ''; });
-  ['json-grid-output', 'json-diff-output', 'diff-output', 'si-result-card', 'loan-result-card', 'editor-stats', 'diff-stats', 'file-b64-info', 'json-status', 'url-short-result'].forEach(id => {
-    const el = panel.querySelector('#' + id);
-    if (!el) return;
-    if (id === 'url-short-result') { el.style.display = 'none'; }
-    else if (id.endsWith('-card')) { el.innerHTML = ''; el.style.display = 'none'; }
-    else { el.innerHTML = ''; el.textContent = ''; }
-  });
-  ['loan-table-wrap'].forEach(id => {
-    const el = panel.querySelector('#' + id);
-    if (el) el.style.display = 'none';
-  });
-}
 
 // ===== Tool: SQL Cheatsheet =====
 
