@@ -2,20 +2,24 @@
  * BA Toolbox — Service Worker
  *
  * Strategy:
- *  - Precache the app shell (HTML/CSS/JS/manifest) on install so the site works offline.
- *  - Same-origin GETs: cache-first with background revalidation (stale-while-revalidate).
- *  - Cross-origin (CDN: bpmn-js, js-yaml, TinyURL/is.gd APIs): network-only — never cached,
- *    so URL shortening and live API calls always go through.
- *  - Bump CACHE_VERSION when shipping new app shell assets to invalidate old caches.
+ *  - Precache the minimal app shell (HTML/CSS/manifest + main entry) on install.
+ *  - Same-origin GETs: stale-while-revalidate. The 30+ ES modules under src/
+ *    aren't pre-listed; they're cached opportunistically on first fetch, which
+ *    keeps APP_SHELL small and means new files don't need a service-worker
+ *    update to be cacheable.
+ *  - Cross-origin (CDN: bpmn-js, js-yaml; APIs: TinyURL/is.gd): network-only.
+ *    URL shortener calls and lazy-loaded libraries always go through fresh.
+ *  - Bump CACHE_VERSION when the shell layout changes (e.g. main.js path).
+ *    v2 (Sprint 5a Faz 4): legacy app.js removed; main entry is src/main.js.
  */
 
-const CACHE_VERSION = 'ba-toolbox-v1';
+const CACHE_VERSION = 'ba-toolbox-v2';
 const APP_SHELL = [
   './',
   './index.html',
-  './app.js',
   './style.css',
   './manifest.webmanifest',
+  './src/main.js',
 ];
 
 self.addEventListener('install', (event) => {
