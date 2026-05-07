@@ -384,6 +384,11 @@ export default {
   'raci.issue.noA': 'No A — row',
   'raci.issue.multiA': 'Multiple A — row',
   // Feedback
+  // Send-to (Sprint 5b)
+  'send.to': 'Send to',
+  'send.tooltip': 'Send this output to a compatible tool',
+  'send.empty': 'No compatible targets — produce output first.',
+  // Feedback
   'feedback.btn': 'Feedback',
   'feedback.email': 'Send Email',
   'feedback.github': 'Open GitHub Issue',

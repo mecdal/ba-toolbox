@@ -60,6 +60,7 @@ import { initTabs } from './core/tab-helper.js';
 import { toggleFeedbackMenu } from './core/feedback.js';
 import { addClearButtons, clearPanel, noClearPanels } from './core/clear.js';
 import { utf8ToBase64, base64ToUtf8 } from './core/base64-codec.js';
+import { initSendTo, refreshSendToLabels } from './core/handoff.js';
 
 // Tool modules
 import { generateUUIDs } from './tools/dev/uuid.js';
@@ -149,6 +150,7 @@ function applyLang() {
     }
   }
   updateThemeBtn(document.documentElement.getAttribute('data-theme'));
+  refreshSendToLabels(); // Send-to triggers reuse t('send.to') — keep them in sync.
   buildSqlCheatsheet();
   buildKqlCheatsheet();
   if (typeof filterHttpStatus === 'function' && document.getElementById('http-status-list')) filterHttpStatus();
@@ -191,6 +193,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('md-input')) renderMarkdown();
   // AC Generator opens with one empty scenario card.
   if (document.getElementById('ac-scenarios')) addScenario();
+
+  // Sprint 5b: inject Send-to dropdown triggers into every tool panel that
+  // declares an output. Runs after addClearButtons so trigger ordering is stable.
+  initSendTo();
 
   // PWA: register the service worker; failure is silent and the app still works.
   if ('serviceWorker' in navigator) {

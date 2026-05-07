@@ -372,6 +372,11 @@ export default {
   'raci.issue.noA': 'A yok — satır',
   'raci.issue.multiA': 'Birden fazla A — satır',
   // Feedback
+  // Send-to (Sprint 5b)
+  'send.to': 'Şuna gönder',
+  'send.tooltip': 'Bu çıktıyı uyumlu başka bir araca gönder',
+  'send.empty': 'Uyumlu hedef yok — önce çıktıyı oluşturun.',
+  // Feedback
   'feedback.btn': 'Geri Bildirim',
   'feedback.email': 'E-posta Gönder',
   'feedback.github': 'GitHub Issue Aç',
