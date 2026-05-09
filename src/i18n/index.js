@@ -25,6 +25,7 @@ export const groupKeyMap = {
   'Hesaplama': 'group.hesaplama',
   'Metin': 'group.metin',
   'Analiz & Gereksinim': 'group.analiz',
+  'Çalışma Alanı': 'group.workspace',
 };
 
 export function getLang() {

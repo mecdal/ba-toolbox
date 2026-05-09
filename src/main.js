@@ -114,6 +114,7 @@ import { renderUseCase, copyUseCaseMd, clearUseCase } from './tools/ba/use-case.
 import { addScenario, removeScenario, renderAC } from './tools/ba/ac-generator.js';
 import { buildRaciMatrix, cycleRaci, copyRaciMd, copyRaciCsv } from './tools/ba/raci.js';
 import { initBpmn, bpmnNew, bpmnExportXml, bpmnExportSvg, bpmnImport } from './tools/ba/bpmn.js';
+import { nbAddCell, nbRunAll, nbClear, nbSave, nbLoad, initNotebook } from './tools/workspace/notebook.js';
 
 
 // ===== applyLang wrapper =====
@@ -198,6 +199,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // declares an output. Runs after addClearButtons so trigger ordering is stable.
   initSendTo();
 
+  // Sprint 5c: Notebook starts with one empty cell so users see how it works.
+  if (document.getElementById('nb-cells')) initNotebook();
+
   // PWA: register the service worker; failure is silent and the app still works.
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => { /* registration failed; app still works */ });
@@ -223,6 +227,9 @@ Object.assign(window, {
   // i18n / theme / global UI
   applyLang, toggleLang, t,
   toggleFeedbackMenu,
+
+  // Notebook (Workspace)
+  nbAddCell, nbRunAll, nbClear, nbSave, nbLoad,
 
   // JSON Formatter
   jsonBeautify, jsonMinify, jsonValidate, jsonRemoveNulls, setJsonView,

@@ -44,6 +44,8 @@ export const tools = [
   { id: 'ac-generator',      label: 'AC Üretici (Gherkin)',  labelEn: 'AC Generator (Gherkin)', icon: '✅', group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
   { id: 'raci-matrix',       label: 'RACI Matrisi',          labelEn: 'RACI Matrix',          icon: '🎯',  group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
   { id: 'bpmn-modeler',      label: 'BPMN Modeler',          labelEn: 'BPMN Modeler',         icon: '⬡',   group: 'Analiz & Gereksinim', groupEn: 'Analysis & Requirements' },
+  // Workspace — chain tools together with cells
+  { id: 'notebook',          label: 'Notebook',              labelEn: 'Notebook',             icon: '📓',  group: 'Çalışma Alanı', groupEn: 'Workspace' },
 ];
 
 export function findTool(id) {

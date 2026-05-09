@@ -946,6 +946,24 @@ block code
       </div>
     </div>
 
+    <!-- ===== NOTEBOOK (Workspace) ===== -->
+    <div id="panel-notebook" class="tool-panel">
+      <div class="tool-card">
+        <h3>
+          <span data-i18n="nb.title">Notebook</span>
+          <span class="tool-subtitle" data-i18n="nb.subtitle">— Birden çok aracı zincirle: ${cell:N} ile referans, .bantb dosyasına kaydet</span>
+        </h3>
+        <div class="btn-group nb-toolbar">
+          <button class="btn btn-primary" onclick="nbAddCell()" data-i18n="nb.add">+ Hücre Ekle</button>
+          <button class="btn btn-secondary" onclick="nbRunAll()" data-i18n="nb.run-all">Tümünü Çalıştır</button>
+          <button class="btn btn-secondary" onclick="nbSave()" data-i18n="nb.save">↓ Kaydet (.bantb)</button>
+          <button class="btn btn-secondary" onclick="nbLoad()" data-i18n="nb.load">↑ Yükle</button>
+          <button class="btn btn-secondary" onclick="nbClear()" data-i18n="nb.clear-all">Sil</button>
+        </div>
+        <div id="nb-cells" class="nb-cells"></div>
+      </div>
+    </div>
+
   </div><!-- /content -->
 </div><!-- /main -->
 
